@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <h1 class="section-title">Meu Carrinho</h1>
+        
+        {% if cart_items %}
+        <div class="cart-container">
+            {% for item in cart_items %}
+            <div class="cart-item">
+                {% if item.image %}
+                <img src="{{ item.image }}" alt="{{ item.name }}" class="cart-item-image">
+                {% else %}
+                <div class="cart-item-image no-image">
+                    <i class="fas fa-image"></i>
+                </div>
+                {% endif %}
+                
+                <div class="cart-item-info">
+                    <h3>{{ item.name }}</h3>
+                    <p>Quantidade: {{ item.quantity }}</p>
+                    {% if item.description %}
+                    <p><strong>Obs:</strong> {{ item.description }}</p>
+                    {% endif %}
+                    <div class="cart-item-price">R$ {{ "%.2f"|format(item.total) }}</div>
+                </div>
+                
+                <a href="{{ url_for('remove_from_cart', product_id=item.id) }}" 
+                   class="remove-btn" onclick="return confirm('Remover item?')">
+                    <i class="fas fa-trash"></i>
+                </a>
+            </div>
+            {% endfor %}
+            
+            <div class="cart-summary">
+                <div class="cart-total">TOTAL: R$ {{ "%.2f"|format(total) }}</div>
+                <a href="{{ url_for('checkout') }}" class="btn btn-primary btn-large">
+                    <i class="fab fa-whatsapp"></i> Finalizar via WhatsApp
+                </a>
+            </div>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-shopping-cart"></i>
+            <h3>Seu carrinho está vazio</h3>
+            <p>Que tal conhecer nossos produtos?</p>
+            <a href="{{ url_for('products') }}" class="btn btn-primary">Ver Produtos</a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

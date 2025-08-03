@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="admin-nav">
+    <div class="container">
+        <h1><i class="fas fa-cog"></i> Painel Administrativo</h1>
+        <div class="nav-links">
+            <a href="{{ url_for('admin_products') }}">Produtos</a>
+            <a href="{{ url_for('admin_announcements') }}">Anúncios</a>
+            <a href="{{ url_for('index') }}" target="_blank">Ver Site</a>
+            <a href="{{ url_for('admin_logout') }}">Sair</a>
+        </div>
+    </div>
+</div>
+
+<section class="section">
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-box-open"></i>
+                </div>
+                <div class="stat-number">{{ stats.total_products }}</div>
+                <div class="stat-label">Produtos</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-bullhorn"></i>
+                </div>
+                <div class="stat-number">{{ stats.total_announcements }}</div>
+                <div class="stat-label">Anúncios</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-eye"></i>
+                </div>
+                <div class="stat-number">{{ stats.active_announcements }}</div>
+                <div class="stat-label">Ativos</div>
+            </div>
+        </div>
+        
+        <div class="quick-actions">
+            <div class="action-card">
+                <h3><i class="fas fa-plus-circle"></i> Novo Produto</h3>
+                <p>Adicione um novo produto artesanal ao catálogo.</p>
+                <a href="{{ url_for('admin_new_product') }}" class="btn btn-primary">Criar Produto</a>
+            </div>
+            
+            <div class="action-card">
+                <h3><i class="fas fa-bullhorn"></i> Novo Anúncio</h3>
+                <p>Crie um anúncio para destacar novidades.</p>
+                <a href="{{ url_for('admin_new_announcement') }}" class="btn btn-secondary">Criar Anúncio</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

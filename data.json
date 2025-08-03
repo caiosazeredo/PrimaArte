@@ -1,0 +1,53 @@
+{
+  "products": [
+    {
+      "id": "produto-1",
+      "name": "Bolsa de Crochê Floral",
+      "description": "Linda bolsa feita em crochê com detalhes florais. Confeccionada com linha 100% algodão em cores suaves. Perfeita para o dia a dia, combina com qualquer look. Possui alça resistente e forro interno.",
+      "price": 89.9,
+      "category": "acessorios",
+      "images": [
+        "/static/uploads/1754262429_bolsafloral3.jpg",
+        "/static/uploads/1754262429_bolsafloral.jpg",
+        "/static/uploads/1754262429_bolsafloral2.jpg"
+      ],
+      "featured": true,
+      "created_at": "2025-08-03T19:50:48.264320",
+      "updated_at": "2025-08-03T20:07:09.137066"
+    },
+    {
+      "id": "produto-2",
+      "name": "Almofada Bordada à Mão",
+      "description": "Almofada decorativa com bordado artesanal exclusivo. Tecido de algodão de alta qualidade com enchimento antialérgico. Ideal para sofás e camas.",
+      "price": 65.0,
+      "category": "decoracao",
+      "image": "",
+      "featured": true,
+      "created_at": "2025-01-14T15:30:00"
+    },
+    {
+      "id": "af0c81c1-b17d-4a1b-bd2b-eeaf7ba98c04",
+      "name": "aaaa",
+      "description": "adsfsdf",
+      "price": 100.0,
+      "category": "acessorios",
+      "images": [
+        "/static/uploads/1754262536_chinelo_val.jpg"
+      ],
+      "featured": true,
+      "created_at": "2025-08-03T20:08:56.993066",
+      "updated_at": "2025-08-03T20:08:56.993066"
+    }
+  ],
+  "announcements": [
+    {
+      "id": "anuncio-1",
+      "title": "Novidades de Verão! 🌻",
+      "content": "Estamos preparando uma coleção especial para o verão com cores vibrantes e peças únicas!",
+      "image": "",
+      "active": true,
+      "created_at": "2025-01-15T08:00:00"
+    }
+  ],
+  "admin_password": "primaarte2025"
+}

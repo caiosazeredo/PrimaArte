@@ -1,0 +1,296 @@
+{% extends "base.html" %}
+
+{% block title %}Gerenciar Anúncios - Admin Prima Arte{% endblock %}
+
+{% block content %}
+<div class="admin-nav">
+    <div class="container">
+        <h1><i class="fas fa-bullhorn"></i> Gerenciar Anúncios</h1>
+        <div class="nav-links">
+            <a href="{{ url_for('admin_dashboard') }}"><i class="fas fa-dashboard"></i> Dashboard</a>
+            <a href="{{ url_for('admin_products') }}"><i class="fas fa-box-open"></i> Produtos</a>
+            <a href="{{ url_for('admin_logout') }}"><i class="fas fa-sign-out-alt"></i> Sair</a>
+        </div>
+    </div>
+</div>
+
+<section class="section">
+    <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <h2 style="font-family: var(--font-heading); color: var(--dark-brown); margin: 0;">Seus Anúncios</h2>
+            <a href="{{ url_for('admin_new_announcement') }}" class="btn-primary-large">
+                <i class="fas fa-plus"></i> Novo Anúncio
+            </a>
+        </div>
+        
+        {% if announcements %}
+        <div class="announcements-admin-grid">
+            {% for announcement in announcements %}
+            <div class="announcement-admin-card">
+                <!-- Status Badge -->
+                <div class="announcement-status">
+                    {% if announcement.active %}
+                    <span class="status-active">
+                        <i class="fas fa-eye"></i> Ativo
+                    </span>
+                    {% else %}
+                    <span class="status-inactive">
+                        <i class="fas fa-eye-slash"></i> Inativo
+                    </span>
+                    {% endif %}
+                </div>
+                
+                <!-- Imagem do Anúncio -->
+                {% if announcement.image %}
+                <div class="announcement-image">
+                    <img src="{{ announcement.image }}" alt="{{ announcement.title }}">
+                </div>
+                {% else %}
+                <div class="announcement-image no-image">
+                    <i class="fas fa-bullhorn"></i>
+                </div>
+                {% endif %}
+                
+                <!-- Conteúdo -->
+                <div class="announcement-content">
+                    <h3>{{ announcement.title }}</h3>
+                    <p>{{ announcement.content[:150] }}{% if announcement.content|length > 150 %}...{% endif %}</p>
+                    
+                    <div class="announcement-meta">
+                        <small>
+                            <i class="fas fa-calendar"></i>
+                            {{ announcement.created_at[:10] if announcement.created_at else 'Data não disponível' }}
+                        </small>
+                    </div>
+                </div>
+                
+                <!-- Ações -->
+                <div class="announcement-actions">
+                    <a href="{{ url_for('admin_edit_announcement', announcement_id=announcement.id) }}" 
+                       class="btn-edit" title="Editar">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a href="{{ url_for('admin_delete_announcement', announcement_id=announcement.id) }}" 
+                       class="btn-delete" title="Excluir"
+                       onclick="return confirm('Tem certeza que deseja excluir o anúncio \'{{ announcement.title }}\'?')">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-bullhorn"></i>
+            <h3>Nenhum anúncio criado</h3>
+            <p>Crie anúncios para destacar novidades e promoções!</p>
+            <a href="{{ url_for('admin_new_announcement') }}" class="btn-primary-large">
+                <i class="fas fa-plus"></i> Criar Primeiro Anúncio
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<style>
+.admin-nav {
+    background: var(--dark-brown);
+    padding: 1rem 0;
+    margin-bottom: 2rem;
+}
+
+.admin-nav .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.admin-nav h1 {
+    color: var(--primary-gold);
+    font-family: var(--font-heading);
+    margin: 0;
+}
+
+.admin-nav .nav-links {
+    display: flex;
+    gap: 1rem;
+}
+
+.admin-nav .nav-links a {
+    color: var(--cream);
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+}
+
+.admin-nav .nav-links a:hover {
+    background: var(--primary-gold);
+    color: var(--dark-brown);
+}
+
+/* Grid de Anúncios */
+.announcements-admin-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+}
+
+.announcement-admin-card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.announcement-admin-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+/* Status */
+.announcement-status {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 2;
+}
+
+.status-active {
+    background: linear-gradient(135deg, #4CAF50, #45A049);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.status-inactive {
+    background: linear-gradient(135deg, #757575, #616161);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+/* Imagem */
+.announcement-image {
+    width: 100%;
+    height: 200px;
+    position: relative;
+}
+
+.announcement-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.announcement-image.no-image {
+    background: var(--gradient-main);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 3rem;
+}
+
+/* Conteúdo */
+.announcement-content {
+    padding: 1.5rem;
+    padding-bottom: 1rem;
+}
+
+.announcement-content h3 {
+    font-family: var(--font-heading);
+    font-size: 1.4rem;
+    color: var(--dark-brown);
+    margin-bottom: 1rem;
+}
+
+.announcement-content p {
+    color: var(--gray);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.announcement-meta {
+    color: var(--gray);
+    font-size: 0.8rem;
+}
+
+/* Ações */
+.announcement-actions {
+    padding: 1rem 1.5rem;
+    background: var(--primary-beige);
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.btn-edit {
+    background: rgba(212, 175, 55, 0.2);
+    color: var(--primary-gold);
+    border: 2px solid rgba(212, 175, 55, 0.3);
+    padding: 0.75rem 1.5rem;
+    border-radius: 20px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-edit:hover {
+    background: rgba(212, 175, 55, 0.3);
+    border-color: rgba(212, 175, 55, 0.5);
+    transform: translateY(-2px);
+}
+
+.btn-delete {
+    background: rgba(244, 67, 54, 0.1);
+    color: #F44336;
+    border: 2px solid rgba(244, 67, 54, 0.2);
+    padding: 0.75rem 1.5rem;
+    border-radius: 20px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-delete:hover {
+    background: rgba(244, 67, 54, 0.2);
+    border-color: rgba(244, 67, 54, 0.4);
+    transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+    .announcements-admin-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .admin-nav .container {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .admin-nav .nav-links {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
+</style>
+{% endblock %}

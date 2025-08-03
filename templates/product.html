@@ -1,0 +1,326 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }} - Prima Arte{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start;">
+            <!-- Galeria de Imagens -->
+<div>
+    {% if product.images and product.images|length > 0 %}
+    <div class="product-gallery">
+        <!-- Imagem Principal -->
+        <div class="main-image">
+            <img id="mainImage" src="{{ product.images[0] }}" alt="{{ product.name }}" 
+                 style="width: 100%; height: 400px; object-fit: cover; border-radius: 15px; box-shadow: var(--shadow-medium); cursor: zoom-in; transition: transform 0.3s ease;"
+                 onclick="openImageModal('{{ product.images[0] }}')"
+                 onmouseover="this.style.transform='scale(1.05)'"
+                 onmouseout="this.style.transform='scale(1)'">
+        </div>
+        
+        <!-- Miniaturas -->
+        {% if product.images|length > 1 %}
+        <div class="image-thumbnails" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 0.5rem; margin-top: 1rem;">
+            {% for image in product.images %}
+            <img src="{{ image }}" alt="{{ product.name }}" 
+                 onclick="changeMainImage('{{ image }}')"
+                 style="width: 100%; height: 80px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 2px solid transparent; transition: all 0.3s ease;"
+                 onmouseover="this.style.borderColor='var(--primary-gold)'; this.style.transform='scale(1.1)'"
+                 onmouseout="this.style.borderColor='transparent'; this.style.transform='scale(1)'">
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+    {% else %}
+    <div style="width: 100%; height: 400px; background: var(--gradient-main); border-radius: 15px; display: flex; align-items: center; justify-content: center; color: white; font-size: 6rem; box-shadow: var(--shadow-medium);">
+        <i class="fas fa-image"></i>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Modal para Zoom da Imagem -->
+<div id="imageModal" class="image-modal" onclick="closeImageModal()">
+    <span class="close-modal">&times;</span>
+    <img class="modal-content" id="modalImage">
+    <div class="modal-caption" id="modalCaption"></div>
+</div>
+            
+            <!-- Detalhes do Produto -->
+            <div>
+                <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: var(--shadow-soft);">
+                    {% if product.featured %}
+                    <div style="background: var(--gradient-secondary); color: white; padding: 0.5rem 1rem; border-radius: 15px; display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; font-size: 0.9rem; font-weight: 600;">
+                        <i class="fas fa-star"></i> Produto em Destaque
+                    </div>
+                    {% endif %}
+                    
+                    <h1 style="font-family: var(--font-heading); font-size: 2.5rem; color: var(--dark-brown); margin-bottom: 1rem;">
+                        {{ product.name }}
+                    </h1>
+                    
+                    <div style="background: var(--gradient-main); color: white; padding: 1rem; border-radius: 10px; text-align: center; margin-bottom: 2rem;">
+                        <span style="font-size: 2rem; font-weight: 700;">R$ {{ "%.2f"|format(product.price) }}</span>
+                    </div>
+                    
+                    <div style="margin-bottom: 2rem;">
+                        <h3 style="font-family: var(--font-heading); color: var(--dark-brown); margin-bottom: 1rem;">
+                            <i class="fas fa-info-circle"></i> Descrição
+                        </h3>
+                        <p style="line-height: 1.6; color: var(--gray);">{{ product.description }}</p>
+                    </div>
+                    
+                    <div style="margin-bottom: 2rem;">
+                        <h3 style="font-family: var(--font-heading); color: var(--dark-brown); margin-bottom: 1rem;">
+                            <i class="fas fa-tag"></i> Categoria
+                        </h3>
+                        <span style="background: var(--primary-beige); color: var(--dark-brown); padding: 0.5rem 1rem; border-radius: 15px; font-weight: 600;">
+                            {{ product.category.title() }}
+                        </span>
+                    </div>
+                    
+                    <!-- Formulário Adicionar ao Carrinho -->
+                    <form action="{{ url_for('add_to_cart') }}" method="post" style="margin-bottom: 2rem;">
+                        <input type="hidden" name="product_id" value="{{ product.id }}">
+                        
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: block; font-weight: 600; color: var(--dark-brown); margin-bottom: 0.5rem;">
+                                <i class="fas fa-sort-numeric-up"></i> Quantidade:
+                            </label>
+                            <input type="number" name="quantity" value="1" min="1" max="10" 
+                                   style="width: 100px; padding: 0.5rem; border: 2px solid var(--primary-beige); border-radius: 10px; font-size: 1rem;">
+                        </div>
+                        
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: block; font-weight: 600; color: var(--dark-brown); margin-bottom: 0.5rem;">
+                                <i class="fas fa-comment"></i> Observações (opcional):
+                            </label>
+                            <textarea name="description" rows="3" placeholder="Cor preferida, tamanho, personalizações..."
+                                      style="width: 100%; padding: 0.75rem; border: 2px solid var(--primary-beige); border-radius: 10px; font-family: var(--font-body); resize: vertical;"></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn-primary-large add-to-cart-btn" style="width: 100%;">
+                            <i class="fas fa-shopping-cart"></i>
+                            Adicionar ao Carrinho
+                        </button>
+                    </form>
+                    
+                    <!-- Botões de Ação -->
+                    <div style="display: flex; gap: 1rem;">
+                        <a href="https://wa.me/5521973108293?text=Olá! Tenho interesse no produto: {{ product.name }}" 
+                           target="_blank" class="btn-secondary-large" style="flex: 1; text-align: center;">
+                            <i class="fab fa-whatsapp"></i>
+                            Falar no WhatsApp
+                        </a>
+                        <a href="{{ url_for('products') }}" class="btn-neutral" 
+                           style="padding: 1rem; border-radius: 25px; text-decoration: none; text-align: center; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-arrow-left"></i>
+                            Voltar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Informações Adicionais -->
+        <div style="margin-top: 3rem;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: var(--shadow-soft); text-align: center;">
+                    <i class="fas fa-hands" style="font-size: 3rem; color: var(--primary-gold); margin-bottom: 1rem;"></i>
+                    <h3 style="font-family: var(--font-heading); color: var(--dark-brown); margin-bottom: 1rem;">100% Artesanal</h3>
+                    <p style="color: var(--gray);">Cada peça é única e feita à mão com muito carinho e dedicação.</p>
+                </div>
+                
+                <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: var(--shadow-soft); text-align: center;">
+                    <i class="fas fa-heart" style="font-size: 3rem; color: var(--primary-pink); margin-bottom: 1rem;"></i>
+                    <h3 style="font-family: var(--font-heading); color: var(--dark-brown); margin-bottom: 1rem;">Feito com Amor</h3>
+                    <p style="color: var(--gray);">Todo nosso trabalho é feito com amor e atenção aos detalhes.</p>
+                </div>
+                
+                <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: var(--shadow-soft); text-align: center;">
+                    <i class="fab fa-whatsapp" style="font-size: 3rem; color: var(--primary-teal); margin-bottom: 1rem;"></i>
+                    <h3 style="font-family: var(--font-heading); color: var(--dark-brown); margin-bottom: 1rem;">Pedidos via WhatsApp</h3>
+                    <p style="color: var(--gray);">Finalize seu pedido facilmente pelo WhatsApp. Rápido e seguro!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+function changeMainImage(imageUrl) {
+    document.getElementById('mainImage').src = imageUrl;
+    
+    // Remove seleção de todas as miniaturas
+    const thumbnails = document.querySelectorAll('.image-thumbnails img');
+    thumbnails.forEach(img => {
+        img.style.borderColor = 'transparent';
+    });
+    
+    // Adiciona seleção na miniatura clicada
+    event.target.style.borderColor = 'var(--primary-gold)';
+}
+
+// Seleciona primeira miniatura por padrão
+document.addEventListener('DOMContentLoaded', function() {
+    const firstThumbnail = document.querySelector('.image-thumbnails img');
+    if (firstThumbnail) {
+        firstThumbnail.style.borderColor = 'var(--primary-gold)';
+    }
+});
+</script>
+<script>
+function changeMainImage(imageUrl) {
+    document.getElementById('mainImage').src = imageUrl;
+    
+    // Remove seleção de todas as miniaturas
+    const thumbnails = document.querySelectorAll('.image-thumbnails img');
+    thumbnails.forEach(img => {
+        img.style.borderColor = 'transparent';
+    });
+    
+    // Adiciona seleção na miniatura clicada
+    event.target.style.borderColor = 'var(--primary-gold)';
+}
+
+function openImageModal(imageSrc) {
+    const modal = document.getElementById('imageModal');
+    const modalImg = document.getElementById('modalImage');
+    const caption = document.getElementById('modalCaption');
+    
+    modal.style.display = 'block';
+    modalImg.src = imageSrc;
+    caption.innerHTML = '{{ product.name }} - Clique para fechar';
+    
+    // Previne scroll do body
+    document.body.style.overflow = 'hidden';
+}
+
+function closeImageModal() {
+    const modal = document.getElementById('imageModal');
+    modal.style.display = 'none';
+    
+    // Restaura scroll do body
+    document.body.style.overflow = 'auto';
+}
+
+// Seleciona primeira miniatura por padrão
+document.addEventListener('DOMContentLoaded', function() {
+    const firstThumbnail = document.querySelector('.image-thumbnails img');
+    if (firstThumbnail) {
+        firstThumbnail.style.borderColor = 'var(--primary-gold)';
+    }
+    
+    // Fechar modal com ESC
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeImageModal();
+        }
+    });
+});
+</script>
+<style>
+@media (max-width: 768px) {
+    .container > div:first-child {
+        grid-template-columns: 1fr !important;
+        gap: 2rem !important;
+    }
+    
+    .container > div:first-child > div:last-child {
+        order: -1;
+    }
+    
+    .image-thumbnails {
+        grid-template-columns: repeat(4, 1fr) !important;
+    }
+}
+</style>
+<style>
+/* Modal da Imagem */
+.image-modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+    margin: auto;
+    display: block;
+    max-width: 90%;
+    max-height: 90%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 10px;
+    box-shadow: 0 10px 50px rgba(0,0,0,0.5);
+    animation: zoomIn 0.3s ease;
+}
+
+.close-modal {
+    position: absolute;
+    top: 20px;
+    right: 35px;
+    color: white;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 10000;
+    transition: all 0.3s ease;
+}
+
+.close-modal:hover {
+    color: var(--primary-gold);
+    transform: scale(1.2);
+}
+
+.modal-caption {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    text-align: center;
+    background: rgba(0,0,0,0.7);
+    padding: 1rem 2rem;
+    border-radius: 25px;
+    font-size: 1.1rem;
+    backdrop-filter: blur(10px);
+}
+
+@keyframes zoomIn {
+    from { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+    to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@media (max-width: 768px) {
+    .modal-content {
+        max-width: 95%;
+        max-height: 80%;
+    }
+    
+    .close-modal {
+        top: 10px;
+        right: 20px;
+        font-size: 30px;
+    }
+    
+    .modal-caption {
+        bottom: 10px;
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+    }
+}
+</style>
+{% endblock %}

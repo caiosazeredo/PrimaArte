@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="hero">
+    <div class="container">
+        <h1>PRIMA ARTE</h1>
+        <span class="handmade">feito à mão</span>
+        <p>Artesanato único criado com amor e dedicação. Cada peça conta uma história.</p>
+        <div class="cta-buttons">
+            <a href="{{ url_for('products') }}" class="btn btn-primary">
+                <i class="fas fa-box-open"></i> Ver Produtos
+            </a>
+        </div>
+    </div>
+</section>
+
+{% if featured_products %}
+<section class="section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Produtos em Destaque</h2>
+            <p class="section-subtitle">Nossas criações mais especiais, feitas com muito carinho</p>
+        </div>
+        
+        <div class="products-grid">
+            {% for product in featured_products %}
+            <div class="product-card" data-category="{{ product.category }}">
+                <!-- Imagem do Produto -->
+                {% if product.images and product.images|length > 0 %}
+                <img src="{{ product.images[0] }}" alt="{{ product.name }}" class="product-image">
+                {% else %}
+                <div class="product-image no-image">
+                    <i class="fas fa-image"></i>
+                </div>
+                {% endif %}
+                
+                <div class="featured-badge">
+                    <i class="fas fa-star"></i> Destaque
+                </div>
+                
+                <div class="product-info">
+                    <h3 class="product-title">{{ product.name }}</h3>
+                    <p class="product-description">{{ product.description[:100] }}{% if product.description|length > 100 %}...{% endif %}</p>
+                    <div class="product-price">R$ {{ "%.2f"|format(product.price) }}</div>
+                    
+                    <div class="product-actions">
+                        <a href="{{ url_for('product_detail', product_id=product.id) }}" class="btn-product-view">
+                            <i class="fas fa-eye"></i> Ver Detalhes
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="text-center mt-4">
+            <a href="{{ url_for('products') }}" class="btn-primary-large">
+                <i class="fas fa-th-large"></i>
+                Ver Todos os Produtos
+            </a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% if announcements %}
+<section class="announcements">
+    <div class="container">
+        <h2 class="section-title">Novidades</h2>
+        <div class="announcements-grid">
+            {% for announcement in announcements %}
+            <div class="announcement-card">
+                <h3>{{ announcement.title }}</h3>
+                <p>{{ announcement.content }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endblock %}
