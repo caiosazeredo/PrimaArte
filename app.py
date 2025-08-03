@@ -5,10 +5,11 @@
 Site de artesanato feito à mão
 Desenvolvido para Valéria & Flávia
 """
-import urllib.parse
+
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for, flash
 import json
 import os
+import urllib.parse
 from datetime import datetime
 import uuid
 from werkzeug.utils import secure_filename
@@ -47,9 +48,6 @@ def save_data(data):
     with open(DATA_FILE, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
-# ================================
-# ROTAS PRINCIPAIS
-# ================================
 def create_slug(text):
     """Cria slug amigável para URL"""
     import re
@@ -65,6 +63,21 @@ def create_slug(text):
     text = text.strip('-')
     
     return text
+
+@app.template_filter('slug')
+def slug_filter(text):
+    """Filtro para criar slugs"""
+    return create_slug(text)
+
+# Função auxiliar para gerar URL do produto
+@app.template_global()
+def product_url(product):
+    """Gera URL amigável para produto"""
+    return url_for('product_detail', product_identifier=create_slug(product['name']))
+
+# ================================
+# ROTAS PRINCIPAIS
+# ================================
 
 @app.route('/')
 def index():
@@ -90,17 +103,25 @@ def products():
                          products=products, 
                          current_category=category)
 
-@app.route('/produto/<product_id>')
-def product_detail(product_id):
-    """Detalhes do produto"""
+@app.route('/produto/<product_identifier>')
+def product_detail(product_identifier):
+    """Detalhes do produto com slug amigável ou ID"""
     data = load_data()
-    product = next((p for p in data['products'] if p['id'] == product_id), None)
+    
+    # Primeiro tenta encontrar por slug, depois por ID para compatibilidade
+    product = None
+    for p in data['products']:
+        product_slug_generated = create_slug(p['name'])
+        if product_slug_generated == product_identifier or p['id'] == product_identifier:
+            product = p
+            break
     
     if not product:
         flash('Produto não encontrado!', 'error')
         return redirect(url_for('products'))
     
     return render_template('product.html', product=product)
+
 @app.route('/carrinho')
 def cart():
     """Página do carrinho"""
@@ -121,7 +142,7 @@ def cart():
                 'price': product['price'],
                 'quantity': item['quantity'],
                 'total': item_total,
-                'images': product.get('images', []),  # Corrigido: usar 'images' plural
+                'images': product.get('images', []),
                 'description': item.get('description', '')
             })
             total += item_total
@@ -164,7 +185,6 @@ def remove_from_cart(product_id):
     return redirect(url_for('cart'))
 
 @app.route('/finalizar-pedido')
-@app.route('/finalizar-pedido')
 def checkout():
     """Redireciona para WhatsApp com detalhes do pedido"""
     cart_items = session.get('cart', [])
@@ -195,7 +215,6 @@ def checkout():
     message += "Olá! Gostaria de finalizar este pedido! 😊"
     
     # URL do WhatsApp com encoding correto
-    import urllib.parse
     whatsapp_url = f"https://wa.me/{WHATSAPP_NUMBER.replace('+', '').replace(' ', '')}?text={urllib.parse.quote(message)}"
     
     # Limpa carrinho após enviar
@@ -365,6 +384,43 @@ def admin_new_announcement():
     
     return render_template('admin/announcement_form.html')
 
+@app.route('/admin/anuncio/editar/<announcement_id>')
+def admin_edit_announcement(announcement_id):
+    """Editar anúncio"""
+    if not session.get('admin'):
+        return redirect(url_for('admin_login'))
+    
+    data = load_data()
+    announcement = next((a for a in data['announcements'] if a['id'] == announcement_id), None)
+    
+    if not announcement:
+        flash('Anúncio não encontrado!', 'error')
+        return redirect(url_for('admin_announcements'))
+    
+    return render_template('admin/announcement_form.html', announcement=announcement)
+
+@app.route('/admin/anuncio/excluir/<announcement_id>')
+def admin_delete_announcement(announcement_id):
+    """Excluir anúncio"""
+    if not session.get('admin'):
+        return redirect(url_for('admin_login'))
+    
+    data = load_data()
+    
+    # Remove anúncio e sua imagem
+    announcement = next((a for a in data['announcements'] if a['id'] == announcement_id), None)
+    if announcement and announcement.get('image'):
+        if announcement['image'].startswith('/static/uploads/'):
+            image_path = announcement['image'][1:]  # Remove /
+            if os.path.exists(image_path):
+                os.remove(image_path)
+    
+    data['announcements'] = [a for a in data['announcements'] if a['id'] != announcement_id]
+    save_data(data)
+    
+    flash('Anúncio excluído com sucesso!', 'success')
+    return redirect(url_for('admin_announcements'))
+
 @app.route('/admin/anuncio/salvar', methods=['POST'])
 def admin_save_announcement():
     """Salva anúncio com imagem"""
@@ -444,43 +500,6 @@ def upload_file():
         return jsonify({'url': f"/static/uploads/{filename}"})
     
     return jsonify({'error': 'Tipo de arquivo não permitido'}), 400
-
-@app.route('/admin/anuncio/editar/<announcement_id>')
-def admin_edit_announcement(announcement_id):
-    """Editar anúncio"""
-    if not session.get('admin'):
-        return redirect(url_for('admin_login'))
-    
-    data = load_data()
-    announcement = next((a for a in data['announcements'] if a['id'] == announcement_id), None)
-    
-    if not announcement:
-        flash('Anúncio não encontrado!', 'error')
-        return redirect(url_for('admin_announcements'))
-    
-    return render_template('admin/announcement_form.html', announcement=announcement)
-
-@app.route('/admin/anuncio/excluir/<announcement_id>')
-def admin_delete_announcement(announcement_id):
-    """Excluir anúncio"""
-    if not session.get('admin'):
-        return redirect(url_for('admin_login'))
-    
-    data = load_data()
-    
-    # Remove anúncio e sua imagem
-    announcement = next((a for a in data['announcements'] if a['id'] == announcement_id), None)
-    if announcement and announcement.get('image'):
-        if announcement['image'].startswith('/static/uploads/'):
-            image_path = announcement['image'][1:]  # Remove /
-            if os.path.exists(image_path):
-                os.remove(image_path)
-    
-    data['announcements'] = [a for a in data['announcements'] if a['id'] != announcement_id]
-    save_data(data)
-    
-    flash('Anúncio excluído com sucesso!', 'success')
-    return redirect(url_for('admin_announcements'))
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)

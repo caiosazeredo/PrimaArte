@@ -55,7 +55,7 @@
                     <div class="product-price">R$ {{ "%.2f"|format(product.price) }}</div>
                     
                     <div class="product-actions">
-                        <a href="{{ url_for('product_detail', product_id=product.id) }}" class="btn-product-view">
+                        <a href="{{ url_for('product_detail', product_slug=product.name|slug) }}" class="btn-product-view">
                             <i class="fas fa-eye"></i> Ver Detalhes
                         </a>
                     </div>
