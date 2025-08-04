@@ -87,7 +87,22 @@
     font-size: 3rem;
 }
 
-
+.featured-badge {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: white;
+    padding: 0.4rem 0.8rem;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    box-shadow: 0 3px 15px rgba(255, 215, 0, 0.3);
+    z-index: 2;
+}
 
 .product-info {
     padding: 1.5rem;
@@ -393,110 +408,4 @@
     .section-title {
         font-size: 2rem;
     }
-}
-
-/* ================================
-   PROMOÇÕES MELHORADAS
-   ================================ */
-.featured-badge {
-    position: absolute;
-    top: 15px;
-    left: 15px;
-    background: linear-gradient(135deg, #FFD700, #FFA500);
-    color: white;
-    padding: 0.4rem 0.8rem;
-    border-radius: 15px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
-    box-shadow: 0 3px 15px rgba(255, 215, 0, 0.3);
-    z-index: 2;
-}
-
-.promotion-badge {
-    position: absolute;
-    top: 15px;
-    left: 15px;
-    background: linear-gradient(135deg, #FF6B6B, #FF5252);
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
-    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
-    z-index: 2;
-    animation: promotionPulse 2s infinite;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-@keyframes promotionPulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-}
-
-.product-price-section {
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-    align-items: flex-start;
-}
-
-.regular-price {
-    font-size: 0.9rem;
-    color: #999;
-    text-decoration: line-through;
-    font-weight: 400;
-}
-
-.promotional-price {
-    font-size: 1.5rem;
-    font-weight: 800;
-    color: #4CAF50;
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
-    line-height: 1;
-}
-
-.promotional-price .currency {
-    font-size: 1rem;
-    font-weight: 600;
-}
-
-.savings-badge {
-    background: #4CAF50;
-    color: white;
-    padding: 0.2rem 0.6rem;
-    border-radius: 12px;
-    font-size: 0.7rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
-}
-
-.product-price {
-    font-size: 1.4rem;
-    font-weight: 700;
-    color: var(--primary-pink);
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
-}
-
-/* Cards de produto com promoção */
-.product-card.has-promotion {
-    border: 2px solid #4CAF50;
-    box-shadow: 0 8px 25px rgba(76, 175, 80, 0.15);
-}
-
-.product-card.has-promotion:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 15px 35px rgba(76, 175, 80, 0.2);
 }

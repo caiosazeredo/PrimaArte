@@ -46,27 +46,8 @@
                 <h1 class="product-title">{{ product.name }}</h1>
                 
                 <div class="product-price-container">
-                    {% if product.promotion_active and product.promotional_price %}
-                        <div class="promotion-badge">
-                            <i class="fas fa-fire"></i>
-                            {% set discount = ((product.price - product.promotional_price) / product.price * 100) | round %}
-                            {{ discount }}% OFF - Oferta Especial!
-                        </div>
-                        
-                        <div class="price-display">
-                            <span class="regular-price">De: R$ {{ "%.2f"|format(product.price) }}</span>
-                            <span class="promotional-price">
-                                Por: R$ {{ "%.2f"|format(product.promotional_price) }}
-                                <i class="fas fa-tag" style="color: #4CAF50; font-size: 0.8em;"></i>
-                            </span>
-                            {% set savings = product.price - product.promotional_price %}
-                            <div class="savings-amount">
-                                Você economiza R$ {{ "%.2f"|format(savings) }}!
-                            </div>
-                        </div>
-                    {% else %}
-                        <div class="regular-price-only">R$ {{ "%.2f"|format(product.price) }}</div>
-                    {% endif %}
+                    <span class="product-price">R$ {{ "%.2f"|format(product.price) }}</span>
+                    <span class="price-note">À vista</span>
                 </div>
                 
                 <div class="product-category">
@@ -82,7 +63,6 @@
                 <!-- Formulário de Compra -->
                 <form action="{{ url_for('add_to_cart') }}" method="POST" class="purchase-form">
                     <input type="hidden" name="product_id" value="{{ product.id }}">
-                    <input type="hidden" name="current_price" value="{% if product.promotion_active and product.promotional_price %}{{ product.promotional_price }}{% else %}{{ product.price }}{% endif %}">
                     
                     <div class="form-group">
                         <label for="quantity">

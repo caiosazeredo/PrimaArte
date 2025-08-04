@@ -45,10 +45,7 @@
                 <nav class="main-nav">
                     <ul>
                         <li><a href="{{ url_for('index') }}"><i class="fas fa-home"></i> Início</a></li>
-                        <li><a href="{{ url_for('products') }}"><i class="fas fa-box-open"></i> Produtos</a>
-                    <a href="{{ url_for('about') }}">
-                        <i class="fas fa-heart"></i> Sobre
-                    </a></li>
+                        <li><a href="{{ url_for('products') }}"><i class="fas fa-box-open"></i> Produtos</a></li>
                         <li><a href="https://www.instagram.com/primaarte2025/" target="_blank"><i class="fab fa-instagram"></i> Instagram</a></li>
                     </ul>
                 </nav>

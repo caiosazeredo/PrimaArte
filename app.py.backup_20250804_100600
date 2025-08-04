@@ -34,19 +34,6 @@ DATA_FILE = 'data.json'
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-
-def get_product_current_price(product):
-    """Retorna o preço atual do produto (promocional se ativo, normal se não)"""
-    if product.get('promotion_active', False) and product.get('promotional_price'):
-        return float(product['promotional_price'])
-    return float(product['price'])
-
-def calculate_discount_percentage(original_price, promotional_price):
-    """Calcula a porcentagem de desconto"""
-    if not promotional_price or promotional_price >= original_price:
-        return 0
-    return round(((original_price - promotional_price) / original_price) * 100)
-
 def load_data():
     """Carrega dados do arquivo JSON"""
     if os.path.exists(DATA_FILE):
@@ -92,19 +79,6 @@ def create_slug(text):
 def slug_filter(text):
     """Filtro para criar slugs"""
     return create_slug(text)
-# Filtros para templates
-@app.template_filter('calculate_discount')
-def calculate_discount_filter(regular_price, promotional_price):
-    """Calcula desconto para usar nos templates"""
-    if not promotional_price or promotional_price >= regular_price:
-        return 0
-    return round(((regular_price - promotional_price) / regular_price) * 100)
-
-@app.template_global()
-def get_current_price(product):
-    """Retorna preço atual do produto para templates"""
-    return get_product_current_price(product)
-
 
 # Função auxiliar para gerar URL do produto
 @app.template_global()
@@ -121,13 +95,6 @@ def index():
     """Página inicial"""
     data = load_data()
     featured_products = [p for p in data['products'] if p.get('featured', False)][:6]
-    
-    # Adiciona preço atual para cada produto em destaque
-    for product in featured_products:
-        product['current_price'] = get_product_current_price(product)
-        if product.get('promotion_active') and product.get('promotional_price'):
-            product['discount_percent'] = calculate_discount_percentage(product['price'], product['promotional_price'])
-    
     announcements = [a for a in data['announcements'] if a.get('active', True)][:3]
     return render_template('index.html', 
                          featured_products=featured_products,
@@ -142,12 +109,6 @@ def products():
     
     if category:
         products = [p for p in products if p.get('category', '').lower() == category.lower()]
-    
-    # Adiciona preço atual para cada produto
-    for product in products:
-        product['current_price'] = get_product_current_price(product)
-        if product.get('promotion_active') and product.get('promotional_price'):
-            product['discount_percent'] = calculate_discount_percentage(product['price'], product['promotional_price'])
     
     return render_template('products.html', 
                          products=products, 
@@ -172,11 +133,6 @@ def product_detail(product_slug):
     
     return render_template('product.html', product=product)
 
-@app.route('/sobre')
-def about():
-    """Página sobre a Prima Arte"""
-    return render_template('about.html')
-
 @app.route('/carrinho')
 def cart():
     """Página do carrinho"""
@@ -190,15 +146,11 @@ def cart():
     for item in cart_items:
         product = next((p for p in data['products'] if p['id'] == item['product_id']), None)
         if product:
-            current_price = get_product_current_price(product)
-            item_total = current_price * item['quantity']
+            item_total = product['price'] * item['quantity']
             detailed_cart.append({
                 'id': item['product_id'],
                 'name': product['name'],
-                'price': current_price,
-                'regular_price': product['price'],
-                'promotional_price': product.get('promotional_price'),
-                'promotion_active': product.get('promotion_active', False),
+                'price': product['price'],
                 'quantity': item['quantity'],
                 'total': item_total,
                 'images': product.get('images', []),
@@ -356,18 +308,12 @@ def admin_product_edit(product_id):
 @app.route('/admin/produto/salvar', methods=['POST'])
 @admin_required
 def admin_save_product():
-    """Salva produto com múltiplas imagens e preços promocionais"""
+    """Salva produto com múltiplas imagens"""
     data = load_data()
     
     # Pega dados do formulário
     product_id = request.form.get('id') or str(uuid.uuid4())
     product_name = request.form.get('name')
-    
-    # Preços
-    regular_price = float(request.form.get('price', 0))
-    promotional_price = request.form.get('promotional_price')
-    promotional_price = float(promotional_price) if promotional_price and promotional_price.strip() else None
-    promotion_active = request.form.get('promotion_active') == 'on'
     
     # Processa upload de múltiplas imagens
     uploaded_images = []
@@ -391,9 +337,7 @@ def admin_save_product():
         'id': product_id,
         'name': product_name,
         'description': request.form.get('description'),
-        'price': regular_price,
-        'promotional_price': promotional_price,
-        'promotion_active': promotion_active,
+        'price': float(request.form.get('price')),
         'category': request.form.get('category'),
         'images': uploaded_images,
         'featured': request.form.get('featured') == 'on',
@@ -409,14 +353,7 @@ def admin_save_product():
         data['products'].append(product)
     
     save_data(data)
-    
-    # Mensagem com informação sobre promoção
-    if promotion_active and promotional_price:
-        discount_percent = calculate_discount_percentage(regular_price, promotional_price)
-        flash(f'Produto "{product_name}" salvo com {discount_percent}% de desconto!', 'success')
-    else:
-        flash(f'Produto "{product_name}" salvo com sucesso!', 'success')
-    
+    flash(f'Produto "{product_name}" salvo com sucesso!', 'success')
     return redirect(url_for('admin_products'))
 
 @app.route('/admin/produto/excluir/<product_id>')

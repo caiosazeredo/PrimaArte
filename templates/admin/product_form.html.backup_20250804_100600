@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+{% endblock %}
+
+{% block title %}{% if product %}Editar Produto{% else %}Novo Produto{% endif %} - Admin Prima Arte{% endblock %}
+
+{% block content %}
+<div class="admin-nav">
+    <div class="container">
+        <h1><i class="fas fa-{% if product %}edit{% else %}plus-circle{% endif %}"></i> {% if product %}Editar: {{ product.name }}{% else %}Novo Produto{% endif %}</h1>
+        <div class="nav-links">
+            <a href="{{ url_for('admin_products') }}"><i class="fas fa-arrow-left"></i> Voltar</a>
+            <a href="{{ url_for('admin_dashboard') }}"><i class="fas fa-dashboard"></i> Dashboard</a>
+        </div>
+    </div>
+</div>
+
+<section class="section">
+    <div class="container">
+        <div style="max-width: 800px; margin: 0 auto;">
+            <form action="{{ url_for('admin_save_product') }}" method="post" enctype="multipart/form-data" style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                {% if product %}
+                <input type="hidden" name="id" value="{{ product.id }}">
+                {% endif %}
+                
+                <div style="display: grid; gap: 1.5rem;">
+                    <!-- Nome do Produto -->
+                    <div>
+                        <label style="display: block; font-weight: 600; color: var(--dark-brown); margin-bottom: 0.5rem;">
+                            <i class="fas fa-tag"></i> Nome do Produto *
+                        </label>
+                        <input type="text" name="name" required
+                               style="width: 100%; padding: 1rem; border: 2px solid var(--primary-beige); border-radius: 10px; font-size: 1rem; font-family: var(--font-body);"
+                               placeholder="Ex: Bolsa de Crochê Artesanal"
+                               value="{% if product %}{{ product.name }}{% endif %}">
+                    </div>
+                    
+                    <!-- Descrição -->
+                    <div>
+                        <label style="display: block; font-weight: 600; color: var(--dark-brown); margin-bottom: 0.5rem;">
+                            <i class="fas fa-align-left"></i> Descrição *
+                        </label>
+                        <textarea name="description" rows="4" required
+                                  style="width: 100%; padding: 1rem; border: 2px solid var(--primary-beige); border-radius: 10px; font-family: var(--font-body); resize: vertical;"
+                                  placeholder="Descreva os materiais, cores, tamanho, tempo de confecção...">{% if product %}{{ product.description }}{% endif %}</textarea>
+                    </div>
+                    
+                    <!-- Preço e Categoria -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div>
+                            <label style="display: block; font-weight: 600; color: var(--dark-brown); margin-bottom: 0.5rem;">
+                                <i class="fas fa-dollar-sign"></i> Preço (R$) *
+                            </label>
+                            <input type="number" name="price" step="0.01" min="0" required
+                                   style="width: 100%; padding: 1rem; border: 2px solid var(--primary-beige); border-radius: 10px; font-size: 1rem;"
+                                   placeholder="0.00"
+                                   value="{% if product %}{{ product.price }}{% endif %}">
+                        </div>
+                        
+                        <div>
+                            <label style="display: block; font-weight: 600; color: var(--dark-brown); margin-bottom: 0.5rem;">
+                                <i class="fas fa-list"></i> Categoria *
+                            </label>
+                            <select name="category" required
+                                    style="width: 100%; padding: 1rem; border: 2px solid var(--primary-beige); border-radius: 10px; font-size: 1rem; font-family: var(--font-body);">
+                                <option value="">Selecione uma categoria</option>
+                                <option value="costura" {% if product and product.category == 'costura' %}selected{% endif %}>Costura</option>
+                                <option value="decoracao" {% if product and product.category == 'decoracao' %}selected{% endif %}>Decoração</option>
+                                <option value="acessorios" {% if product and product.category == 'acessorios' %}selected{% endif %}>Acessórios</option>
+                                <option value="personalizados" {% if product and product.category == 'personalizados' %}selected{% endif %}>Personalizados</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Upload de Múltiplas Imagens -->
+                    <div>
+                        <label style="display: block; font-weight: 600; color: var(--dark-brown); margin-bottom: 0.5rem;">
+                            <i class="fas fa-images"></i> Imagens do Produto (máximo 5)
+                        </label>
+                        
+                        {% if product and product.images %}
+                        <div style="margin-bottom: 1rem;">
+                            <p style="color: var(--gray); margin-bottom: 0.5rem;">Imagens atuais:</p>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
+                                {% for image in product.images %}
+                                <img src="{{ image }}" alt="Imagem do produto" 
+                                     style="width: 100%; height: 150px; object-fit: cover; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <div style="border: 2px dashed var(--primary-beige); border-radius: 10px; padding: 2rem; text-align: center;">
+                            <input type="file" name="images" multiple accept="image/*" id="imageUpload"
+                                   style="display: none;" 
+                                   onchange="previewMultipleImages(this)">
+                            
+                            <div id="imagePreview" style="margin-bottom: 1rem;">
+                                <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: var(--primary-gold); margin-bottom: 1rem;"></i>
+                                <p style="color: var(--gray); margin: 0;">
+                                    {% if product and product.images %}
+                                        Clique para alterar as imagens (substituirá todas as imagens atuais)
+                                    {% else %}
+                                        Clique para selecionar múltiplas imagens
+                                    {% endif %}
+                                </p>
+                            </div>
+                            
+                            <button type="button" onclick="document.getElementById('imageUpload').click()" 
+                                    class="btn-upload">
+                                <i class="fas fa-upload"></i> 
+                                {% if product and product.images %}Alterar Imagens{% else %}Selecionar Imagens{% endif %}
+                            </button>
+                        </div>
+                        <p style="font-size: 0.8rem; color: var(--gray); margin-top: 0.5rem;">
+                            Formatos aceitos: JPG, PNG, GIF. Tamanho máximo: 5MB por imagem. Máximo 5 imagens.
+                        </p>
+                    </div>
+                    
+                    <!-- Produto em Destaque -->
+                    <div>
+                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                            <input type="checkbox" name="featured" 
+                                   style="width: 20px; height: 20px; accent-color: var(--primary-gold);"
+                                   {% if product and product.featured %}checked{% endif %}>
+                            <span style="font-weight: 600; color: var(--dark-brown);">
+                                <i class="fas fa-star"></i> Produto em Destaque
+                            </span>
+                        </label>
+                        <p style="font-size: 0.8rem; color: var(--gray); margin-top: 0.5rem; margin-left: 1.5rem;">
+                            Produtos em destaque aparecem na página inicial
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Botões -->
+                <div style="display: flex; gap: 1rem; margin-top: 2rem; justify-content: center;">
+                    <button type="submit" class="btn-primary-large">
+                        <i class="fas fa-save"></i> 
+                        {% if product %}Atualizar Produto{% else %}Salvar Produto{% endif %}
+                    </button>
+                    <a href="{{ url_for('admin_products') }}" class="btn-secondary-large">
+                        <i class="fas fa-times"></i> Cancelar
+                    </a>
+                </div>
+            </form>
+            
+            <!-- Dica -->
+            <div style="background: linear-gradient(135deg, var(--primary-beige), var(--cream)); padding: 1.5rem; border-radius: 15px; margin-top: 2rem; border-left: 5px solid var(--primary-teal);">
+                <h4 style="color: var(--primary-teal); margin-bottom: 1rem;">
+                    <i class="fas fa-lightbulb"></i> Dicas para Fotos Perfeitas
+                </h4>
+                <ul style="color: var(--gray); line-height: 1.6; margin: 0;">
+                    <li><strong>Iluminação natural:</strong> Fotografe próximo a uma janela, evite flash</li>
+                    <li><strong>Fundo neutro:</strong> Use fundo branco ou cores claras</li>
+                    <li><strong>Múltiplos ângulos:</strong> Mostre frente, verso, detalhes e uso</li>
+                    <li><strong>Qualidade alta:</strong> Use a maior resolução possível</li>
+                    <li><strong>Foco nos detalhes:</strong> Destaque o trabalho artesanal</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+function previewMultipleImages(input) {
+    const previewContainer = document.getElementById('imagePreview');
+    const files = input.files;
+    
+    if (files.length > 5) {
+        alert('Máximo 5 imagens permitidas!');
+        input.value = '';
+        return;
+    }
+    
+    if (files.length > 0) {
+        previewContainer.innerHTML = '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 1rem;"></div>';
+        const grid = previewContainer.querySelector('div');
+        
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            
+            if (!file.type.startsWith('image/')) {
+                alert('Por favor, selecione apenas arquivos de imagem.');
+                continue;
+            }
+            
+            if (file.size > 5 * 1024 * 1024) {
+                alert(`A imagem ${file.name} deve ter no máximo 5MB.`);
+                continue;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.style.cssText = 'width: 100%; height: 100px; object-fit: cover; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);';
+                grid.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        // Adiciona texto informativo
+        const info = document.createElement('p');
+        info.innerHTML = `${files.length} imagem(ns) selecionada(s)`;
+        info.style.cssText = 'color: var(--primary-teal); font-weight: 600; margin-top: 1rem; margin-bottom: 0;';
+        previewContainer.appendChild(info);
+    }
+}
+</script>
+{% endblock %}

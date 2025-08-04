@@ -47,32 +47,16 @@
                 </div>
                 {% endif %}
                 
-                {% if product.promotion_active and product.promotional_price %}
-                    <div class="promotion-badge">
-                        <i class="fas fa-fire"></i>
-                        {{ product.discount_percent }}% OFF
-                    </div>
-                {% elif product.featured %}
-                    <div class="featured-badge">
-                        <i class="fas fa-star"></i>
-                        Destaque
-                    </div>
+                {% if product.featured %}
+                <div class="featured-badge">
+                    <i class="fas fa-star"></i> Destaque
+                </div>
                 {% endif %}
                 
                 <div class="product-info">
                     <h3 class="product-title">{{ product.name }}</h3>
                     <p class="product-description">{{ product.description[:100] }}{% if product.description|length > 100 %}...{% endif %}</p>
-                    <div class="product-price-section">
-                        {% if product.promotion_active and product.promotional_price %}
-                            <span class="regular-price">R$ {{ "%.2f"|format(product.price) }}</span>
-                            <div class="promotional-price">
-                                <span class="currency">R$</span> {{ "%.2f"|format(product.promotional_price) }}
-                            </div>
-                            <div class="savings-badge">{{ product.discount_percent }}% OFF</div>
-                        {% else %}
-                            <div class="product-price">R$ {{ "%.2f"|format(product.price) }}</div>
-                        {% endif %}
-                    </div>
+                    <div class="product-price">R$ {{ "%.2f"|format(product.price) }}</div>
                     
                     <div class="product-actions">
                         <a href="{{ url_for('product_detail', product_slug=product.name|slug) }}" class="btn-product-view">

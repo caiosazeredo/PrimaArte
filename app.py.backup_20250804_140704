@@ -121,13 +121,6 @@ def index():
     """Página inicial"""
     data = load_data()
     featured_products = [p for p in data['products'] if p.get('featured', False)][:6]
-    
-    # Adiciona preço atual para cada produto em destaque
-    for product in featured_products:
-        product['current_price'] = get_product_current_price(product)
-        if product.get('promotion_active') and product.get('promotional_price'):
-            product['discount_percent'] = calculate_discount_percentage(product['price'], product['promotional_price'])
-    
     announcements = [a for a in data['announcements'] if a.get('active', True)][:3]
     return render_template('index.html', 
                          featured_products=featured_products,
@@ -142,12 +135,6 @@ def products():
     
     if category:
         products = [p for p in products if p.get('category', '').lower() == category.lower()]
-    
-    # Adiciona preço atual para cada produto
-    for product in products:
-        product['current_price'] = get_product_current_price(product)
-        if product.get('promotion_active') and product.get('promotional_price'):
-            product['discount_percent'] = calculate_discount_percentage(product['price'], product['promotional_price'])
     
     return render_template('products.html', 
                          products=products, 
@@ -171,11 +158,6 @@ def product_detail(product_slug):
         return redirect(url_for('products'))
     
     return render_template('product.html', product=product)
-
-@app.route('/sobre')
-def about():
-    """Página sobre a Prima Arte"""
-    return render_template('about.html')
 
 @app.route('/carrinho')
 def cart():

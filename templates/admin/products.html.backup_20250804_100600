@@ -2,51 +2,6 @@
 
 {% block page_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
-<style>
-.promotion-badge {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background: linear-gradient(135deg, #4CAF50, #45A049);
-    color: white;
-    padding: 0.3rem 0.8rem;
-    border-radius: 15px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
-    z-index: 2;
-}
-
-.price-info {
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-}
-
-.regular-price {
-    text-decoration: line-through;
-    opacity: 0.6;
-    font-size: 0.9rem;
-}
-
-.promotional-price {
-    color: #4CAF50;
-    font-weight: 700;
-    font-size: 1.1rem;
-}
-
-.discount-badge {
-    background: #4CAF50;
-    color: white;
-    padding: 0.2rem 0.5rem;
-    border-radius: 10px;
-    font-size: 0.7rem;
-    font-weight: 600;
-    width: fit-content;
-}
-</style>
 {% endblock %}
 
 {% block title %}Gerenciar Produtos - Prima Arte Admin{% endblock %}
@@ -79,13 +34,7 @@
                     </div>
                     {% endif %}
                     
-                    {% if product.promotion_active and product.promotional_price %}
-                    <div class="promotion-badge">
-                        <i class="fas fa-fire"></i>
-                        {% set discount = ((product.price - product.promotional_price) / product.price * 100) | round %}
-                        {{ discount }}% OFF
-                    </div>
-                    {% elif product.featured %}
+                    {% if product.featured %}
                     <div class="featured-badge-admin">
                         <i class="fas fa-star"></i>
                         Destaque
@@ -96,18 +45,7 @@
                 <div class="product-admin-info">
                     <h3>{{ product.name }}</h3>
                     <p class="product-admin-category">{{ product.category|title }}</p>
-                    
-                    <div class="price-info">
-                        {% if product.promotion_active and product.promotional_price %}
-                            <span class="regular-price">R$ {{ "%.2f"|format(product.price) }}</span>
-                            <span class="promotional-price">R$ {{ "%.2f"|format(product.promotional_price) }}</span>
-                            {% set discount = ((product.price - product.promotional_price) / product.price * 100) | round %}
-                            <div class="discount-badge">{{ discount }}% desconto</div>
-                        {% else %}
-                            <span class="product-admin-price">R$ {{ "%.2f"|format(product.price) }}</span>
-                        {% endif %}
-                    </div>
-                    
+                    <p class="product-admin-price">R$ {{ "%.2f"|format(product.price) }}</p>
                     <p class="product-admin-description">{{ product.description[:80] }}{% if product.description|length > 80 %}...{% endif %}</p>
                 </div>
                 

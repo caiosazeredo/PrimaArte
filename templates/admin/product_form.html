@@ -2,6 +2,55 @@
 
 {% block page_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+<style>
+.promotion-section {
+    background: linear-gradient(135deg, #ff9800, #f57c00);
+    color: white;
+    padding: 1.5rem;
+    border-radius: 15px;
+    margin: 1rem 0;
+}
+
+.promotion-toggle {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.discount-preview {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 1rem;
+    border-radius: 10px;
+    margin-top: 1rem;
+    text-align: center;
+}
+
+.discount-percentage {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #4CAF50;
+}
+
+.price-comparison {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0.5rem;
+}
+
+.old-price {
+    text-decoration: line-through;
+    opacity: 0.7;
+}
+
+.new-price {
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: #4CAF50;
+}
+</style>
 {% endblock %}
 
 {% block title %}{% if product %}Editar Produto{% else %}Novo Produto{% endif %} - Admin Prima Arte{% endblock %}
@@ -42,20 +91,20 @@
                         <label style="display: block; font-weight: 600; color: var(--dark-brown); margin-bottom: 0.5rem;">
                             <i class="fas fa-align-left"></i> Descrição *
                         </label>
-                        <textarea name="description" rows="4" required
-                                  style="width: 100%; padding: 1rem; border: 2px solid var(--primary-beige); border-radius: 10px; font-family: var(--font-body); resize: vertical;"
-                                  placeholder="Descreva os materiais, cores, tamanho, tempo de confecção...">{% if product %}{{ product.description }}{% endif %}</textarea>
+                        <textarea name="description" required
+                                  style="width: 100%; min-height: 120px; padding: 1rem; border: 2px solid var(--primary-beige); border-radius: 10px; font-size: 1rem; font-family: var(--font-body); resize: vertical;"
+                                  placeholder="Descreva os detalhes do produto...">{% if product %}{{ product.description }}{% endif %}</textarea>
                     </div>
                     
-                    <!-- Preço e Categoria -->
+                    <!-- Preço Regular -->
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                         <div>
                             <label style="display: block; font-weight: 600; color: var(--dark-brown); margin-bottom: 0.5rem;">
-                                <i class="fas fa-dollar-sign"></i> Preço (R$) *
+                                <i class="fas fa-dollar-sign"></i> Preço Regular *
                             </label>
-                            <input type="number" name="price" step="0.01" min="0" required
-                                   style="width: 100%; padding: 1rem; border: 2px solid var(--primary-beige); border-radius: 10px; font-size: 1rem;"
-                                   placeholder="0.00"
+                            <input type="number" name="price" step="0.01" min="0" required id="regularPrice"
+                                   style="width: 100%; padding: 1rem; border: 2px solid var(--primary-beige); border-radius: 10px; font-size: 1rem; font-family: var(--font-body);"
+                                   placeholder="0.00" onchange="calculateDiscount()"
                                    value="{% if product %}{{ product.price }}{% endif %}">
                         </div>
                         
@@ -74,140 +123,125 @@
                         </div>
                     </div>
                     
-                    <!-- Upload de Múltiplas Imagens -->
+                    <!-- Seção de Promoção -->
+                    <div class="promotion-section">
+                        <h3 style="margin: 0 0 1rem 0; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fas fa-percentage"></i> Sistema Promocional
+                        </h3>
+                        
+                        <div class="promotion-toggle">
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: white; margin: 0;">
+                                <input type="checkbox" name="promotion_active" id="promotionActive" onchange="togglePromotion()"
+                                       {% if product and product.promotion_active %}checked{% endif %}
+                                       style="width: 20px; height: 20px;">
+                                <span style="font-weight: 600;">
+                                    <i class="fas fa-fire"></i> Ativar Promoção
+                                </span>
+                            </label>
+                        </div>
+                        
+                        <div id="promotionFields" style="{% if not product or not product.promotion_active %}display: none;{% endif %}">
+                            <div>
+                                <label style="display: block; font-weight: 600; color: white; margin-bottom: 0.5rem;">
+                                    <i class="fas fa-tag"></i> Preço Promocional
+                                </label>
+                                <input type="number" name="promotional_price" step="0.01" min="0" id="promotionalPrice"
+                                       style="width: 100%; padding: 1rem; border: 2px solid white; border-radius: 10px; font-size: 1rem; font-family: var(--font-body);"
+                                       placeholder="0.00" onchange="calculateDiscount()"
+                                       value="{% if product and product.promotional_price %}{{ product.promotional_price }}{% endif %}">
+                            </div>
+                            
+                            <div class="discount-preview" id="discountPreview" style="display: none;">
+                                <div class="discount-percentage" id="discountPercent">0%</div>
+                                <div style="color: white; margin-bottom: 0.5rem;">de desconto</div>
+                                <div class="price-comparison">
+                                    <span class="old-price" id="oldPriceDisplay">R$ 0,00</span>
+                                    <i class="fas fa-arrow-right" style="color: #4CAF50;"></i>
+                                    <span class="new-price" id="newPriceDisplay">R$ 0,00</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Imagens -->
                     <div>
                         <label style="display: block; font-weight: 600; color: var(--dark-brown); margin-bottom: 0.5rem;">
-                            <i class="fas fa-images"></i> Imagens do Produto (máximo 5)
+                            <i class="fas fa-images"></i> Imagens do Produto
                         </label>
-                        
+                        <input type="file" name="images" multiple accept="image/*"
+                               style="width: 100%; padding: 1rem; border: 2px solid var(--primary-beige); border-radius: 10px; font-size: 1rem; font-family: var(--font-body);">
                         {% if product and product.images %}
-                        <div style="margin-bottom: 1rem;">
-                            <p style="color: var(--gray); margin-bottom: 0.5rem;">Imagens atuais:</p>
-                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
-                                {% for image in product.images %}
-                                <img src="{{ image }}" alt="Imagem do produto" 
-                                     style="width: 100%; height: 150px; object-fit: cover; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-                                {% endfor %}
-                            </div>
-                        </div>
+                        <small style="color: var(--gray);">Imagens atuais: {{ product.images|length }} arquivo(s)</small>
                         {% endif %}
-                        
-                        <div style="border: 2px dashed var(--primary-beige); border-radius: 10px; padding: 2rem; text-align: center;">
-                            <input type="file" name="images" multiple accept="image/*" id="imageUpload"
-                                   style="display: none;" 
-                                   onchange="previewMultipleImages(this)">
-                            
-                            <div id="imagePreview" style="margin-bottom: 1rem;">
-                                <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: var(--primary-gold); margin-bottom: 1rem;"></i>
-                                <p style="color: var(--gray); margin: 0;">
-                                    {% if product and product.images %}
-                                        Clique para alterar as imagens (substituirá todas as imagens atuais)
-                                    {% else %}
-                                        Clique para selecionar múltiplas imagens
-                                    {% endif %}
-                                </p>
-                            </div>
-                            
-                            <button type="button" onclick="document.getElementById('imageUpload').click()" 
-                                    class="btn-upload">
-                                <i class="fas fa-upload"></i> 
-                                {% if product and product.images %}Alterar Imagens{% else %}Selecionar Imagens{% endif %}
-                            </button>
-                        </div>
-                        <p style="font-size: 0.8rem; color: var(--gray); margin-top: 0.5rem;">
-                            Formatos aceitos: JPG, PNG, GIF. Tamanho máximo: 5MB por imagem. Máximo 5 imagens.
-                        </p>
                     </div>
                     
                     <!-- Produto em Destaque -->
                     <div>
                         <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-                            <input type="checkbox" name="featured" 
-                                   style="width: 20px; height: 20px; accent-color: var(--primary-gold);"
-                                   {% if product and product.featured %}checked{% endif %}>
+                            <input type="checkbox" name="featured" {% if product and product.featured %}checked{% endif %}
+                                   style="width: 20px; height: 20px;">
                             <span style="font-weight: 600; color: var(--dark-brown);">
                                 <i class="fas fa-star"></i> Produto em Destaque
                             </span>
                         </label>
-                        <p style="font-size: 0.8rem; color: var(--gray); margin-top: 0.5rem; margin-left: 1.5rem;">
-                            Produtos em destaque aparecem na página inicial
-                        </p>
+                        <small style="color: var(--gray); margin-left: 25px;">Produtos em destaque aparecem na página inicial</small>
+                    </div>
+                    
+                    <!-- Botões -->
+                    <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem;">
+                        <button type="submit" class="btn-admin-primary">
+                            <i class="fas fa-save"></i>
+                            {% if product %}Atualizar Produto{% else %}Criar Produto{% endif %}
+                        </button>
+                        
+                        <a href="{{ url_for('admin_products') }}" class="btn-admin-secondary">
+                            <i class="fas fa-times"></i>
+                            Cancelar
+                        </a>
                     </div>
                 </div>
-                
-                <!-- Botões -->
-                <div style="display: flex; gap: 1rem; margin-top: 2rem; justify-content: center;">
-                    <button type="submit" class="btn-primary-large">
-                        <i class="fas fa-save"></i> 
-                        {% if product %}Atualizar Produto{% else %}Salvar Produto{% endif %}
-                    </button>
-                    <a href="{{ url_for('admin_products') }}" class="btn-secondary-large">
-                        <i class="fas fa-times"></i> Cancelar
-                    </a>
-                </div>
             </form>
-            
-            <!-- Dica -->
-            <div style="background: linear-gradient(135deg, var(--primary-beige), var(--cream)); padding: 1.5rem; border-radius: 15px; margin-top: 2rem; border-left: 5px solid var(--primary-teal);">
-                <h4 style="color: var(--primary-teal); margin-bottom: 1rem;">
-                    <i class="fas fa-lightbulb"></i> Dicas para Fotos Perfeitas
-                </h4>
-                <ul style="color: var(--gray); line-height: 1.6; margin: 0;">
-                    <li><strong>Iluminação natural:</strong> Fotografe próximo a uma janela, evite flash</li>
-                    <li><strong>Fundo neutro:</strong> Use fundo branco ou cores claras</li>
-                    <li><strong>Múltiplos ângulos:</strong> Mostre frente, verso, detalhes e uso</li>
-                    <li><strong>Qualidade alta:</strong> Use a maior resolução possível</li>
-                    <li><strong>Foco nos detalhes:</strong> Destaque o trabalho artesanal</li>
-                </ul>
-            </div>
         </div>
     </div>
 </section>
 
 <script>
-function previewMultipleImages(input) {
-    const previewContainer = document.getElementById('imagePreview');
-    const files = input.files;
+function togglePromotion() {
+    const active = document.getElementById('promotionActive').checked;
+    const fields = document.getElementById('promotionFields');
     
-    if (files.length > 5) {
-        alert('Máximo 5 imagens permitidas!');
-        input.value = '';
-        return;
-    }
-    
-    if (files.length > 0) {
-        previewContainer.innerHTML = '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 1rem;"></div>';
-        const grid = previewContainer.querySelector('div');
-        
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
-            
-            if (!file.type.startsWith('image/')) {
-                alert('Por favor, selecione apenas arquivos de imagem.');
-                continue;
-            }
-            
-            if (file.size > 5 * 1024 * 1024) {
-                alert(`A imagem ${file.name} deve ter no máximo 5MB.`);
-                continue;
-            }
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = document.createElement('img');
-                img.src = e.target.result;
-                img.style.cssText = 'width: 100%; height: 100px; object-fit: cover; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);';
-                grid.appendChild(img);
-            };
-            reader.readAsDataURL(file);
-        }
-        
-        // Adiciona texto informativo
-        const info = document.createElement('p');
-        info.innerHTML = `${files.length} imagem(ns) selecionada(s)`;
-        info.style.cssText = 'color: var(--primary-teal); font-weight: 600; margin-top: 1rem; margin-bottom: 0;';
-        previewContainer.appendChild(info);
+    if (active) {
+        fields.style.display = 'block';
+        calculateDiscount();
+    } else {
+        fields.style.display = 'none';
+        document.getElementById('discountPreview').style.display = 'none';
     }
 }
+
+function calculateDiscount() {
+    const regularPrice = parseFloat(document.getElementById('regularPrice').value) || 0;
+    const promotionalPrice = parseFloat(document.getElementById('promotionalPrice').value) || 0;
+    const preview = document.getElementById('discountPreview');
+    
+    if (regularPrice > 0 && promotionalPrice > 0 && promotionalPrice < regularPrice) {
+        const discount = Math.round(((regularPrice - promotionalPrice) / regularPrice) * 100);
+        
+        document.getElementById('discountPercent').textContent = discount + '%';
+        document.getElementById('oldPriceDisplay').textContent = 'R$ ' + regularPrice.toFixed(2).replace('.', ',');
+        document.getElementById('newPriceDisplay').textContent = 'R$ ' + promotionalPrice.toFixed(2).replace('.', ',');
+        
+        preview.style.display = 'block';
+    } else {
+        preview.style.display = 'none';
+    }
+}
+
+// Calcular desconto ao carregar se já houver dados
+document.addEventListener('DOMContentLoaded', function() {
+    if (document.getElementById('promotionActive').checked) {
+        calculateDiscount();
+    }
+});
 </script>
 {% endblock %}
