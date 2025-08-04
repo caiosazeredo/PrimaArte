@@ -206,7 +206,7 @@ def checkout():
     data = load_data()
     
     # Monta mensagem para WhatsApp com formatação melhorada
-    message = "*NOVO PEDIDO - PRIMA ARTE*\n"
+    message = "🎨 *NOVO PEDIDO - PRIMA ARTE* 🎨\n"
     message += "═" * 35 + "\n\n"
     
     total = 0
@@ -218,7 +218,7 @@ def checkout():
             item_total = product['price'] * item['quantity']
             total += item_total
             
-            message += f"*Item {item_count}:* {product['name']}\n"
+            message += f"📦 *Item {item_count}:* {product['name']}\n"
             message += f"   • Quantidade: {item['quantity']} unidade(s)\n"
             message += f"   • Preço unitário: R$ {product['price']:.2f}\n"
             
@@ -229,14 +229,14 @@ def checkout():
             message += "─" * 30 + "\n"
             item_count += 1
     
-    message += f"\n *VALOR TOTAL: R$ {total:.2f}*\n"
+    message += f"\n💰 *VALOR TOTAL: R$ {total:.2f}*\n"
     message += "═" * 35 + "\n\n"
-    message += " Olá! Gostaria de finalizar este pedido!\n\n"
-    message += " *Próximos passos:*\n"
+    message += "👋 Olá! Gostaria de finalizar este pedido!\n\n"
+    message += "📍 *Próximos passos:*\n"
     message += "• Confirmaremos os itens do pedido\n"
     message += "• Combinaremos forma de pagamento\n"
     message += "• Definiremos entrega/retirada\n\n"
-    message += " Obrigado por escolher a Prima Arte! "
+    message += "🤝 Obrigado por escolher a Prima Arte! ✨"
     
     # URL do WhatsApp com encoding correto
     whatsapp_url = f"https://wa.me/{WHATSAPP_NUMBER.replace('+', '').replace(' ', '')}?text={urllib.parse.quote(message)}"
@@ -290,13 +290,13 @@ def admin_products():
 
 @app.route('/admin/produto/novo')
 @admin_required
-def admin_product_new():
+def admin_new_product():
     """Formulário para novo produto"""
     return render_template('admin/product_form.html', product=None)
 
 @app.route('/admin/produto/editar/<product_id>')
 @admin_required
-def admin_product_edit(product_id):
+def admin_edit_product(product_id):
     """Formulário para editar produto"""
     data = load_data()
     product = next((p for p in data['products'] if p['id'] == product_id), None)
@@ -358,7 +358,7 @@ def admin_save_product():
 
 @app.route('/admin/produto/excluir/<product_id>')
 @admin_required
-def admin_product_delete(product_id):
+def admin_delete_product(product_id):
     """Excluir produto"""
     data = load_data()
     

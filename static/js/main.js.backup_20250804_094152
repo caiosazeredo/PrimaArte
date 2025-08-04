@@ -65,6 +65,8 @@ let translateY = 0;
 function openImageModal(imageSrc, imageIndex = 0, imageArray = []) {
     const modal = document.getElementById('imageModal');
     const modalImage = document.getElementById('modalImage');
+    const imageCounter = document.getElementById('imageCounter');
+    
     if (!modal || !modalImage) return;
     
     images = imageArray.length > 0 ? imageArray : [imageSrc];
@@ -76,7 +78,8 @@ function openImageModal(imageSrc, imageIndex = 0, imageArray = []) {
     translateX = 0;
     translateY = 0;
     
-     / ${images.length}`;
+    if (imageCounter) {
+        imageCounter.textContent = `${currentImageIndex + 1} / ${images.length}`;
     }
     
     modal.classList.add('active');
@@ -132,12 +135,15 @@ function nextImage() {
 
 function changeImage() {
     const modalImage = document.getElementById('modalImage');
+    const imageCounter = document.getElementById('imageCounter');
+    
     if (modalImage) {
         modalImage.src = images[currentImageIndex];
         resetZoom();
     }
     
-     / ${images.length}`;
+    if (imageCounter) {
+        imageCounter.textContent = `${currentImageIndex + 1} / ${images.length}`;
     }
 }
 

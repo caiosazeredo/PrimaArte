@@ -99,5 +99,65 @@
     </div>
 </section>
 
+<style>
+/* Filtros */
+.filter-btn {
+    background: rgba(212, 175, 55, 0.1);
+    color: var(--primary-gold);
+    border: 2px solid rgba(212, 175, 55, 0.2);
+    padding: 0.75rem 1.5rem;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
 
+.filter-btn:hover {
+    background: rgba(212, 175, 55, 0.2);
+    border-color: rgba(212, 175, 55, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
+}
+
+.filter-btn.active {
+    background: var(--gradient-main);
+    color: white;
+    border-color: transparent;
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+}
+
+/* Botões dos produtos */
+.btn-product-view {
+    background: rgba(38, 198, 218, 0.1);
+    color: var(--primary-teal);
+    border: 2px solid rgba(38, 198, 218, 0.2);
+    padding: 0.75rem 1.5rem;
+    border-radius: 20px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    justify-content: center;
+}
+
+.btn-product-view:hover {
+    background: rgba(38, 198, 218, 0.2);
+    border-color: rgba(38, 198, 218, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(38, 198, 218, 0.2);
+}
+
+@media (max-width: 768px) {
+    .filter-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+}
+</style>
 {% endblock %}

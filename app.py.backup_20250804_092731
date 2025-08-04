@@ -14,7 +14,6 @@ import urllib.parse
 from datetime import datetime
 import uuid
 from werkzeug.utils import secure_filename
-from functools import wraps
 
 app = Flask(__name__)
 app.secret_key = 'prima-arte-secret-key-2025'
@@ -49,15 +48,6 @@ def save_data(data):
     """Salva dados no arquivo JSON"""
     with open(DATA_FILE, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
-
-def admin_required(f):
-    """Decorator para proteger rotas admin"""
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if not session.get('admin'):
-            return redirect(url_for('admin_login'))
-        return f(*args, **kwargs)
-    return decorated_function
 
 def create_slug(text):
     """Cria slug amigável para URL"""
@@ -206,7 +196,7 @@ def checkout():
     data = load_data()
     
     # Monta mensagem para WhatsApp com formatação melhorada
-    message = "*NOVO PEDIDO - PRIMA ARTE*\n"
+    message = "🎨 *NOVO PEDIDO - PRIMA ARTE* 🎨\n"
     message += "═" * 35 + "\n\n"
     
     total = 0
@@ -218,7 +208,7 @@ def checkout():
             item_total = product['price'] * item['quantity']
             total += item_total
             
-            message += f"*Item {item_count}:* {product['name']}\n"
+            message += f"📦 *Item {item_count}:* {product['name']}\n"
             message += f"   • Quantidade: {item['quantity']} unidade(s)\n"
             message += f"   • Preço unitário: R$ {product['price']:.2f}\n"
             
@@ -229,14 +219,14 @@ def checkout():
             message += "─" * 30 + "\n"
             item_count += 1
     
-    message += f"\n *VALOR TOTAL: R$ {total:.2f}*\n"
+    message += f"\n💰 *VALOR TOTAL: R$ {total:.2f}*\n"
     message += "═" * 35 + "\n\n"
-    message += " Olá! Gostaria de finalizar este pedido!\n\n"
-    message += " *Próximos passos:*\n"
+    message += "👋 Olá! Gostaria de finalizar este pedido!\n\n"
+    message += "📍 *Próximos passos:*\n"
     message += "• Confirmaremos os itens do pedido\n"
     message += "• Combinaremos forma de pagamento\n"
     message += "• Definiremos entrega/retirada\n\n"
-    message += " Obrigado por escolher a Prima Arte! "
+    message += "🤝 Obrigado por escolher a Prima Arte! ✨"
     
     # URL do WhatsApp com encoding correto
     whatsapp_url = f"https://wa.me/{WHATSAPP_NUMBER.replace('+', '').replace(' ', '')}?text={urllib.parse.quote(message)}"
@@ -245,10 +235,6 @@ def checkout():
     session['cart'] = []
     
     return redirect(whatsapp_url)
-
-# ================================
-# ÁREA ADMINISTRATIVA
-# ================================
 
 @app.route('/admin')
 def admin_login():
@@ -269,9 +255,11 @@ def admin_authenticate():
         return redirect(url_for('admin_login'))
 
 @app.route('/admin/dashboard')
-@admin_required
 def admin_dashboard():
     """Dashboard administrativo"""
+    if not session.get('admin'):
+        return redirect(url_for('admin_login'))
+    
     data = load_data()
     stats = {
         'total_products': len(data['products']),
@@ -282,33 +270,66 @@ def admin_dashboard():
     return render_template('admin/dashboard.html', stats=stats)
 
 @app.route('/admin/produtos')
-@admin_required
 def admin_products():
     """Gerenciar produtos"""
+    if not session.get('admin'):
+        return redirect(url_for('admin_login'))
+    
     data = load_data()
     return render_template('admin/products.html', products=data['products'])
 
 @app.route('/admin/produto/novo')
-@admin_required
-def admin_product_new():
-    """Formulário para novo produto"""
-    return render_template('admin/product_form.html', product=None)
+def admin_new_product():
+    """Novo produto"""
+    if not session.get('admin'):
+        return redirect(url_for('admin_login'))
+    
+    return render_template('admin/product_form.html')
 
 @app.route('/admin/produto/editar/<product_id>')
-@admin_required
-def admin_product_edit(product_id):
-    """Formulário para editar produto"""
+def admin_edit_product(product_id):
+    """Editar produto"""
+    if not session.get('admin'):
+        return redirect(url_for('admin_login'))
+    
     data = load_data()
     product = next((p for p in data['products'] if p['id'] == product_id), None)
+    
     if not product:
         flash('Produto não encontrado!', 'error')
         return redirect(url_for('admin_products'))
+    
     return render_template('admin/product_form.html', product=product)
 
+@app.route('/admin/produto/excluir/<product_id>')
+def admin_delete_product(product_id):
+    """Excluir produto"""
+    if not session.get('admin'):
+        return redirect(url_for('admin_login'))
+    
+    data = load_data()
+    
+    # Remove produto e suas imagens
+    product = next((p for p in data['products'] if p['id'] == product_id), None)
+    if product and product.get('images'):
+        for image_url in product['images']:
+            if image_url.startswith('/static/uploads/'):
+                image_path = image_url[1:]  # Remove /
+                if os.path.exists(image_path):
+                    os.remove(image_path)
+    
+    data['products'] = [p for p in data['products'] if p['id'] != product_id]
+    save_data(data)
+    
+    flash('Produto excluído com sucesso!', 'success')
+    return redirect(url_for('admin_products'))
+
 @app.route('/admin/produto/salvar', methods=['POST'])
-@admin_required
 def admin_save_product():
     """Salva produto com múltiplas imagens"""
+    if not session.get('admin'):
+        return redirect(url_for('admin_login'))
+    
     data = load_data()
     
     # Pega dados do formulário
@@ -356,44 +377,29 @@ def admin_save_product():
     flash(f'Produto "{product_name}" salvo com sucesso!', 'success')
     return redirect(url_for('admin_products'))
 
-@app.route('/admin/produto/excluir/<product_id>')
-@admin_required
-def admin_product_delete(product_id):
-    """Excluir produto"""
-    data = load_data()
-    
-    # Remove produto e suas imagens
-    product = next((p for p in data['products'] if p['id'] == product_id), None)
-    if product and product.get('images'):
-        for image_url in product['images']:
-            if image_url.startswith('/static/uploads/'):
-                image_path = image_url[1:]  # Remove /
-                if os.path.exists(image_path):
-                    os.remove(image_path)
-    
-    data['products'] = [p for p in data['products'] if p['id'] != product_id]
-    save_data(data)
-    
-    flash('Produto excluído com sucesso!', 'success')
-    return redirect(url_for('admin_products'))
-
 @app.route('/admin/anuncios')
-@admin_required
 def admin_announcements():
     """Gerenciar anúncios"""
+    if not session.get('admin'):
+        return redirect(url_for('admin_login'))
+    
     data = load_data()
-    return render_template('admin/announcements.html', announcements=data.get('announcements', []))
+    return render_template('admin/announcements.html', announcements=data['announcements'])
 
 @app.route('/admin/anuncio/novo')
-@admin_required
 def admin_new_announcement():
     """Novo anúncio"""
-    return render_template('admin/announcement_form.html', announcement=None)
+    if not session.get('admin'):
+        return redirect(url_for('admin_login'))
+    
+    return render_template('admin/announcement_form.html')
 
 @app.route('/admin/anuncio/editar/<announcement_id>')
-@admin_required
 def admin_edit_announcement(announcement_id):
     """Editar anúncio"""
+    if not session.get('admin'):
+        return redirect(url_for('admin_login'))
+    
     data = load_data()
     announcement = next((a for a in data['announcements'] if a['id'] == announcement_id), None)
     
@@ -403,10 +409,34 @@ def admin_edit_announcement(announcement_id):
     
     return render_template('admin/announcement_form.html', announcement=announcement)
 
+@app.route('/admin/anuncio/excluir/<announcement_id>')
+def admin_delete_announcement(announcement_id):
+    """Excluir anúncio"""
+    if not session.get('admin'):
+        return redirect(url_for('admin_login'))
+    
+    data = load_data()
+    
+    # Remove anúncio e sua imagem
+    announcement = next((a for a in data['announcements'] if a['id'] == announcement_id), None)
+    if announcement and announcement.get('image'):
+        if announcement['image'].startswith('/static/uploads/'):
+            image_path = announcement['image'][1:]  # Remove /
+            if os.path.exists(image_path):
+                os.remove(image_path)
+    
+    data['announcements'] = [a for a in data['announcements'] if a['id'] != announcement_id]
+    save_data(data)
+    
+    flash('Anúncio excluído com sucesso!', 'success')
+    return redirect(url_for('admin_announcements'))
+
 @app.route('/admin/anuncio/salvar', methods=['POST'])
-@admin_required
 def admin_save_announcement():
     """Salva anúncio com imagem"""
+    if not session.get('admin'):
+        return redirect(url_for('admin_login'))
+    
     data = load_data()
     
     # Pega dados do formulário
@@ -451,26 +481,6 @@ def admin_save_announcement():
     flash(f'Anúncio "{announcement_title}" salvo com sucesso!', 'success')
     return redirect(url_for('admin_announcements'))
 
-@app.route('/admin/anuncio/excluir/<announcement_id>')
-@admin_required
-def admin_delete_announcement(announcement_id):
-    """Excluir anúncio"""
-    data = load_data()
-    
-    # Remove anúncio e sua imagem
-    announcement = next((a for a in data['announcements'] if a['id'] == announcement_id), None)
-    if announcement and announcement.get('image'):
-        if announcement['image'].startswith('/static/uploads/'):
-            image_path = announcement['image'][1:]  # Remove /
-            if os.path.exists(image_path):
-                os.remove(image_path)
-    
-    data['announcements'] = [a for a in data['announcements'] if a['id'] != announcement_id]
-    save_data(data)
-    
-    flash('Anúncio excluído com sucesso!', 'success')
-    return redirect(url_for('admin_announcements'))
-
 @app.route('/admin/logout')
 def admin_logout():
     """Logout do admin"""
@@ -500,6 +510,95 @@ def upload_file():
         return jsonify({'url': f"/static/uploads/{filename}"})
     
     return jsonify({'error': 'Tipo de arquivo não permitido'}), 400
+
+
+# ================================
+# ROTAS ADMIN ADICIONAIS
+# ================================
+
+@app.route('/admin/produto/novo')
+@admin_required
+def admin_product_new():
+    """Formulário para novo produto"""
+    return render_template('admin/product_form.html', product=None)
+
+@app.route('/admin/produto/editar/<product_id>')
+@admin_required  
+def admin_product_edit(product_id):
+    """Formulário para editar produto"""
+    data = load_data()
+    product = next((p for p in data['products'] if p['id'] == product_id), None)
+    if not product:
+        flash('Produto não encontrado!', 'error')
+        return redirect(url_for('admin_products'))
+    return render_template('admin/product_form.html', product=product)
+
+@app.route('/admin/produto/salvar', methods=['POST'])
+@admin_required
+def admin_save_product():
+    """Salva produto (novo ou editado)"""
+    data = load_data()
+    
+    product_id = request.form.get('id')
+    name = request.form.get('name')
+    description = request.form.get('description')
+    price = float(request.form.get('price', 0))
+    category = request.form.get('category')
+    featured = 'featured' in request.form
+    
+    if product_id:
+        # Editar produto existente
+        product = next((p for p in data['products'] if p['id'] == product_id), None)
+        if product:
+            product.update({
+                'name': name,
+                'description': description,
+                'price': price,
+                'category': category,
+                'featured': featured
+            })
+            flash('Produto atualizado com sucesso!', 'success')
+        else:
+            flash('Produto não encontrado!', 'error')
+    else:
+        # Novo produto
+        new_product = {
+            'id': str(int(time.time())),
+            'name': name,
+            'description': description,
+            'price': price,
+            'category': category,
+            'featured': featured,
+            'images': []
+        }
+        data['products'].append(new_product)
+        flash('Produto criado com sucesso!', 'success')
+    
+    save_data(data)
+    return redirect(url_for('admin_products'))
+
+@app.route('/admin/produto/excluir/<product_id>')
+@admin_required
+def admin_product_delete(product_id):
+    """Exclui produto"""
+    data = load_data()
+    data['products'] = [p for p in data['products'] if p['id'] != product_id]
+    save_data(data)
+    flash('Produto excluído com sucesso!', 'success')
+    return redirect(url_for('admin_products'))
+
+@app.route('/admin/anuncios')
+@admin_required
+def admin_announcements():
+    """Gerenciar anúncios"""
+    data = load_data()
+    return render_template('admin/announcements.html', announcements=data.get('announcements', []))
+
+@app.route('/admin/anuncio/novo')
+@admin_required
+def admin_new_announcement():
+    """Novo anúncio"""
+    return render_template('admin/announcement_form.html', announcement=None)
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)

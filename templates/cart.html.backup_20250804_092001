@@ -95,28 +95,13 @@
                     Continuar Comprando
                 </a>
                 
-                <!-- Informações sobre Finalização -->
-                <div style="background: rgba(38, 198, 218, 0.1); padding: 1rem; border-radius: 10px; margin-top: 1rem; border-left: 4px solid var(--primary-teal);">
+                <div style="background: rgba(38, 198, 218, 0.1); padding: 1rem; border-radius: 10px; margin-top: 1.5rem; border-left: 4px solid var(--primary-teal);">
                     <h4 style="color: var(--primary-teal); margin-bottom: 0.5rem;">
                         <i class="fas fa-info-circle"></i> Como Funciona?
                     </h4>
                     <p style="font-size: 0.9rem; color: var(--gray); margin: 0; line-height: 1.4;">
                         Ao finalizar, você será redirecionado para o WhatsApp com os detalhes do seu pedido. 
                         Conversaremos sobre forma de pagamento e entrega!
-                    </p>
-                </div>
-                
-                <!-- Informação sobre Pagamento Futuro -->
-                <div style="background: rgba(212, 175, 55, 0.1); padding: 1rem; border-radius: 10px; margin-top: 1rem; border-left: 4px solid var(--primary-gold); text-align: center;">
-                    <h4 style="color: var(--primary-gold); margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
-                        <i class="fas fa-credit-card"></i> Em Breve
-                    </h4>
-                    <p style="font-size: 0.9rem; color: var(--gray); margin: 0; line-height: 1.4;">
-                        🚀 Estamos trabalhando para disponibilizar <strong>pagamento online</strong> diretamente pelo site! 
-                        Em breve você poderá finalizar suas compras de forma ainda mais rápida e prática.
-                    </p>
-                    <p style="font-size: 0.8rem; color: var(--primary-gold); margin: 0.5rem 0 0 0; font-weight: 600;">
-                        💳 Pix • Cartão • Boleto • E muito mais!
                     </p>
                 </div>
             </div>

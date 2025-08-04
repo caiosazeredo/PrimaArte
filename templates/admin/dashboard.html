@@ -2,7 +2,46 @@
 
 {% block page_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+<style>
+/* Botões coloridos para o dashboard */
+.btn-create-product {
+    background: linear-gradient(135deg, #4CAF50, #45A049) !important;
+    color: white !important;
+    border: none !important;
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3) !important;
+}
+
+.btn-create-product:hover {
+    background: linear-gradient(135deg, #45A049, #3E8E41) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4) !important;
+}
+
+.btn-create-announcement {
+    background: linear-gradient(135deg, #FF9800, #F57C00) !important;
+    color: white !important;
+    border: none !important;
+    box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3) !important;
+}
+
+.btn-create-announcement:hover {
+    background: linear-gradient(135deg, #F57C00, #E65100) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4) !important;
+}
+
+.action-card {
+    transition: all 0.3s ease;
+}
+
+.action-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+</style>
 {% endblock %}
+
+{% block title %}Dashboard - Admin Prima Arte{% endblock %}
 
 {% block content %}
 <div class="admin-nav">
@@ -48,14 +87,37 @@
         <div class="quick-actions">
             <div class="action-card">
                 <h3><i class="fas fa-plus-circle"></i> Novo Produto</h3>
-                <p>Adicione um novo produto artesanal ao catálogo.</p>
-                <a href="{{ url_for('admin_new_product') }}" class="btn btn-primary">Criar Produto</a>
+                <p>Adicione um novo produto artesanal ao catálogo com imagens e descrição completa.</p>
+                <a href="{{ url_for('admin_product_new') }}" class="btn-admin-primary btn-create-product">
+                    <i class="fas fa-plus-circle"></i> Criar Produto
+                </a>
             </div>
             
             <div class="action-card">
-                <h3><i class="fas fa-bullhorn"></i> Novo Anúncio</h3>
-                <p>Crie um anúncio para destacar novidades.</p>
-                <a href="{{ url_for('admin_new_announcement') }}" class="btn btn-secondary">Criar Anúncio</a>
+                <h3><i class="fas fa-bullhorn"></i> Novo Anúncio</h3>  
+                <p>Crie um anúncio para destacar novidades, promoções ou informações importantes.</p>
+                <a href="{{ url_for('admin_new_announcement') }}" class="btn-admin-primary btn-create-announcement">
+                    <i class="fas fa-bullhorn"></i> Criar Anúncio
+                </a>
+            </div>
+        </div>
+        
+        <!-- Ações Rápidas Adicionais -->
+        <div class="quick-stats" style="margin-top: 3rem;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                <div style="background: white; padding: 1.5rem; border-radius: 10px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <i class="fas fa-star" style="color: #FFD700; font-size: 2rem; margin-bottom: 0.5rem;"></i>
+                    <h4 style="margin: 0; color: var(--dark-brown);">Produtos em Destaque</h4>
+                    <p style="margin: 0.5rem 0 0 0; color: var(--gray);">
+                        {{ products|selectattr('featured')|list|length if products else 0 }} produtos
+                    </p>
+                </div>
+                
+                <div style="background: white; padding: 1.5rem; border-radius: 10px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <i class="fas fa-chart-line" style="color: #4CAF50; font-size: 2rem; margin-bottom: 0.5rem;"></i>
+                    <h4 style="margin: 0; color: var(--dark-brown);">Status</h4>
+                    <p style="margin: 0.5rem 0 0 0; color: #4CAF50; font-weight: 600;">Sistema Online</p>
+                </div>
             </div>
         </div>
     </div>

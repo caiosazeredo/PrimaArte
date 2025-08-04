@@ -11,7 +11,7 @@
     <div class="container">
         <h1><i class="fas fa-box-open"></i> Gerenciar Produtos</h1>
         <div class="nav-links">
-            <a href="{{ url_for('admin_product_new') }}" class="btn-admin-primary">
+            <a href="{{ url_for('admin_new_product') }}" class="btn-admin-primary">
                 <i class="fas fa-plus"></i> Novo Produto
             </a>
             <a href="{{ url_for('admin_dashboard') }}"><i class="fas fa-dashboard"></i> Dashboard</a>
@@ -73,7 +73,7 @@
             <i class="fas fa-box-open"></i>
             <h3>Nenhum produto cadastrado</h3>
             <p>Comece criando seu primeiro produto!</p>
-            <a href="{{ url_for('admin_product_new') }}" class="btn-admin-primary">
+            <a href="{{ url_for('admin_new_product') }}" class="btn-admin-primary">
                 <i class="fas fa-plus"></i>
                 Criar Primeiro Produto
             </a>
