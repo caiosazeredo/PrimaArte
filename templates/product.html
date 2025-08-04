@@ -5,261 +5,750 @@
 {% block content %}
 <section class="section">
     <div class="container">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start;">
+        <div class="product-detail">
             <!-- Galeria de Imagens -->
-            <div>
+            <div class="product-gallery">
                 {% if product.images and product.images|length > 0 %}
-                <div class="product-gallery">
-                    <!-- Imagem Principal -->
-                    <div class="main-image">
-                        <img id="mainImage" src="{{ product.images[0] }}" alt="{{ product.name }}" 
-                             style="width: 100%; height: 400px; object-fit: cover; border-radius: 15px; box-shadow: var(--shadow-medium); cursor: zoom-in; transition: transform 0.3s ease;"
-                             onclick="openImageModal('{{ product.images[0] }}')"
-                             onmouseover="this.style.transform='scale(1.05)'"
-                             onmouseout="this.style.transform='scale(1)'">
+                <!-- Imagem Principal -->
+                <div class="main-image-container">
+                    <img id="mainImage" src="{{ product.images[0] }}" alt="{{ product.name }}" 
+                         class="main-image" onclick="openImageModal(0)">
+                    <div class="zoom-indicator">
+                        <i class="fas fa-search-plus"></i>
+                        <span>Clique para ampliar</span>
                     </div>
-                    
-                    <!-- Miniaturas -->
-                    {% if product.images|length > 1 %}
-                    <div class="image-thumbnails" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 0.5rem; margin-top: 1rem;">
-                        {% for image in product.images %}
-                        <img src="{{ image }}" alt="{{ product.name }}" 
-                             onclick="changeMainImage('{{ image }}')"
-                             style="width: 100%; height: 80px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 2px solid transparent; transition: all 0.3s ease;"
-                             onmouseover="this.style.borderColor='var(--primary-gold)'; this.style.transform='scale(1.1)'"
-                             onmouseout="this.style.borderColor='transparent'; this.style.transform='scale(1)'">
-                        {% endfor %}
-                    </div>
-                    {% endif %}
                 </div>
+                
+                <!-- Miniaturas -->
+                {% if product.images|length > 1 %}
+                <div class="image-thumbnails">
+                    {% for image in product.images %}
+                    <img src="{{ image }}" alt="{{ product.name }}" 
+                         onclick="changeMainImage('{{ image }}', {{ loop.index0 }})"
+                         class="thumbnail" data-index="{{ loop.index0 }}">
+                    {% endfor %}
+                </div>
+                {% endif %}
                 {% else %}
-                <div style="width: 100%; height: 400px; background: var(--gradient-main); border-radius: 15px; display: flex; align-items: center; justify-content: center; color: white; font-size: 6rem; box-shadow: var(--shadow-medium);">
+                <div class="no-image-product">
                     <i class="fas fa-image"></i>
+                    <p>Sem imagem disponível</p>
                 </div>
                 {% endif %}
             </div>
             
-            <!-- Detalhes do Produto -->
-            <div>
-                <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: var(--shadow-soft);">
-                    {% if product.featured %}
-                    <div style="background: var(--gradient-secondary); color: white; padding: 0.5rem 1rem; border-radius: 15px; display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; font-size: 0.9rem; font-weight: 600;">
-                        <i class="fas fa-star"></i> Produto em Destaque
-                    </div>
-                    {% endif %}
+            <!-- Informações do Produto -->
+            <div class="product-info">
+                <h1 class="product-title">{{ product.name }}</h1>
+                
+                <div class="product-price-container">
+                    <span class="product-price">R$ {{ "%.2f"|format(product.price) }}</span>
+                    <span class="price-note">À vista</span>
+                </div>
+                
+                <div class="product-category">
+                    <i class="fas fa-tag"></i>
+                    <span>{{ product.category|title }}</span>
+                </div>
+                
+                <div class="product-description">
+                    <h3><i class="fas fa-info-circle"></i> Descrição</h3>
+                    <p>{{ product.description }}</p>
+                </div>
+                
+                <!-- Formulário de Compra -->
+                <form action="{{ url_for('add_to_cart') }}" method="POST" class="purchase-form">
+                    <input type="hidden" name="product_id" value="{{ product.id }}">
                     
-                    <h1 style="font-family: var(--font-heading); font-size: 2.5rem; color: var(--dark-brown); margin-bottom: 1rem;">
-                        {{ product.name }}
-                    </h1>
-                    
-                    <div style="background: var(--gradient-main); color: white; padding: 1rem; border-radius: 10px; text-align: center; margin-bottom: 2rem;">
-                        <span style="font-size: 2rem; font-weight: 700;">R$ {{ "%.2f"|format(product.price) }}</span>
-                    </div>
-                    
-                    <div style="margin-bottom: 2rem;">
-                        <h3 style="font-family: var(--font-heading); color: var(--dark-brown); margin-bottom: 1rem;">
-                            <i class="fas fa-info-circle"></i> Descrição
-                        </h3>
-                        <p style="line-height: 1.6; color: var(--gray);">{{ product.description }}</p>
-                    </div>
-                    
-                    <div style="margin-bottom: 2rem;">
-                        <h3 style="font-family: var(--font-heading); color: var(--dark-brown); margin-bottom: 1rem;">
-                            <i class="fas fa-tag"></i> Categoria
-                        </h3>
-                        <span style="background: var(--primary-beige); color: var(--dark-brown); padding: 0.5rem 1rem; border-radius: 15px; font-weight: 600;">
-                            {{ product.category.title() }}
-                        </span>
-                    </div>
-                    
-                    <!-- Formulário Adicionar ao Carrinho -->
-                    <form action="{{ url_for('add_to_cart') }}" method="post" style="margin-bottom: 2rem;">
-                        <input type="hidden" name="product_id" value="{{ product.id }}">
-                        
-                        <div style="margin-bottom: 1rem;">
-                            <label style="display: block; font-weight: 600; color: var(--dark-brown); margin-bottom: 0.5rem;">
-                                <i class="fas fa-sort-numeric-up"></i> Quantidade:
-                            </label>
-                            <input type="number" name="quantity" value="1" min="1" max="10" 
-                                   style="width: 100px; padding: 0.5rem; border: 2px solid var(--primary-beige); border-radius: 10px; font-size: 1rem;">
+                    <div class="form-group">
+                        <label for="quantity">
+                            <i class="fas fa-sort-numeric-up"></i> Quantidade:
+                        </label>
+                        <div class="quantity-selector">
+                            <button type="button" onclick="decreaseQuantity()" class="qty-btn">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <input type="number" name="quantity" id="quantity" value="1" min="1" max="10" readonly>
+                            <button type="button" onclick="increaseQuantity()" class="qty-btn">
+                                <i class="fas fa-plus"></i>
+                            </button>
                         </div>
-                        
-                        <div style="margin-bottom: 1rem;">
-                            <label style="display: block; font-weight: 600; color: var(--dark-brown); margin-bottom: 0.5rem;">
-                                <i class="fas fa-comment"></i> Observações (opcional):
-                            </label>
-                            <textarea name="description" rows="3" placeholder="Cor preferida, tamanho, personalizações..."
-                                      style="width: 100%; padding: 0.75rem; border: 2px solid var(--primary-beige); border-radius: 10px; font-family: var(--font-body); resize: vertical;"></textarea>
-                        </div>
-                        
-                        <button type="submit" class="btn-primary-large add-to-cart-btn" style="width: 100%;">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="description">
+                            <i class="fas fa-comment-alt"></i> Observações (opcional):
+                        </label>
+                        <textarea name="description" id="description" 
+                                  placeholder="Personalizações, cores específicas, tamanhos, etc."></textarea>
+                    </div>
+                    
+                    <div class="purchase-actions">
+                        <button type="submit" class="btn-add-cart">
                             <i class="fas fa-shopping-cart"></i>
-                            Adicionar ao Carrinho
+                            <span>Adicionar ao Carrinho</span>
                         </button>
-                    </form>
-                    
-                    <!-- Botões de Ação -->
-                    <div style="display: flex; gap: 1rem;">
+                        
                         <a href="https://wa.me/5521973108293?text=Olá! Tenho interesse no produto: {{ product.name }}" 
-                           target="_blank" class="btn-secondary-large" style="flex: 1; text-align: center;">
+                           target="_blank" class="btn-whatsapp">
                             <i class="fab fa-whatsapp"></i>
-                            Falar no WhatsApp
-                        </a>
-                        <a href="{{ url_for('products') }}" class="btn-neutral" 
-                           style="padding: 1rem; border-radius: 25px; text-decoration: none; text-align: center; display: flex; align-items: center; justify-content: center;">
-                            <i class="fas fa-arrow-left"></i>
-                            Voltar
+                            <span>Falar no WhatsApp</span>
                         </a>
                     </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Informações Adicionais -->
-        <div style="margin-top: 3rem;">
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
-                <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: var(--shadow-soft); text-align: center;">
-                    <i class="fas fa-hands" style="font-size: 3rem; color: var(--primary-gold); margin-bottom: 1rem;"></i>
-                    <h3 style="font-family: var(--font-heading); color: var(--dark-brown); margin-bottom: 1rem;">100% Artesanal</h3>
-                    <p style="color: var(--gray);">Cada peça é única e feita à mão com muito carinho e dedicação.</p>
-                </div>
+                </form>
                 
-                <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: var(--shadow-soft); text-align: center;">
-                    <i class="fas fa-heart" style="font-size: 3rem; color: var(--primary-pink); margin-bottom: 1rem;"></i>
-                    <h3 style="font-family: var(--font-heading); color: var(--dark-brown); margin-bottom: 1rem;">Feito com Amor</h3>
-                    <p style="color: var(--gray);">Todo nosso trabalho é feito com amor e atenção aos detalhes.</p>
-                </div>
-                
-                <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: var(--shadow-soft); text-align: center;">
-                    <i class="fab fa-whatsapp" style="font-size: 3rem; color: var(--primary-teal); margin-bottom: 1rem;"></i>
-                    <h3 style="font-family: var(--font-heading); color: var(--dark-brown); margin-bottom: 1rem;">Pedidos via WhatsApp</h3>
-                    <p style="color: var(--gray);">Finalize seu pedido facilmente pelo WhatsApp. Rápido e seguro!</p>
+                <!-- Garantias -->
+                <div class="product-guarantees">
+                    <div class="guarantee-item">
+                        <i class="fas fa-heart"></i>
+                        <span>Feito à mão com amor</span>
+                    </div>
+                    <div class="guarantee-item">
+                        <i class="fas fa-star"></i>
+                        <span>Qualidade premium</span>
+                    </div>
+                    <div class="guarantee-item">
+                        <i class="fas fa-shipping-fast"></i>
+                        <span>Entrega rápida</span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Modal para Zoom da Imagem -->
-<div id="imageModal" class="image-modal" onclick="closeImageModal()">
-    <span class="close-modal">&times;</span>
-    <img class="modal-content" id="modalImage">
-    <div class="modal-caption" id="modalCaption"></div>
+<!-- Modal de Zoom Avançado com Controles -->
+<div id="imageModal" class="image-modal">
+    <div class="modal-header">
+        <h3 id="modalTitle">{{ product.name }}</h3>
+        <div class="modal-controls">
+            <button class="zoom-btn" onclick="zoomOut()" title="Diminuir zoom">
+                <i class="fas fa-search-minus"></i>
+            </button>
+            <button class="zoom-btn" onclick="resetZoom()" title="Zoom original">
+                <i class="fas fa-expand-arrows-alt"></i>
+            </button>
+            <button class="zoom-btn" onclick="zoomIn()" title="Aumentar zoom">
+                <i class="fas fa-search-plus"></i>
+            </button>
+            <button class="close-modal" onclick="closeImageModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+    
+    <div class="modal-content-wrapper">
+        <!-- Botão Anterior -->
+        <button class="nav-btn nav-prev" onclick="previousImage()">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        
+        <!-- Container de Imagem com Zoom -->
+        <div class="modal-image-container" id="imageContainer">
+            <img class="modal-image" id="modalImage" alt="{{ product.name }}">
+            <div class="image-counter">
+                <span id="imageCounter">1 / {{ product.images|length }}</span>
+            </div>
+            <div class="zoom-level">
+                <span id="zoomLevel">100%</span>
+            </div>
+        </div>
+        
+        <!-- Botão Próximo -->
+        <button class="nav-btn nav-next" onclick="nextImage()">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+    </div>
+    
+    <!-- Miniaturas no Modal -->
+    {% if product.images and product.images|length > 1 %}
+    <div class="modal-thumbnails">
+        {% for image in product.images %}
+        <img src="{{ image }}" alt="{{ product.name }}" 
+             onclick="goToImage({{ loop.index0 }})"
+             class="modal-thumbnail" data-index="{{ loop.index0 }}">
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <div class="modal-instructions">
+        <span>Setas do teclado: navegar • + / -: zoom • ESC: fechar • Scroll: zoom</span>
+    </div>
 </div>
 
-<script>
-function changeMainImage(imageUrl) {
-    document.getElementById('mainImage').src = imageUrl;
-    
-    // Remove seleção de todas as miniaturas
-    const thumbnails = document.querySelectorAll('.image-thumbnails img');
-    thumbnails.forEach(img => {
-        img.style.borderColor = 'transparent';
-    });
-    
-    // Adiciona seleção na miniatura clicada
-    event.target.style.borderColor = 'var(--primary-gold)';
-}
-
-function openImageModal(imageSrc) {
-    const modal = document.getElementById('imageModal');
-    const modalImg = document.getElementById('modalImage');
-    const caption = document.getElementById('modalCaption');
-    
-    modal.style.display = 'block';
-    modalImg.src = imageSrc;
-    caption.innerHTML = '{{ product.name }} - Clique para fechar';
-    
-    // Previne scroll do body
-    document.body.style.overflow = 'hidden';
-}
-
-function closeImageModal() {
-    const modal = document.getElementById('imageModal');
-    modal.style.display = 'none';
-    
-    // Restaura scroll do body
-    document.body.style.overflow = 'auto';
-}
-
-// Seleciona primeira miniatura por padrão
-document.addEventListener('DOMContentLoaded', function() {
-    const firstThumbnail = document.querySelector('.image-thumbnails img');
-    if (firstThumbnail) {
-        firstThumbnail.style.borderColor = 'var(--primary-gold)';
-    }
-    
-    // Fechar modal com ESC
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            closeImageModal();
-        }
-    });
-});
-</script>
-
 <style>
-/* Modal da Imagem */
+/* Product Detail Styles */
+.product-detail {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+}
+
+.product-gallery {
+    position: sticky;
+    top: 2rem;
+}
+
+.main-image-container {
+    position: relative;
+    margin-bottom: 1rem;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+}
+
+.main-image {
+    width: 100%;
+    height: 500px;
+    object-fit: cover;
+    cursor: zoom-in;
+    transition: transform 0.3s ease;
+}
+
+.main-image:hover {
+    transform: scale(1.02);
+}
+
+.zoom-indicator {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    backdrop-filter: blur(10px);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.main-image-container:hover .zoom-indicator {
+    opacity: 1;
+}
+
+.image-thumbnails {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 0.5rem;
+}
+
+.thumbnail {
+    width: 100%;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 10px;
+    cursor: pointer;
+    border: 3px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.thumbnail:hover {
+    border-color: var(--primary-gold);
+    transform: scale(1.05);
+}
+
+.thumbnail.active {
+    border-color: var(--primary-gold);
+    box-shadow: 0 0 20px rgba(218, 165, 32, 0.3);
+}
+
+/* Product Info Styles */
+.product-info {
+    padding: 1rem 0;
+}
+
+.product-title {
+    font-family: var(--font-heading);
+    font-size: 2.5rem;
+    color: var(--dark-brown);
+    margin-bottom: 1rem;
+    line-height: 1.2;
+}
+
+.product-price-container {
+    margin-bottom: 1.5rem;
+}
+
+.product-price {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--primary-pink);
+    display: block;
+}
+
+.price-note {
+    font-size: 0.9rem;
+    color: #666;
+    font-style: italic;
+}
+
+.product-category {
+    background: linear-gradient(135deg, var(--primary-gold), var(--primary-pink));
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 2rem;
+}
+
+.product-description {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 15px;
+    margin-bottom: 2rem;
+    border-left: 4px solid var(--primary-gold);
+}
+
+.product-description h3 {
+    color: var(--dark-brown);
+    font-size: 1.1rem;
+    margin-bottom: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.product-description p {
+    line-height: 1.6;
+    color: #555;
+}
+
+/* Form Styles */
+.purchase-form {
+    background: white;
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    color: var(--dark-brown);
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.quantity-selector {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    width: fit-content;
+    border: 2px solid var(--primary-gold);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.qty-btn {
+    background: var(--primary-gold);
+    border: none;
+    color: white;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s ease;
+}
+
+.qty-btn:hover {
+    background: var(--primary-pink);
+}
+
+#quantity {
+    width: 60px;
+    height: 40px;
+    text-align: center;
+    border: none;
+    background: white;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+#description {
+    width: 100%;
+    min-height: 100px;
+    padding: 1rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-family: inherit;
+    resize: vertical;
+    transition: border-color 0.3s ease;
+}
+
+#description:focus {
+    border-color: var(--primary-gold);
+    outline: none;
+}
+
+.purchase-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.btn-add-cart, .btn-whatsapp {
+    padding: 1rem 2rem;
+    border-radius: 15px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    border: none;
+    min-height: 60px;
+}
+
+.btn-add-cart {
+    background: linear-gradient(135deg, var(--primary-gold), var(--primary-pink));
+    color: white;
+}
+
+.btn-add-cart:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.btn-whatsapp {
+    background: #25D366;
+    color: white;
+}
+
+.btn-whatsapp:hover {
+    background: #1fd655;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(37, 211, 102, 0.3);
+}
+
+.product-guarantees {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.guarantee-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem;
+    background: #f8f9fa;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    color: var(--dark-brown);
+}
+
+.guarantee-item i {
+    color: var(--primary-gold);
+    font-size: 1.2rem;
+}
+
+/* Modal Styles Melhorados */
 .image-modal {
     display: none;
     position: fixed;
-    z-index: 9999;
+    z-index: 10000;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.9);
+    background: rgba(0, 0, 0, 0.95);
     animation: fadeIn 0.3s ease;
 }
 
-.modal-content {
-    margin: auto;
-    display: block;
-    max-width: 90%;
-    max-height: 90%;
+.modal-header {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    border-radius: 10px;
-    box-shadow: 0 10px 50px rgba(0,0,0,0.5);
-    animation: zoomIn 0.3s ease;
-}
-
-.close-modal {
-    position: absolute;
-    top: 20px;
-    right: 35px;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.8);
     color: white;
-    font-size: 40px;
-    font-weight: bold;
-    cursor: pointer;
-    z-index: 10000;
-    transition: all 0.3s ease;
-}
-
-.close-modal:hover {
-    color: var(--primary-gold);
-    transform: scale(1.2);
-}
-
-.modal-caption {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    color: white;
-    text-align: center;
-    background: rgba(0,0,0,0.7);
     padding: 1rem 2rem;
-    border-radius: 25px;
-    font-size: 1.1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10001;
     backdrop-filter: blur(10px);
 }
 
-@keyframes zoomIn {
-    from { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
-    to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+.modal-header h3 {
+    font-size: 1.3rem;
+    margin: 0;
+}
+
+.modal-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.zoom-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.zoom-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+}
+
+.close-modal {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    margin-left: 0.5rem;
+}
+
+.close-modal:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.1);
+}
+
+.modal-content-wrapper {
+    position: relative;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 60px 120px;
+    overflow: hidden;
+}
+
+.modal-image-container {
+    position: relative;
+    max-width: 90%;
+    max-height: 90%;
+    overflow: hidden;
+    cursor: grab;
+}
+
+.modal-image-container:active {
+    cursor: grabbing;
+}
+
+.modal-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 10px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    animation: zoomIn 0.3s ease;
+    transition: transform 0.3s ease;
+    transform-origin: center center;
+}
+
+.image-counter {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    backdrop-filter: blur(10px);
+}
+
+.zoom-level {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    backdrop-filter: blur(10px);
+}
+
+.nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.nav-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.nav-prev {
+    left: 20px;
+}
+
+.nav-next {
+    right: 20px;
+}
+
+.modal-thumbnails {
+    position: absolute;
+    bottom: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 25px;
+    backdrop-filter: blur(10px);
+    max-width: 90%;
+    overflow-x: auto;
+}
+
+.modal-thumbnail {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.modal-thumbnail:hover {
+    border-color: var(--primary-gold);
+}
+
+.modal-thumbnail.active {
+    border-color: var(--primary-gold);
+    box-shadow: 0 0 20px rgba(218, 165, 32, 0.5);
+}
+
+.modal-instructions {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.8rem;
+    text-align: center;
+}
+
+.no-image-product {
+    background: linear-gradient(135deg, var(--primary-gold), var(--primary-pink));
+    color: white;
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    font-size: 3rem;
+}
+
+.no-image-product p {
+    font-size: 1.2rem;
+    margin-top: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .product-detail {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    .product-gallery {
+        position: static;
+    }
+    
+    .main-image {
+        height: 300px;
+    }
+    
+    .product-title {
+        font-size: 2rem;
+    }
+    
+    .purchase-actions {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .modal-content-wrapper {
+        padding: 60px 20px 100px;
+    }
+    
+    .nav-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+    
+    .nav-prev {
+        left: 10px;
+    }
+    
+    .nav-next {
+        right: 10px;
+    }
+    
+    .modal-thumbnails {
+        bottom: 20px;
+        max-width: 95%;
+    }
+    
+    .modal-thumbnail {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .modal-controls {
+        gap: 0.25rem;
+    }
+    
+    .zoom-btn {
+        width: 35px;
+        height: 35px;
+        font-size: 0.9rem;
+    }
 }
 
 @keyframes fadeIn {
@@ -267,36 +756,210 @@ document.addEventListener('DOMContentLoaded', function() {
     to { opacity: 1; }
 }
 
-@media (max-width: 768px) {
-    .container > div:first-child {
-        grid-template-columns: 1fr !important;
-        gap: 2rem !important;
+@keyframes zoomIn {
+    from { 
+        opacity: 0;
+        transform: scale(0.8);
     }
-    
-    .container > div:first-child > div:last-child {
-        order: -1;
-    }
-    
-    .image-thumbnails {
-        grid-template-columns: repeat(4, 1fr) !important;
-    }
-    
-    .modal-content {
-        max-width: 95%;
-        max-height: 80%;
-    }
-    
-    .close-modal {
-        top: 10px;
-        right: 20px;
-        font-size: 30px;
-    }
-    
-    .modal-caption {
-        bottom: 10px;
-        font-size: 0.9rem;
-        padding: 0.5rem 1rem;
+    to { 
+        opacity: 1;
+        transform: scale(1);
     }
 }
 </style>
+
+<script>
+let currentImageIndex = 0;
+let currentZoom = 1;
+let isDragging = false;
+let startX, startY, scrollLeft, scrollTop;
+
+let productImages = [
+    {% for image in product.images %}
+    "{{ image }}"{% if not loop.last %},{% endif %}
+    {% endfor %}
+];
+
+function changeMainImage(imageUrl, index) {
+    document.getElementById('mainImage').src = imageUrl;
+    currentImageIndex = index;
+    
+    // Remove active class from all thumbnails
+    document.querySelectorAll('.thumbnail').forEach(thumb => {
+        thumb.classList.remove('active');
+    });
+    
+    // Add active class to clicked thumbnail
+    document.querySelector(`[data-index="${index}"]`).classList.add('active');
+}
+
+function openImageModal(index = 0) {
+    currentImageIndex = index;
+    currentZoom = 1;
+    const modal = document.getElementById('imageModal');
+    const modalImg = document.getElementById('modalImage');
+    const counter = document.getElementById('imageCounter');
+    
+    modal.style.display = 'block';
+    modalImg.src = productImages[currentImageIndex];
+    counter.textContent = `${currentImageIndex + 1} / ${productImages.length}`;
+    
+    updateZoomLevel();
+    updateModalThumbnails();
+    
+    // Prevent body scroll
+    document.body.style.overflow = 'hidden';
+}
+
+function closeImageModal() {
+    const modal = document.getElementById('imageModal');
+    modal.style.display = 'none';
+    document.body.style.overflow = 'auto';
+    currentZoom = 1;
+}
+
+function nextImage() {
+    if (currentImageIndex < productImages.length - 1) {
+        currentImageIndex++;
+    } else {
+        currentImageIndex = 0;
+    }
+    updateModalImage();
+}
+
+function previousImage() {
+    if (currentImageIndex > 0) {
+        currentImageIndex--;
+    } else {
+        currentImageIndex = productImages.length - 1;
+    }
+    updateModalImage();
+}
+
+function goToImage(index) {
+    currentImageIndex = index;
+    updateModalImage();
+}
+
+function updateModalImage() {
+    const modalImg = document.getElementById('modalImage');
+    const counter = document.getElementById('imageCounter');
+    
+    modalImg.src = productImages[currentImageIndex];
+    counter.textContent = `${currentImageIndex + 1} / ${productImages.length}`;
+    
+    // Reset zoom when changing images
+    currentZoom = 1;
+    modalImg.style.transform = `scale(${currentZoom})`;
+    updateZoomLevel();
+    updateModalThumbnails();
+}
+
+function updateModalThumbnails() {
+    document.querySelectorAll('.modal-thumbnail').forEach((thumb, index) => {
+        thumb.classList.toggle('active', index === currentImageIndex);
+    });
+}
+
+// Funções de Zoom
+function zoomIn() {
+    if (currentZoom < 3) {
+        currentZoom += 0.25;
+        applyZoom();
+    }
+}
+
+function zoomOut() {
+    if (currentZoom > 0.5) {
+        currentZoom -= 0.25;
+        applyZoom();
+    }
+}
+
+function resetZoom() {
+    currentZoom = 1;
+    applyZoom();
+}
+
+function applyZoom() {
+    const modalImg = document.getElementById('modalImage');
+    modalImg.style.transform = `scale(${currentZoom})`;
+    updateZoomLevel();
+}
+
+function updateZoomLevel() {
+    const zoomLevelElement = document.getElementById('zoomLevel');
+    zoomLevelElement.textContent = `${Math.round(currentZoom * 100)}%`;
+}
+
+function increaseQuantity() {
+    const qty = document.getElementById('quantity');
+    if (parseInt(qty.value) < 10) {
+        qty.value = parseInt(qty.value) + 1;
+    }
+}
+
+function decreaseQuantity() {
+    const qty = document.getElementById('quantity');
+    if (parseInt(qty.value) > 1) {
+        qty.value = parseInt(qty.value) - 1;
+    }
+}
+
+// Event Listeners
+document.addEventListener('DOMContentLoaded', function() {
+    // Set first thumbnail as active
+    const firstThumbnail = document.querySelector('.thumbnail');
+    if (firstThumbnail) {
+        firstThumbnail.classList.add('active');
+    }
+    
+    // Keyboard navigation
+    document.addEventListener('keydown', function(e) {
+        const modal = document.getElementById('imageModal');
+        if (modal.style.display === 'block') {
+            switch(e.key) {
+                case 'Escape':
+                    closeImageModal();
+                    break;
+                case 'ArrowLeft':
+                    previousImage();
+                    break;
+                case 'ArrowRight':
+                    nextImage();
+                    break;
+                case '+':
+                case '=':
+                    zoomIn();
+                    break;
+                case '-':
+                    zoomOut();
+                    break;
+                case '0':
+                    resetZoom();
+                    break;
+            }
+        }
+    });
+    
+    // Mouse wheel zoom
+    document.getElementById('imageModal').addEventListener('wheel', function(e) {
+        if (e.target.closest('.modal-image-container')) {
+            e.preventDefault();
+            if (e.deltaY < 0) {
+                zoomIn();
+            } else {
+                zoomOut();
+            }
+        }
+    });
+    
+    // Click outside modal to close
+    document.getElementById('imageModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeImageModal();
+        }
+    });
+});
+</script>
 {% endblock %}

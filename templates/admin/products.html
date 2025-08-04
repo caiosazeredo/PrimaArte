@@ -1,102 +1,75 @@
 {% extends "base.html" %}
 
-{% block title %}Gerenciar Produtos - Admin Prima Arte{% endblock %}
+{% block title %}Gerenciar Produtos - Prima Arte Admin{% endblock %}
 
 {% block content %}
-<div class="admin-nav">
+<section class="admin-section">
     <div class="container">
-        <h1><i class="fas fa-box-open"></i> Gerenciar Produtos</h1>
-        <div class="nav-links">
-            <a href="{{ url_for('admin_dashboard') }}"><i class="fas fa-dashboard"></i> Dashboard</a>
-            <a href="{{ url_for('admin_announcements') }}"><i class="fas fa-bullhorn"></i> Anúncios</a>
-            <a href="{{ url_for('admin_logout') }}"><i class="fas fa-sign-out-alt"></i> Sair</a>
-        </div>
-    </div>
-</div>
-
-<section class="section">
-    <div class="container">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-            <h2 style="font-family: var(--font-heading); color: var(--dark-brown); margin: 0;">Seus Produtos</h2>
-            <a href="{{ url_for('admin_new_product') }}" class="btn-primary-large">
-                <i class="fas fa-plus"></i> Novo Produto
+        <div class="admin-header">
+            <h1 class="admin-title">
+                <i class="fas fa-box-open"></i>
+                Gerenciar Produtos
+            </h1>
+            <a href="{{ url_for('admin_product_new') }}" class="btn-admin-primary">
+                <i class="fas fa-plus"></i>
+                Novo Produto
             </a>
         </div>
         
-        {% if products %}
-        <div style="background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
-            <table style="width: 100%; border-collapse: collapse;">
-                <thead style="background: linear-gradient(135deg, var(--primary-gold), var(--primary-pink)); color: white;">
-                    <tr>
-                        <th style="padding: 1rem; text-align: left;">Imagem</th>
-                        <th style="padding: 1rem; text-align: left;">Nome</th>
-                        <th style="padding: 1rem; text-align: left;">Categoria</th>
-                        <th style="padding: 1rem; text-align: left;">Preço</th>
-                        <th style="padding: 1rem; text-align: left;">Destaque</th>
-                        <th style="padding: 1rem; text-align: center;">Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for product in products %}
-                    <tr style="border-bottom: 1px solid var(--primary-beige);">
-                        <td style="padding: 1rem;">
-                            {% if product.images and product.images|length > 0 %}
-                            <img src="{{ product.images[0] }}" alt="{{ product.name }}" 
-                                 style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">
-                            {% else %}
-                            <div style="width: 50px; height: 50px; background: linear-gradient(135deg, var(--primary-gold), var(--primary-pink)); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white;">
-                                <i class="fas fa-image"></i>
-                            </div>
-                            {% endif %}
-                        </td>
-                        <td style="padding: 1rem; font-weight: 600; color: var(--dark-brown);">{{ product.name }}</td>
-                        <td style="padding: 1rem;">
-                            <span style="background: var(--primary-beige); color: var(--dark-brown); padding: 0.25rem 0.75rem; border-radius: 15px; font-size: 0.8rem;">
-                                {{ product.category.title() }}
-                            </span>
-                        </td>
-                        <td style="padding: 1rem; font-weight: 600; color: var(--primary-pink);">
-                            R$ {{ "%.2f"|format(product.price) }}
-                        </td>
-                        <td style="padding: 1rem;">
-                            {% if product.featured %}
-                            <span style="background: linear-gradient(135deg, var(--primary-teal), var(--primary-purple)); color: white; padding: 0.25rem 0.75rem; border-radius: 15px; font-size: 0.8rem;">
-                                <i class="fas fa-star"></i> Sim
-                            </span>
-                            {% else %}
-                            <span style="color: var(--gray);">Não</span>
-                            {% endif %}
-                        </td>
-                        <td style="padding: 1rem; text-align: center;">
-                            <a href="{{ url_for('product_detail', product_id=product.id) }}" 
-                               target="_blank" title="Visualizar" 
-                               style="color: var(--primary-teal); margin-right: 0.5rem; text-decoration: none; font-size: 1.1rem;">
-                                <i class="fas fa-eye"></i>
-                            </a>
-                            <a href="{{ url_for('admin_edit_product', product_id=product.id) }}" 
-                               title="Editar" 
-                               style="color: var(--primary-gold); margin-right: 0.5rem; text-decoration: none; font-size: 1.1rem;">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <a href="{{ url_for('admin_delete_product', product_id=product.id) }}" 
-                               title="Excluir" 
-                               style="color: #e74c3c; text-decoration: none; font-size: 1.1rem;"
-                               onclick="return confirm('Tem certeza que deseja excluir o produto \'{{ product.name }}\'?')">
-                                <i class="fas fa-trash"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <div class="products-admin-grid">
+            {% for product in products %}
+            <div class="product-admin-card">
+                <div class="product-admin-image">
+                    {% if product.images and product.images|length > 0 %}
+                    <img src="{{ product.images[0] }}" alt="{{ product.name }}">
+                    {% else %}
+                    <div class="no-image-admin">
+                        <i class="fas fa-image"></i>
+                    </div>
+                    {% endif %}
+                    
+                    {% if product.featured %}
+                    <div class="featured-badge-admin">
+                        <i class="fas fa-star"></i>
+                        Destaque
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="product-admin-info">
+                    <h3>{{ product.name }}</h3>
+                    <p class="product-admin-category">{{ product.category|title }}</p>
+                    <p class="product-admin-price">R$ {{ "%.2f"|format(product.price) }}</p>
+                    <p class="product-admin-description">{{ product.description[:80] }}{% if product.description|length > 80 %}...{% endif %}</p>
+                </div>
+                
+                <div class="product-admin-actions">
+                    <a href="{{ url_for('product_detail', product_slug=product.name|slug) }}" 
+                       class="btn-admin-view" target="_blank" title="Ver no site">
+                        <i class="fas fa-eye"></i>
+                    </a>
+                    <a href="{{ url_for('admin_product_edit', product_id=product.id) }}" 
+                       class="btn-admin-edit" title="Editar">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a href="{{ url_for('admin_product_delete', product_id=product.id) }}" 
+                       class="btn-admin-delete" title="Excluir"
+                       onclick="return confirm('Tem certeza que deseja excluir este produto?')">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
         </div>
-        {% else %}
-        <div class="empty-state">
+        
+        {% if not products %}
+        <div class="empty-state-admin">
             <i class="fas fa-box-open"></i>
             <h3>Nenhum produto cadastrado</h3>
-            <p>Comece criando seu primeiro produto artesanal!</p>
-            <a href="{{ url_for('admin_new_product') }}" class="btn-primary-large">
-                <i class="fas fa-plus"></i> Criar Primeiro Produto
+            <p>Comece criando seu primeiro produto!</p>
+            <a href="{{ url_for('admin_product_new') }}" class="btn-admin-primary">
+                <i class="fas fa-plus"></i>
+                Criar Primeiro Produto
             </a>
         </div>
         {% endif %}
@@ -104,59 +77,224 @@
 </section>
 
 <style>
-.admin-nav {
-    background: var(--dark-brown);
-    padding: 1rem 0;
-    margin-bottom: 2rem;
+.admin-section {
+    padding: 2rem 0;
+    background: #f8f9fa;
+    min-height: 100vh;
 }
 
-.admin-nav .container {
+.admin-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 2rem;
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.1);
 }
 
-.admin-nav h1 {
-    color: var(--primary-gold);
+.admin-title {
+    color: #20B2AA;
     font-family: var(--font-heading);
+    font-size: 2rem;
     margin: 0;
-}
-
-.admin-nav .nav-links {
     display: flex;
-    gap: 1rem;
+    align-items: center;
+    gap: 0.8rem;
 }
 
-.admin-nav .nav-links a {
-    color: var(--cream);
+.btn-admin-primary {
+    background: linear-gradient(135deg, #20B2AA, #87CEEB);
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 10px;
     text-decoration: none;
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
     transition: all 0.3s ease;
 }
 
-.admin-nav .nav-links a:hover {
-    background: var(--primary-gold);
-    color: var(--dark-brown);
+.btn-admin-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(32, 178, 170, 0.3);
+}
+
+.products-admin-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.product-admin-card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.product-admin-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 35px rgba(0,0,0,0.15);
+}
+
+.product-admin-image {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+}
+
+.product-admin-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.no-image-admin {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #87CEEB, #4682B4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 3rem;
+}
+
+.featured-badge-admin {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #FFD700;
+    color: #4682B4;
+    padding: 0.5rem 1rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.product-admin-info {
+    padding: 1.5rem;
+}
+
+.product-admin-info h3 {
+    color: #20B2AA;
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+}
+
+.product-admin-category {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.product-admin-price {
+    color: #FFD700;
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.product-admin-description {
+    color: #666;
+    line-height: 1.5;
+    font-size: 0.9rem;
+}
+
+.product-admin-actions {
+    display: flex;
+    gap: 0.5rem;
+    padding: 1rem 1.5rem;
+    background: #f8f9fa;
+    border-top: 1px solid #e0e0e0;
+}
+
+.btn-admin-view, .btn-admin-edit, .btn-admin-delete {
+    flex: 1;
+    padding: 0.8rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.btn-admin-view {
+    background: #17a2b8;
+    color: white;
+}
+
+.btn-admin-view:hover {
+    background: #138496;
+}
+
+.btn-admin-edit {
+    background: #28a745;
+    color: white;
+}
+
+.btn-admin-edit:hover {
+    background: #218838;
+}
+
+.btn-admin-delete {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-admin-delete:hover {
+    background: #c82333;
+}
+
+.empty-state-admin {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+}
+
+.empty-state-admin i {
+    font-size: 4rem;
+    color: #20B2AA;
+    margin-bottom: 1rem;
+}
+
+.empty-state-admin h3 {
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.empty-state-admin p {
+    color: #666;
+    margin-bottom: 2rem;
 }
 
 @media (max-width: 768px) {
-    table {
-        font-size: 0.8rem;
-    }
-    
-    th, td {
-        padding: 0.5rem !important;
-    }
-    
-    .admin-nav .container {
+    .admin-header {
         flex-direction: column;
         gap: 1rem;
+        text-align: center;
     }
     
-    .admin-nav .nav-links {
-        flex-wrap: wrap;
-        justify-content: center;
+    .products-admin-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .product-admin-actions {
+        flex-direction: column;
     }
 }
 </style>

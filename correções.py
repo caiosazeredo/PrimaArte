@@ -1,885 +1,1495 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-🎨 PRIMA ARTE - SCRIPT DE ATUALIZAÇÃO COMPLETO
-==============================================
-Aplica todas as correções solicitadas de uma vez
+🎨 PRIMA ARTE - SISTEMA DE EDIÇÃO VISUAL
+========================================
+- Sistema no-code para editar página principal
+- Sistema avançado de edição de anúncios  
+- Palmeiras no hero section
+- Correção de templates admin
 """
 
 import os
 import re
+import json
 
-def create_slug_function():
-    """Função para criar slugs amigáveis"""
-    return '''
-def create_slug(text):
-    """Cria slug amigável para URL"""
-    import re
-    import unicodedata
+def aplicar_sistema_edicao_completo():
+    """Aplica sistema de edição visual completo"""
+    print("🎨 " + "="*60)
+    print("   PRIMA ARTE - SISTEMA DE EDIÇÃO VISUAL")
+    print("="*60)
+    print()
     
-    # Remove acentos
-    text = unicodedata.normalize('NFD', text)
-    text = ''.join(c for c in text if unicodedata.category(c) != 'Mn')
+    # 1. Corrigir templates admin
+    corrigir_templates_admin()
     
-    # Converte para minúsculas e substitui espaços e caracteres especiais por hífen
-    text = re.sub(r'[^\w\s-]', '', text.lower())
-    text = re.sub(r'[-\s]+', '-', text)
-    text = text.strip('-')
+    # 2. Adicionar palmeiras ao hero
+    adicionar_palmeiras_hero()
     
-    return text
+    # 3. Criar sistema de edição da página principal
+    criar_editor_pagina_principal()
+    
+    # 4. Melhorar sistema de edição de anúncios
+    melhorar_editor_anuncios()
+    
+    # 5. Criar rotas do editor
+    criar_rotas_editor()
+    
+    print()
+    print("🎊 " + "="*60)
+    print("   ✅ SISTEMA DE EDIÇÃO VISUAL COMPLETO!")
+    print("="*60)
+    print()
+    print("🚀 Funcionalidades criadas:")
+    print("   🎨 Editor visual da página principal")
+    print("   📋 Editor avançado de anúncios")
+    print("   🌴 Palmeiras no hero section")
+    print("   🔧 Templates admin corrigidos")
+    print("   ⚙️ Configurações salvas em JSON")
+    print()
 
-@app.template_filter('slug')
-def slug_filter(text):
-    """Filtro para criar slugs"""
-    return create_slug(text)
-'''
+def corrigir_templates_admin():
+    """Corrige templates admin que usam product_id"""
+    print("🔧 Corrigindo templates admin...")
+    
+    # Corrigir admin/products.html
+    admin_products_content = '''{% extends "base.html" %}
 
-def update_app_py():
-    """Atualiza o arquivo app.py com todas as correções"""
-    
-    # Lê o arquivo atual
-    with open('app.py', 'r', encoding='utf-8') as f:
-        content = f.read()
-    
-    # Adiciona import urllib.parse se não existir
-    if 'import urllib.parse' not in content:
-        content = content.replace('import uuid', 'import uuid\nimport urllib.parse')
-    
-    # Adiciona função create_slug após os imports
-    slug_function = create_slug_function()
-    if 'def create_slug(' not in content:
-        # Encontra onde inserir (após as configurações)
-        insert_pos = content.find('DATA_FILE = \'data.json\'')
-        if insert_pos != -1:
-            insert_pos = content.find('\n', insert_pos) + 1
-            content = content[:insert_pos] + slug_function + '\n' + content[insert_pos:]
-    
-    # Substitui a função cart
-    cart_function = '''@app.route('/carrinho')
-def cart():
-    """Página do carrinho"""
-    cart_items = session.get('cart', [])
-    data = load_data()
-    
-    # Busca detalhes dos produtos no carrinho
-    detailed_cart = []
-    total = 0
-    
-    for item in cart_items:
-        product = next((p for p in data['products'] if p['id'] == item['product_id']), None)
-        if product:
-            item_total = product['price'] * item['quantity']
-            detailed_cart.append({
-                'id': item['product_id'],
-                'name': product['name'],
-                'price': product['price'],
-                'quantity': item['quantity'],
-                'total': item_total,
-                'images': product.get('images', []),
-                'description': item.get('description', '')
-            })
-            total += item_total
-    
-    return render_template('cart.html', cart_items=detailed_cart, total=total)'''
-    
-    # Substitui função cart existente
-    cart_pattern = r'@app\.route\(\'/carrinho\'\).*?return render_template\(\'cart\.html\'.*?\)'
-    content = re.sub(cart_pattern, cart_function, content, flags=re.DOTALL)
-    
-    # Substitui a rota do produto
-    product_function = '''@app.route('/produto/<product_slug>')
-def product_detail(product_slug):
-    """Detalhes do produto com slug amigável"""
-    data = load_data()
-    
-    # Primeiro tenta encontrar por slug, depois por ID para compatibilidade
-    product = None
-    for p in data['products']:
-        product_slug_generated = create_slug(p['name'])
-        if product_slug_generated == product_slug or p['id'] == product_slug:
-            product = p
-            break
-    
-    if not product:
-        flash('Produto não encontrado!', 'error')
-        return redirect(url_for('products'))
-    
-    return render_template('product.html', product=product)'''
-    
-    # Substitui função product_detail existente
-    product_pattern = r'@app\.route\(\'/produto/<.*?>\'\).*?return render_template\(\'product\.html\'.*?\)'
-    content = re.sub(product_pattern, product_function, content, flags=re.DOTALL)
-    
-    # Substitui a função checkout para corrigir WhatsApp
-    checkout_function = '''@app.route('/finalizar-pedido')
-def checkout():
-    """Redireciona para WhatsApp com detalhes do pedido"""
-    cart_items = session.get('cart', [])
-    if not cart_items:
-        flash('Seu carrinho está vazio!', 'error')
-        return redirect(url_for('cart'))
-    
-    data = load_data()
-    
-    # Monta mensagem para WhatsApp (SEM escape de caracteres)
-    message = "*🎨 NOVO PEDIDO - PRIMA ARTE*\\n\\n"
-    total = 0
-    
-    for item in cart_items:
-        product = next((p for p in data['products'] if p['id'] == item['product_id']), None)
-        if product:
-            item_total = product['price'] * item['quantity']
-            total += item_total
-            
-            message += f"📦 *{product['name']}*\\n"
-            message += f"   Quantidade: {item['quantity']}\\n"
-            message += f"   Preço: R$ {product['price']:.2f}\\n"
-            if item.get('description'):
-                message += f"   Obs: {item['description']}\\n"
-            message += f"   Subtotal: R$ {item_total:.2f}\\n\\n"
-    
-    message += f"💰 *TOTAL: R$ {total:.2f}*\\n\\n"
-    message += "Olá! Gostaria de finalizar este pedido! 😊"
-    
-    # URL do WhatsApp com encoding correto
-    whatsapp_url = f"https://wa.me/{WHATSAPP_NUMBER.replace('+', '').replace(' ', '')}?text={urllib.parse.quote(message)}"
-    
-    # Limpa carrinho após enviar
-    session['cart'] = []
-    
-    return redirect(whatsapp_url)'''
-    
-    # Substitui função checkout existente
-    checkout_pattern = r'@app\.route\(\'/finalizar-pedido\'\).*?return redirect\(whatsapp_url\)'
-    content = re.sub(checkout_pattern, checkout_function, content, flags=re.DOTALL)
-    
-    # Salva o arquivo atualizado
-    with open('app.py', 'w', encoding='utf-8') as f:
-        f.write(content)
-    
-    print("✅ app.py atualizado com sucesso!")
-
-def create_products_html():
-    """Cria o arquivo products.html completo"""
-    content = '''{% extends "base.html" %}
-
-{% block title %}Produtos - Prima Arte{% endblock %}
+{% block title %}Gerenciar Produtos - Prima Arte Admin{% endblock %}
 
 {% block content %}
-<section class="section">
+<section class="admin-section">
     <div class="container">
-        <div class="section-header">
-            <h1 class="section-title">Nossos Produtos</h1>
-            <p class="section-subtitle">Artesanato feito à mão com muito amor e dedicação</p>
+        <div class="admin-header">
+            <h1 class="admin-title">
+                <i class="fas fa-box-open"></i>
+                Gerenciar Produtos
+            </h1>
+            <a href="{{ url_for('admin_product_new') }}" class="btn-admin-primary">
+                <i class="fas fa-plus"></i>
+                Novo Produto
+            </a>
         </div>
         
-        <!-- Filtros -->
-        <div style="text-align: center; margin-bottom: 2rem;">
-            <div style="display: inline-flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
-                <a href="{{ url_for('products') }}" class="filter-btn {% if not current_category %}active{% endif %}">
-                    <i class="fas fa-th-large"></i> Todos
-                </a>
-                <a href="{{ url_for('products', categoria='costura') }}" class="filter-btn {% if current_category == 'costura' %}active{% endif %}">
-                    <i class="fas fa-cut"></i> Costura
-                </a>
-                <a href="{{ url_for('products', categoria='decoracao') }}" class="filter-btn {% if current_category == 'decoracao' %}active{% endif %}">
-                    <i class="fas fa-home"></i> Decoração
-                </a>
-                <a href="{{ url_for('products', categoria='acessorios') }}" class="filter-btn {% if current_category == 'acessorios' %}active{% endif %}">
-                    <i class="fas fa-gem"></i> Acessórios
-                </a>
-                <a href="{{ url_for('products', categoria='personalizados') }}" class="filter-btn {% if current_category == 'personalizados' %}active{% endif %}">
-                    <i class="fas fa-magic"></i> Personalizados
-                </a>
-            </div>
-        </div>
-        
-        {% if products %}
-        <div class="products-grid">
+        <div class="products-admin-grid">
             {% for product in products %}
-            <div class="product-card" data-category="{{ product.category }}">
-                {% if product.images and product.images|length > 0 %}
-                <img src="{{ product.images[0] }}" alt="{{ product.name }}" class="product-image">
-                {% else %}
-                <div class="product-image no-image">
-                    <i class="fas fa-image"></i>
-                </div>
-                {% endif %}
-                
-                {% if product.featured %}
-                <div class="featured-badge">
-                    <i class="fas fa-star"></i> Destaque
-                </div>
-                {% endif %}
-                
-                <div class="product-info">
-                    <h3 class="product-title">{{ product.name }}</h3>
-                    <p class="product-description">{{ product.description[:100] }}{% if product.description|length > 100 %}...{% endif %}</p>
-                    <div class="product-price">R$ {{ "%.2f"|format(product.price) }}</div>
-                    
-                    <div class="product-actions">
-                        <a href="{{ url_for('product_detail', product_slug=product.name|slug) }}" class="btn-product-view">
-                            <i class="fas fa-eye"></i> Ver Detalhes
-                        </a>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-        {% else %}
-        <div class="empty-state">
-            <i class="fas fa-box-open"></i>
-            <h3>
-                {% if current_category %}
-                    Nenhum produto encontrado nesta categoria
-                {% else %}
-                    Nenhum produto cadastrado ainda
-                {% endif %}
-            </h3>
-            <p>
-                {% if current_category %}
-                    Tente uma categoria diferente ou entre em contato conosco!
-                {% else %}
-                    Em breve teremos produtos incríveis aqui!
-                {% endif %}
-            </p>
-            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-top: 2rem;">
-                {% if current_category %}
-                <a href="{{ url_for('products') }}" class="btn-primary-large">
-                    <i class="fas fa-th-large"></i> Ver Todos
-                </a>
-                {% endif %}
-                <a href="https://wa.me/5521973108293" target="_blank" class="btn-secondary-large">
-                    <i class="fab fa-whatsapp"></i> Fale Conosco
-                </a>
-            </div>
-        </div>
-        {% endif %}
-    </div>
-</section>
-
-<style>
-/* Filtros */
-.filter-btn {
-    background: rgba(212, 175, 55, 0.1);
-    color: var(--primary-gold);
-    border: 2px solid rgba(212, 175, 55, 0.2);
-    padding: 0.75rem 1.5rem;
-    border-radius: 25px;
-    text-decoration: none;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.filter-btn:hover {
-    background: rgba(212, 175, 55, 0.2);
-    border-color: rgba(212, 175, 55, 0.4);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
-}
-
-.filter-btn.active {
-    background: var(--gradient-main);
-    color: white;
-    border-color: transparent;
-    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
-}
-
-/* Botões dos produtos */
-.btn-product-view {
-    background: rgba(38, 198, 218, 0.1);
-    color: var(--primary-teal);
-    border: 2px solid rgba(38, 198, 218, 0.2);
-    padding: 0.75rem 1.5rem;
-    border-radius: 20px;
-    text-decoration: none;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    width: 100%;
-    justify-content: center;
-}
-
-.btn-product-view:hover {
-    background: rgba(38, 198, 218, 0.2);
-    border-color: rgba(38, 198, 218, 0.4);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(38, 198, 218, 0.2);
-}
-
-@media (max-width: 768px) {
-    .filter-btn {
-        padding: 0.5rem 1rem;
-        font-size: 0.9rem;
-    }
-}
-</style>
-{% endblock %}'''
-    
-    with open('templates/products.html', 'w', encoding='utf-8') as f:
-        f.write(content)
-    print("✅ templates/products.html criado!")
-
-def create_cart_html():
-    """Cria o arquivo cart.html completo"""
-    content = '''{% extends "base.html" %}
-
-{% block title %}Carrinho - Prima Arte{% endblock %}
-
-{% block content %}
-<section class="section">
-    <div class="container">
-        <div class="section-header">
-            <h1 class="section-title">Meu Carrinho</h1>
-            <p class="section-subtitle">Revise seus itens antes de finalizar o pedido</p>
-        </div>
-        
-        {% if cart_items %}
-        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
-            <!-- Itens do Carrinho -->
-            <div class="cart-container">
-                <h2 style="font-family: var(--font-heading); color: var(--dark-brown); margin-bottom: 1.5rem;">
-                    <i class="fas fa-shopping-cart"></i> Itens do Pedido
-                </h2>
-                
-                {% for item in cart_items %}
-                <div class="cart-item">
-                    {% if item.images and item.images|length > 0 %}
-                    <img src="{{ item.images[0] }}" alt="{{ item.name }}" class="cart-item-image">
+            <div class="product-admin-card">
+                <div class="product-admin-image">
+                    {% if product.images and product.images|length > 0 %}
+                    <img src="{{ product.images[0] }}" alt="{{ product.name }}">
                     {% else %}
-                    <div class="cart-item-image no-image">
+                    <div class="no-image-admin">
                         <i class="fas fa-image"></i>
                     </div>
                     {% endif %}
                     
-                    <div class="cart-item-info">
-                        <h3 class="cart-item-name">{{ item.name }}</h3>
-                        <p style="color: var(--gray); font-size: 0.9rem; margin-bottom: 0.5rem;">
-                            Quantidade: <strong>{{ item.quantity }}</strong>
-                        </p>
-                        {% if item.description %}
-                        <p style="color: var(--gray); font-size: 0.8rem; margin-bottom: 0.5rem;">
-                            <strong>Obs:</strong> {{ item.description }}
-                        </p>
-                        {% endif %}
-                        <div class="cart-item-price">R$ {{ "%.2f"|format(item.price) }} cada</div>
+                    {% if product.featured %}
+                    <div class="featured-badge-admin">
+                        <i class="fas fa-star"></i>
+                        Destaque
                     </div>
-                    
-                    <div style="text-align: right;">
-                        <div style="font-size: 1.2rem; font-weight: 700; color: var(--primary-pink); margin-bottom: 1rem;">
-                            R$ {{ "%.2f"|format(item.total) }}
-                        </div>
-                        <a href="{{ url_for('remove_from_cart', product_id=item.id) }}" 
-                           class="remove-btn" 
-                           onclick="return confirm('Remover este item do carrinho?')">
-                            <i class="fas fa-trash"></i>
-                        </a>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-            
-            <!-- Resumo do Pedido -->
-            <div class="cart-summary">
-                <h2 style="font-family: var(--font-heading); color: var(--dark-brown); margin-bottom: 1.5rem;">
-                    <i class="fas fa-calculator"></i> Resumo do Pedido
-                </h2>
-                
-                <div style="background: white; padding: 1.5rem; border-radius: 10px; margin-bottom: 1.5rem;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--primary-beige);">
-                        <span>Subtotal:</span>
-                        <span>R$ {{ "%.2f"|format(total) }}</span>
-                    </div>
-                    
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
-                        <span style="color: var(--gray); font-size: 0.9rem;">
-                            <i class="fab fa-whatsapp"></i> Finalização via WhatsApp
-                        </span>
-                        <span style="color: var(--primary-teal); font-weight: 600;">GRÁTIS</span>
-                    </div>
-                    
-                    <hr style="border: none; border-top: 2px solid var(--primary-gold); margin: 1rem 0;">
-                    
-                    <div class="cart-total">
-                        <strong>TOTAL: R$ {{ "%.2f"|format(total) }}</strong>
-                    </div>
+                    {% endif %}
                 </div>
                 
-                <a href="{{ url_for('checkout') }}" class="btn-primary-large" style="width: 100%; margin-bottom: 1rem; text-align: center;">
-                    <i class="fab fa-whatsapp"></i>
-                    Finalizar via WhatsApp
-                </a>
+                <div class="product-admin-info">
+                    <h3>{{ product.name }}</h3>
+                    <p class="product-admin-category">{{ product.category|title }}</p>
+                    <p class="product-admin-price">R$ {{ "%.2f"|format(product.price) }}</p>
+                    <p class="product-admin-description">{{ product.description[:80] }}{% if product.description|length > 80 %}...{% endif %}</p>
+                </div>
                 
-                <a href="{{ url_for('products') }}" class="btn-secondary-large" style="width: 100%; text-align: center;">
-                    <i class="fas fa-arrow-left"></i>
-                    Continuar Comprando
-                </a>
-                
-                <div style="background: rgba(38, 198, 218, 0.1); padding: 1rem; border-radius: 10px; margin-top: 1.5rem; border-left: 4px solid var(--primary-teal);">
-                    <h4 style="color: var(--primary-teal); margin-bottom: 0.5rem;">
-                        <i class="fas fa-info-circle"></i> Como Funciona?
-                    </h4>
-                    <p style="font-size: 0.9rem; color: var(--gray); margin: 0; line-height: 1.4;">
-                        Ao finalizar, você será redirecionado para o WhatsApp com os detalhes do seu pedido. 
-                        Conversaremos sobre forma de pagamento e entrega!
-                    </p>
+                <div class="product-admin-actions">
+                    <a href="{{ url_for('product_detail', product_slug=product.name|slug) }}" 
+                       class="btn-admin-view" target="_blank" title="Ver no site">
+                        <i class="fas fa-eye"></i>
+                    </a>
+                    <a href="{{ url_for('admin_product_edit', product_id=product.id) }}" 
+                       class="btn-admin-edit" title="Editar">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                    <a href="{{ url_for('admin_product_delete', product_id=product.id) }}" 
+                       class="btn-admin-delete" title="Excluir"
+                       onclick="return confirm('Tem certeza que deseja excluir este produto?')">
+                        <i class="fas fa-trash"></i>
+                    </a>
                 </div>
             </div>
+            {% endfor %}
         </div>
-        {% else %}
-        <!-- Carrinho Vazio -->
-        <div class="empty-state">
-            <i class="fas fa-shopping-cart"></i>
-            <h3>Seu carrinho está vazio</h3>
-            <p>Que tal conhecer nossos produtos artesanais feitos com muito carinho?</p>
-            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-top: 2rem;">
-                <a href="{{ url_for('products') }}" class="btn-primary-large">
-                    <i class="fas fa-box-open"></i> Ver Produtos
-                </a>
-                <a href="https://wa.me/5521973108293" target="_blank" class="btn-secondary-large">
-                    <i class="fab fa-whatsapp"></i> Fale Conosco
-                </a>
-            </div>
+        
+        {% if not products %}
+        <div class="empty-state-admin">
+            <i class="fas fa-box-open"></i>
+            <h3>Nenhum produto cadastrado</h3>
+            <p>Comece criando seu primeiro produto!</p>
+            <a href="{{ url_for('admin_product_new') }}" class="btn-admin-primary">
+                <i class="fas fa-plus"></i>
+                Criar Primeiro Produto
+            </a>
         </div>
         {% endif %}
     </div>
 </section>
 
 <style>
+.admin-section {
+    padding: 2rem 0;
+    background: #f8f9fa;
+    min-height: 100vh;
+}
+
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+}
+
+.admin-title {
+    color: #20B2AA;
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.btn-admin-primary {
+    background: linear-gradient(135deg, #20B2AA, #87CEEB);
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn-admin-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(32, 178, 170, 0.3);
+}
+
+.products-admin-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.product-admin-card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.product-admin-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 35px rgba(0,0,0,0.15);
+}
+
+.product-admin-image {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+}
+
+.product-admin-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.no-image-admin {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #87CEEB, #4682B4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 3rem;
+}
+
+.featured-badge-admin {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #FFD700;
+    color: #4682B4;
+    padding: 0.5rem 1rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.product-admin-info {
+    padding: 1.5rem;
+}
+
+.product-admin-info h3 {
+    color: #20B2AA;
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+}
+
+.product-admin-category {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.product-admin-price {
+    color: #FFD700;
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.product-admin-description {
+    color: #666;
+    line-height: 1.5;
+    font-size: 0.9rem;
+}
+
+.product-admin-actions {
+    display: flex;
+    gap: 0.5rem;
+    padding: 1rem 1.5rem;
+    background: #f8f9fa;
+    border-top: 1px solid #e0e0e0;
+}
+
+.btn-admin-view, .btn-admin-edit, .btn-admin-delete {
+    flex: 1;
+    padding: 0.8rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.btn-admin-view {
+    background: #17a2b8;
+    color: white;
+}
+
+.btn-admin-view:hover {
+    background: #138496;
+}
+
+.btn-admin-edit {
+    background: #28a745;
+    color: white;
+}
+
+.btn-admin-edit:hover {
+    background: #218838;
+}
+
+.btn-admin-delete {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-admin-delete:hover {
+    background: #c82333;
+}
+
+.empty-state-admin {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+}
+
+.empty-state-admin i {
+    font-size: 4rem;
+    color: #20B2AA;
+    margin-bottom: 1rem;
+}
+
+.empty-state-admin h3 {
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.empty-state-admin p {
+    color: #666;
+    margin-bottom: 2rem;
+}
+
 @media (max-width: 768px) {
-    .container > div:first-child {
-        grid-template-columns: 1fr !important;
-    }
-    
-    .cart-summary {
-        order: -1;
-    }
-    
-    .cart-item {
+    .admin-header {
         flex-direction: column;
-        text-align: center;
         gap: 1rem;
+        text-align: center;
     }
     
-    .cart-item > div:last-child {
-        text-align: center;
+    .products-admin-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .product-admin-actions {
+        flex-direction: column;
     }
 }
 </style>
 {% endblock %}'''
     
-    with open('templates/cart.html', 'w', encoding='utf-8') as f:
-        f.write(content)
-    print("✅ templates/cart.html criado!")
+    os.makedirs('templates/admin', exist_ok=True)
+    with open('templates/admin/products.html', 'w', encoding='utf-8') as f:
+        f.write(admin_products_content)
+    
+    print("✅ Templates admin corrigidos!")
 
-def create_product_html():
-    """Cria o arquivo product.html completo com zoom e modal"""
-    content = '''{% extends "base.html" %}
+def adicionar_palmeiras_hero():
+    """Adiciona palmeiras ao hero section"""
+    print("🌴 Adicionando palmeiras ao hero...")
+    
+    # Ler index.html atual e adicionar palmeiras
+    try:
+        with open('templates/index.html', 'r', encoding='utf-8') as f:
+            content = f.read()
+        
+        # Adicionar mais elementos de praia incluindo palmeiras
+        palmeiras_elements = '''            <div class="beach-element" style="--delay: 0s;"><i class="fas fa-umbrella-beach"></i></div>
+            <div class="beach-element" style="--delay: 1s;"><i class="fas fa-sun"></i></div>
+            <div class="beach-element palm-tree" style="--delay: 2s;"><i class="fas fa-tree"></i></div>
+            <div class="beach-element" style="--delay: 3s;"><i class="fas fa-shell"></i></div>
+            <div class="beach-element palm-tree" style="--delay: 4s;"><i class="fas fa-seedling"></i></div>
+            <div class="beach-element" style="--delay: 5s;"><i class="fas fa-starfish"></i></div>
+            <div class="beach-element palm-tree-large" style="--delay: 6s;">🌴</div>
+            <div class="beach-element palm-tree-large" style="--delay: 7s;">🥥</div>'''
+        
+        # Substituir os elementos existentes se houver
+        beach_pattern = r'<div class="beach-element".*?</div>\s*<div class="beach-element".*?</div>\s*<div class="beach-element".*?</div>\s*<div class="beach-element".*?</div>\s*<div class="beach-element".*?</div>'
+        if re.search(beach_pattern, content, re.DOTALL):
+            content = re.sub(beach_pattern, palmeiras_elements, content, flags=re.DOTALL)
+        else:
+            # Se não houver elementos existentes, adicionar antes do fechamento da seção hero
+            hero_end = content.find('</section>')
+            if hero_end != -1:
+                content = content[:hero_end] + palmeiras_elements + '\n        ' + content[hero_end:]
+        
+        # Adicionar CSS para palmeiras
+        palmeiras_css = '''
+/* Palmeiras especiais */
+.palm-tree {
+    color: rgba(34, 139, 34, 0.3) !important;
+    font-size: 3rem !important;
+}
 
-{% block title %}{{ product.name }} - Prima Arte{% endblock %}
+.palm-tree-large {
+    font-size: 4rem !important;
+    color: rgba(34, 139, 34, 0.4);
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    animation: palmSway 12s ease-in-out infinite !important;
+}
+
+.palm-tree-large:nth-child(7) { top: 10%; right: 5%; }
+.palm-tree-large:nth-child(8) { top: 70%; left: 3%; }
+
+@keyframes palmSway {
+    0%, 100% { transform: translateY(0) rotate(-2deg); }
+    25% { transform: translateY(-10px) rotate(2deg); }
+    50% { transform: translateY(-5px) rotate(-1deg); }
+    75% { transform: translateY(-15px) rotate(3deg); }
+}
+
+/* Mais elementos de praia */
+.beach-element:nth-child(6) { bottom: 35%; right: 8%; }
+.beach-element:nth-child(7) { top: 30%; left: 12%; }
+.beach-element:nth-child(8) { bottom: 15%; right: 20%; }'''
+        
+        # Adicionar CSS antes do fechamento da tag style
+        if '</style>' in content:
+            content = content.replace('</style>', palmeiras_css + '\n</style>')
+        
+        with open('templates/index.html', 'w', encoding='utf-8') as f:
+            f.write(content)
+        
+        print("✅ Palmeiras adicionadas ao hero!")
+        
+    except Exception as e:
+        print(f"⚠️ Erro ao adicionar palmeiras: {e}")
+
+def criar_editor_pagina_principal():
+    """Cria editor visual da página principal"""
+    print("🎨 Criando editor da página principal...")
+    
+    editor_content = '''{% extends "base.html" %}
+
+{% block title %}Editor da Página Principal - Prima Arte Admin{% endblock %}
 
 {% block content %}
-<section class="section">
-    <div class="container">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start;">
-            <!-- Galeria de Imagens -->
-            <div>
-                {% if product.images and product.images|length > 0 %}
-                <div class="product-gallery">
-                    <!-- Imagem Principal -->
-                    <div class="main-image">
-                        <img id="mainImage" src="{{ product.images[0] }}" alt="{{ product.name }}" 
-                             style="width: 100%; height: 400px; object-fit: cover; border-radius: 15px; box-shadow: var(--shadow-medium); cursor: zoom-in; transition: transform 0.3s ease;"
-                             onclick="openImageModal('{{ product.images[0] }}')"
-                             onmouseover="this.style.transform='scale(1.05)'"
-                             onmouseout="this.style.transform='scale(1)'">
-                    </div>
-                    
-                    <!-- Miniaturas -->
-                    {% if product.images|length > 1 %}
-                    <div class="image-thumbnails" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 0.5rem; margin-top: 1rem;">
-                        {% for image in product.images %}
-                        <img src="{{ image }}" alt="{{ product.name }}" 
-                             onclick="changeMainImage('{{ image }}')"
-                             style="width: 100%; height: 80px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 2px solid transparent; transition: all 0.3s ease;"
-                             onmouseover="this.style.borderColor='var(--primary-gold)'; this.style.transform='scale(1.1)'"
-                             onmouseout="this.style.borderColor='transparent'; this.style.transform='scale(1)'">
-                        {% endfor %}
-                    </div>
-                    {% endif %}
+<section class="visual-editor">
+    <div class="editor-container">
+        <!-- Painel de Controle -->
+        <div class="editor-panel">
+            <div class="panel-header">
+                <h2><i class="fas fa-paint-brush"></i> Editor Visual</h2>
+                <div class="panel-actions">
+                    <button class="btn-preview" onclick="togglePreview()">
+                        <i class="fas fa-eye"></i> Preview
+                    </button>
+                    <button class="btn-save" onclick="saveChanges()">
+                        <i class="fas fa-save"></i> Salvar
+                    </button>
                 </div>
-                {% else %}
-                <div style="width: 100%; height: 400px; background: var(--gradient-main); border-radius: 15px; display: flex; align-items: center; justify-content: center; color: white; font-size: 6rem; box-shadow: var(--shadow-medium);">
-                    <i class="fas fa-image"></i>
-                </div>
-                {% endif %}
             </div>
             
-            <!-- Detalhes do Produto -->
-            <div>
-                <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: var(--shadow-soft);">
-                    {% if product.featured %}
-                    <div style="background: var(--gradient-secondary); color: white; padding: 0.5rem 1rem; border-radius: 15px; display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; font-size: 0.9rem; font-weight: 600;">
-                        <i class="fas fa-star"></i> Produto em Destaque
+            <!-- Configurações do Hero -->
+            <div class="editor-section">
+                <h3><i class="fas fa-image"></i> Hero Section</h3>
+                
+                <div class="control-group">
+                    <label for="heroBackground">Cor de Fundo</label>
+                    <input type="color" id="heroBackground" value="#87CEEB" onchange="updateHero()">
+                </div>
+                
+                <div class="control-group">
+                    <label for="heroGradient">Gradiente Secundário</label>
+                    <input type="color" id="heroGradient" value="#20B2AA" onchange="updateHero()">
+                </div>
+                
+                <div class="control-group">
+                    <label for="heroTitle">Título Principal</label>
+                    <input type="text" id="heroTitle" value="Artesanato Único" onchange="updateHero()">
+                </div>
+                
+                <div class="control-group">
+                    <label for="heroSubtitle">Subtítulo</label>
+                    <input type="text" id="heroSubtitle" value="História Especial" onchange="updateHero()">
+                </div>
+                
+                <div class="control-group">
+                    <label for="heroDescription">Descrição</label>
+                    <textarea id="heroDescription" onchange="updateHero()">Cada peça é cuidadosamente criada à mão, combinando técnicas tradicionais com o charme carioca.</textarea>
+                </div>
+                
+                <div class="control-group">
+                    <label for="logoSize">Tamanho da Logo</label>
+                    <input type="range" id="logoSize" min="200" max="400" value="280" onchange="updateHero()">
+                    <span class="range-value">280px</span>
+                </div>
+            </div>
+            
+            <!-- Configurações de Cores -->
+            <div class="editor-section">
+                <h3><i class="fas fa-palette"></i> Paleta de Cores</h3>
+                
+                <div class="color-palette">
+                    <div class="color-item">
+                        <label>Cor Primária</label>
+                        <input type="color" id="primaryColor" value="#20B2AA" onchange="updateColors()">
                     </div>
-                    {% endif %}
-                    
-                    <h1 style="font-family: var(--font-heading); font-size: 2.5rem; color: var(--dark-brown); margin-bottom: 1rem;">
-                        {{ product.name }}
-                    </h1>
-                    
-                    <div style="background: var(--gradient-main); color: white; padding: 1rem; border-radius: 10px; text-align: center; margin-bottom: 2rem;">
-                        <span style="font-size: 2rem; font-weight: 700;">R$ {{ "%.2f"|format(product.price) }}</span>
+                    <div class="color-item">
+                        <label>Cor Secundária</label>
+                        <input type="color" id="secondaryColor" value="#87CEEB" onchange="updateColors()">
                     </div>
-                    
-                    <div style="margin-bottom: 2rem;">
-                        <h3 style="font-family: var(--font-heading); color: var(--dark-brown); margin-bottom: 1rem;">
-                            <i class="fas fa-info-circle"></i> Descrição
-                        </h3>
-                        <p style="line-height: 1.6; color: var(--gray);">{{ product.description }}</p>
+                    <div class="color-item">
+                        <label>Cor de Destaque</label>
+                        <input type="color" id="accentColor" value="#FFD700" onchange="updateColors()">
                     </div>
-                    
-                    <div style="margin-bottom: 2rem;">
-                        <h3 style="font-family: var(--font-heading); color: var(--dark-brown); margin-bottom: 1rem;">
-                            <i class="fas fa-tag"></i> Categoria
-                        </h3>
-                        <span style="background: var(--primary-beige); color: var(--dark-brown); padding: 0.5rem 1rem; border-radius: 15px; font-weight: 600;">
-                            {{ product.category.title() }}
-                        </span>
+                    <div class="color-item">
+                        <label>Texto Principal</label>
+                        <input type="color" id="textColor" value="#333333" onchange="updateColors()">
                     </div>
-                    
-                    <!-- Formulário Adicionar ao Carrinho -->
-                    <form action="{{ url_for('add_to_cart') }}" method="post" style="margin-bottom: 2rem;">
-                        <input type="hidden" name="product_id" value="{{ product.id }}">
-                        
-                        <div style="margin-bottom: 1rem;">
-                            <label style="display: block; font-weight: 600; color: var(--dark-brown); margin-bottom: 0.5rem;">
-                                <i class="fas fa-sort-numeric-up"></i> Quantidade:
-                            </label>
-                            <input type="number" name="quantity" value="1" min="1" max="10" 
-                                   style="width: 100px; padding: 0.5rem; border: 2px solid var(--primary-beige); border-radius: 10px; font-size: 1rem;">
-                        </div>
-                        
-                        <div style="margin-bottom: 1rem;">
-                            <label style="display: block; font-weight: 600; color: var(--dark-brown); margin-bottom: 0.5rem;">
-                                <i class="fas fa-comment"></i> Observações (opcional):
-                            </label>
-                            <textarea name="description" rows="3" placeholder="Cor preferida, tamanho, personalizações..."
-                                      style="width: 100%; padding: 0.75rem; border: 2px solid var(--primary-beige); border-radius: 10px; font-family: var(--font-body); resize: vertical;"></textarea>
-                        </div>
-                        
-                        <button type="submit" class="btn-primary-large add-to-cart-btn" style="width: 100%;">
-                            <i class="fas fa-shopping-cart"></i>
-                            Adicionar ao Carrinho
-                        </button>
-                    </form>
-                    
-                    <!-- Botões de Ação -->
-                    <div style="display: flex; gap: 1rem;">
-                        <a href="https://wa.me/5521973108293?text=Olá! Tenho interesse no produto: {{ product.name }}" 
-                           target="_blank" class="btn-secondary-large" style="flex: 1; text-align: center;">
-                            <i class="fab fa-whatsapp"></i>
-                            Falar no WhatsApp
-                        </a>
-                        <a href="{{ url_for('products') }}" class="btn-neutral" 
-                           style="padding: 1rem; border-radius: 25px; text-decoration: none; text-align: center; display: flex; align-items: center; justify-content: center;">
-                            <i class="fas fa-arrow-left"></i>
-                            Voltar
-                        </a>
-                    </div>
+                </div>
+            </div>
+            
+            <!-- Presets -->
+            <div class="editor-section">
+                <h3><i class="fas fa-magic"></i> Estilos Predefinidos</h3>
+                
+                <div class="preset-buttons">
+                    <button class="preset-btn" onclick="applyPreset('tropical')">
+                        🏝️ Tropical
+                    </button>
+                    <button class="preset-btn" onclick="applyPreset('ocean')">
+                        🌊 Oceano
+                    </button>
+                    <button class="preset-btn" onclick="applyPreset('sunset')">
+                        🌅 Pôr do Sol
+                    </button>
+                    <button class="preset-btn" onclick="applyPreset('vintage')">
+                        📷 Vintage
+                    </button>
                 </div>
             </div>
         </div>
         
-        <!-- Informações Adicionais -->
-        <div style="margin-top: 3rem;">
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
-                <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: var(--shadow-soft); text-align: center;">
-                    <i class="fas fa-hands" style="font-size: 3rem; color: var(--primary-gold); margin-bottom: 1rem;"></i>
-                    <h3 style="font-family: var(--font-heading); color: var(--dark-brown); margin-bottom: 1rem;">100% Artesanal</h3>
-                    <p style="color: var(--gray);">Cada peça é única e feita à mão com muito carinho e dedicação.</p>
+        <!-- Preview -->
+        <div class="editor-preview">
+            <div class="preview-header">
+                <h3><i class="fas fa-desktop"></i> Preview da Página</h3>
+                <div class="device-selector">
+                    <button class="device-btn active" data-device="desktop">
+                        <i class="fas fa-desktop"></i>
+                    </button>
+                    <button class="device-btn" data-device="tablet">
+                        <i class="fas fa-tablet-alt"></i>
+                    </button>
+                    <button class="device-btn" data-device="mobile">
+                        <i class="fas fa-mobile-alt"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="preview-container">
+                <iframe id="previewFrame" src="{{ url_for('index') }}?preview=1"></iframe>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+/* Editor Styles */
+.visual-editor {
+    background: #f5f5f5;
+    min-height: 100vh;
+    padding: 0;
+}
+
+.editor-container {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    height: 100vh;
+}
+
+.editor-panel {
+    background: white;
+    border-right: 1px solid #e0e0e0;
+    overflow-y: auto;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+}
+
+.panel-header {
+    background: linear-gradient(135deg, #20B2AA, #87CEEB);
+    color: white;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.panel-header h2 {
+    margin: 0;
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.panel-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-preview, .btn-save {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    transition: all 0.3s ease;
+}
+
+.btn-preview:hover, .btn-save:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.editor-section {
+    padding: 1.5rem;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.editor-section h3 {
+    color: #20B2AA;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.control-group {
+    margin-bottom: 1rem;
+}
+
+.control-group label {
+    display: block;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.3rem;
+    font-size: 0.9rem;
+}
+
+.control-group input,
+.control-group textarea {
+    width: 100%;
+    padding: 0.6rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 5px;
+    font-family: inherit;
+    transition: border-color 0.3s ease;
+}
+
+.control-group input:focus,
+.control-group textarea:focus {
+    border-color: #20B2AA;
+    outline: none;
+}
+
+.control-group textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+.control-group input[type="range"] {
+    margin-bottom: 0;
+}
+
+.range-value {
+    font-size: 0.85rem;
+    color: #666;
+    font-weight: 600;
+}
+
+/* Color Palette */
+.color-palette {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+}
+
+.color-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.color-item label {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.color-item input[type="color"] {
+    width: 100%;
+    height: 40px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Presets */
+.preset-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+}
+
+.preset-btn {
+    background: #f8f9fa;
+    border: 2px solid #e0e0e0;
+    padding: 0.8rem 0.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.preset-btn:hover {
+    border-color: #20B2AA;
+    background: #f0f8ff;
+}
+
+/* Preview */
+.editor-preview {
+    background: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+}
+
+.preview-header {
+    background: white;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.preview-header h3 {
+    margin: 0;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.device-selector {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.device-btn {
+    background: #f8f9fa;
+    border: 2px solid #e0e0e0;
+    color: #666;
+    padding: 0.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.device-btn.active,
+.device-btn:hover {
+    border-color: #20B2AA;
+    color: #20B2AA;
+    background: white;
+}
+
+.preview-container {
+    flex: 1;
+    padding: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: start;
+}
+
+#previewFrame {
+    width: 100%;
+    height: calc(100vh - 120px);
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background: white;
+    transition: all 0.3s ease;
+}
+
+/* Device Responsive */
+.device-desktop #previewFrame { width: 100%; }
+.device-tablet #previewFrame { width: 768px; max-width: 100%; }
+.device-mobile #previewFrame { width: 375px; max-width: 100%; }
+
+/* Mobile */
+@media (max-width: 1024px) {
+    .editor-container {
+        grid-template-columns: 1fr;
+        height: auto;
+    }
+    
+    .editor-panel {
+        position: relative;
+        max-height: 400px;
+    }
+    
+    .preview-container {
+        height: 600px;
+    }
+    
+    #previewFrame {
+        height: 100%;
+    }
+}
+</style>
+
+<script>
+// Editor Functions
+function updateHero() {
+    const background = document.getElementById('heroBackground').value;
+    const gradient = document.getElementById('heroGradient').value;
+    const title = document.getElementById('heroTitle').value;
+    const subtitle = document.getElementById('heroSubtitle').value;
+    const description = document.getElementById('heroDescription').value;
+    const logoSize = document.getElementById('logoSize').value;
+    
+    // Update range display
+    document.querySelector('#logoSize + .range-value').textContent = logoSize + 'px';
+    
+    // Apply changes to preview (via postMessage to iframe)
+    const changes = {
+        type: 'updateHero',
+        data: { background, gradient, title, subtitle, description, logoSize }
+    };
+    
+    document.getElementById('previewFrame').contentWindow.postMessage(changes, '*');
+}
+
+function updateColors() {
+    const colors = {
+        primary: document.getElementById('primaryColor').value,
+        secondary: document.getElementById('secondaryColor').value,
+        accent: document.getElementById('accentColor').value,
+        text: document.getElementById('textColor').value
+    };
+    
+    const changes = {
+        type: 'updateColors',
+        data: colors
+    };
+    
+    document.getElementById('previewFrame').contentWindow.postMessage(changes, '*');
+}
+
+function applyPreset(preset) {
+    const presets = {
+        tropical: {
+            heroBackground: '#00CED1',
+            heroGradient: '#20B2AA',
+            primaryColor: '#00CED1',
+            secondaryColor: '#FFD700',
+            accentColor: '#FF6347'
+        },
+        ocean: {
+            heroBackground: '#4682B4',
+            heroGradient: '#1E90FF',
+            primaryColor: '#4682B4',
+            secondaryColor: '#87CEEB',
+            accentColor: '#00BFFF'
+        },
+        sunset: {
+            heroBackground: '#FF6347',
+            heroGradient: '#FFD700',
+            primaryColor: '#FF6347',
+            secondaryColor: '#FFA500',
+            accentColor: '#FF4500'
+        },
+        vintage: {
+            heroBackground: '#8B4513',
+            heroGradient: '#CD853F',
+            primaryColor: '#8B4513',
+            secondaryColor: '#DEB887',
+            accentColor: '#DAA520'
+        }
+    };
+    
+    const preset_data = presets[preset];
+    if (preset_data) {
+        // Update controls
+        Object.keys(preset_data).forEach(key => {
+            const element = document.getElementById(key);
+            if (element) {
+                element.value = preset_data[key];
+            }
+        });
+        
+        // Apply changes
+        updateHero();
+        updateColors();
+    }
+}
+
+function togglePreview() {
+    const frame = document.getElementById('previewFrame');
+    const btn = document.querySelector('.btn-preview');
+    
+    if (frame.style.display === 'none') {
+        frame.style.display = 'block';
+        btn.innerHTML = '<i class="fas fa-eye"></i> Preview';
+    } else {
+        frame.style.display = 'none';
+        btn.innerHTML = '<i class="fas fa-eye-slash"></i> Mostrar';
+    }
+}
+
+function saveChanges() {
+    const settings = {
+        hero: {
+            background: document.getElementById('heroBackground').value,
+            gradient: document.getElementById('heroGradient').value,
+            title: document.getElementById('heroTitle').value,
+            subtitle: document.getElementById('heroSubtitle').value,
+            description: document.getElementById('heroDescription').value,
+            logoSize: document.getElementById('logoSize').value
+        },
+        colors: {
+            primary: document.getElementById('primaryColor').value,
+            secondary: document.getElementById('secondaryColor').value,
+            accent: document.getElementById('accentColor').value,
+            text: document.getElementById('textColor').value
+        }
+    };
+    
+    // Send to server
+    fetch('/admin/page-editor/save', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(settings)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('✅ Configurações salvas com sucesso!');
+        } else {
+            alert('❌ Erro ao salvar configurações');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('❌ Erro ao salvar configurações');
+    });
+}
+
+// Device selector
+document.addEventListener('DOMContentLoaded', function() {
+    const deviceBtns = document.querySelectorAll('.device-btn');
+    const container = document.querySelector('.preview-container');
+    
+    deviceBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            deviceBtns.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            
+            const device = this.dataset.device;
+            container.className = 'preview-container device-' + device;
+        });
+    });
+    
+    // Initialize
+    updateHero();
+    updateColors();
+});
+</script>
+{% endblock %}'''
+    
+    with open('templates/admin/page_editor.html', 'w', encoding='utf-8') as f:
+        f.write(editor_content)
+    
+    print("✅ Editor da página principal criado!")
+
+def melhorar_editor_anuncios():
+    """Melhora o sistema de edição de anúncios"""
+    print("📋 Melhorando editor de anúncios...")
+    
+    # Verificar se o arquivo existe
+    announcement_file = 'templates/admin/announcement_new.html'
+    if not os.path.exists(announcement_file):
+        print("⚠️ Arquivo announcement_new.html não encontrado, criando...")
+        # Criar o arquivo base primeiro
+        announcement_content = '''{% extends "base.html" %}
+
+{% block title %}Novo Anúncio - Prima Arte Admin{% endblock %}
+
+{% block content %}
+<section class="announcement-editor">
+    <div class="container">
+        <div class="editor-header">
+            <h1><i class="fas fa-bullhorn"></i> Editor de Anúncios</h1>
+            <a href="{{ url_for('admin_announcements') }}" class="btn-back">
+                <i class="fas fa-arrow-left"></i> Voltar
+            </a>
+        </div>
+        
+        <div class="editor-grid">
+            <div class="form-panel">
+                <div class="preset-section">
+                    <h4>📋 Modelos Prontos</h4>
+                    <div class="preset-buttons">
+                        <button type="button" onclick="applyAnnouncementPreset('sale')" class="preset-btn sale">
+                            🔥 Promoção
+                        </button>
+                        <button type="button" onclick="applyAnnouncementPreset('new')" class="preset-btn new">
+                            ✨ Novidade
+                        </button>
+                        <button type="button" onclick="applyAnnouncementPreset('event')" class="preset-btn event">
+                            📅 Evento
+                        </button>
+                        <button type="button" onclick="applyAnnouncementPreset('seasonal')" class="preset-btn seasonal">
+                            🍂 Sazonal
+                        </button>
+                    </div>
+                    
+                    <button type="button" onclick="exportAnnouncementCode()" class="btn-export">
+                        <i class="fas fa-code"></i> Exportar HTML
+                    </button>
                 </div>
                 
-                <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: var(--shadow-soft); text-align: center;">
-                    <i class="fas fa-heart" style="font-size: 3rem; color: var(--primary-pink); margin-bottom: 1rem;"></i>
-                    <h3 style="font-family: var(--font-heading); color: var(--dark-brown); margin-bottom: 1rem;">Feito com Amor</h3>
-                    <p style="color: var(--gray);">Todo nosso trabalho é feito com amor e atenção aos detalhes.</p>
-                </div>
-                
-                <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: var(--shadow-soft); text-align: center;">
-                    <i class="fab fa-whatsapp" style="font-size: 3rem; color: var(--primary-teal); margin-bottom: 1rem;"></i>
-                    <h3 style="font-family: var(--font-heading); color: var(--dark-brown); margin-bottom: 1rem;">Pedidos via WhatsApp</h3>
-                    <p style="color: var(--gray);">Finalize seu pedido facilmente pelo WhatsApp. Rápido e seguro!</p>
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="title">Título</label>
+                        <input type="text" id="title" name="title" required onchange="updatePreview()">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="content">Conteúdo</label>
+                        <textarea id="content" name="content" rows="4" required onchange="updatePreview()"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="bgColor">Cor de Fundo</label>
+                        <input type="color" id="bgColor" name="bgColor" value="#20B2AA" onchange="updatePreview()">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="textColor">Cor do Texto</label>
+                        <input type="color" id="textColor" name="textColor" value="#FFFFFF" onchange="updatePreview()">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="borderColor">Cor da Borda</label>
+                        <input type="color" id="borderColor" name="borderColor" value="#1E90FF" onchange="updatePreview()">
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn-save">
+                            <i class="fas fa-save"></i> Salvar Anúncio
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="preview-panel">
+                <h3><i class="fas fa-eye"></i> Preview</h3>
+                <div id="preview" class="announcement-preview">
+                    <div class="announcement-card">
+                        <h4 id="preview-title">Título do Anúncio</h4>
+                        <p id="preview-content">Conteúdo do anúncio aparecerá aqui...</p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Modal para Zoom da Imagem -->
-<div id="imageModal" class="image-modal" onclick="closeImageModal()">
-    <span class="close-modal">&times;</span>
-    <img class="modal-content" id="modalImage">
-    <div class="modal-caption" id="modalCaption"></div>
-</div>
-
-<script>
-function changeMainImage(imageUrl) {
-    document.getElementById('mainImage').src = imageUrl;
-    
-    // Remove seleção de todas as miniaturas
-    const thumbnails = document.querySelectorAll('.image-thumbnails img');
-    thumbnails.forEach(img => {
-        img.style.borderColor = 'transparent';
-    });
-    
-    // Adiciona seleção na miniatura clicada
-    event.target.style.borderColor = 'var(--primary-gold)';
-}
-
-function openImageModal(imageSrc) {
-    const modal = document.getElementById('imageModal');
-    const modalImg = document.getElementById('modalImage');
-    const caption = document.getElementById('modalCaption');
-    
-    modal.style.display = 'block';
-    modalImg.src = imageSrc;
-    caption.innerHTML = '{{ product.name }} - Clique para fechar';
-    
-    // Previne scroll do body
-    document.body.style.overflow = 'hidden';
-}
-
-function closeImageModal() {
-    const modal = document.getElementById('imageModal');
-    modal.style.display = 'none';
-    
-    // Restaura scroll do body
-    document.body.style.overflow = 'auto';
-}
-
-// Seleciona primeira miniatura por padrão
-document.addEventListener('DOMContentLoaded', function() {
-    const firstThumbnail = document.querySelector('.image-thumbnails img');
-    if (firstThumbnail) {
-        firstThumbnail.style.borderColor = 'var(--primary-gold)';
-    }
-    
-    // Fechar modal com ESC
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            closeImageModal();
-        }
-    });
-});
-</script>
-
 <style>
-/* Modal da Imagem */
-.image-modal {
-    display: none;
-    position: fixed;
-    z-index: 9999;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.9);
-    animation: fadeIn 0.3s ease;
+.announcement-editor {
+    padding: 2rem 0;
+    background: #f8f9fa;
+    min-height: 100vh;
 }
 
-.modal-content {
-    margin: auto;
-    display: block;
-    max-width: 90%;
-    max-height: 90%;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    border-radius: 10px;
-    box-shadow: 0 10px 50px rgba(0,0,0,0.5);
-    animation: zoomIn 0.3s ease;
+.editor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.1);
 }
 
-.close-modal {
-    position: absolute;
-    top: 20px;
-    right: 35px;
+.editor-header h1 {
+    color: #20B2AA;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-back {
+    background: #6c757d;
     color: white;
-    font-size: 40px;
-    font-weight: bold;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.editor-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.form-panel, .preview-panel {
+    background: white;
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+}
+
+.preset-section {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+}
+
+.preset-section h4 {
+    color: #20B2AA;
+    margin-bottom: 1rem;
+}
+
+.preset-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.preset-btn {
+    padding: 0.8rem;
+    border: none;
+    border-radius: 8px;
     cursor: pointer;
-    z-index: 10000;
+    font-weight: 600;
     transition: all 0.3s ease;
 }
 
-.close-modal:hover {
-    color: var(--primary-gold);
-    transform: scale(1.2);
+.preset-btn.sale { background: #FF4444; color: white; }
+.preset-btn.new { background: #4CAF50; color: white; }
+.preset-btn.event { background: #2196F3; color: white; }
+.preset-btn.seasonal { background: #FF9800; color: white; }
+
+.preset-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 
-.modal-caption {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
+.btn-export {
+    width: 100%;
+    background: #6c757d;
     color: white;
-    text-align: center;
-    background: rgba(0,0,0,0.7);
+    border: none;
+    padding: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn-export:hover {
+    background: #5a6268;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 0.8rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-family: inherit;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    border-color: #20B2AA;
+    outline: none;
+}
+
+.form-group textarea {
+    resize: vertical;
+}
+
+.form-group input[type="color"] {
+    height: 50px;
+    cursor: pointer;
+}
+
+.btn-save {
+    background: linear-gradient(135deg, #20B2AA, #87CEEB);
+    color: white;
+    border: none;
     padding: 1rem 2rem;
-    border-radius: 25px;
-    font-size: 1.1rem;
-    backdrop-filter: blur(10px);
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
 }
 
-@keyframes zoomIn {
-    from { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
-    to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+.btn-save:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(32, 178, 170, 0.3);
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+.preview-panel h3 {
+    color: #20B2AA;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
+.announcement-preview {
+    border: 2px dashed #e0e0e0;
+    border-radius: 10px;
+    padding: 1.5rem;
+    min-height: 200px;
+}
+
+.announcement-card {
+    padding: 2rem;
+    border-radius: 15px;
+    background: #20B2AA;
+    color: white;
+    border-left: 5px solid #1E90FF;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.announcement-card h4 {
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+}
+
+.announcement-card p {
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Responsive */
 @media (max-width: 768px) {
-    .container > div:first-child {
-        grid-template-columns: 1fr !important;
-        gap: 2rem !important;
+    .editor-header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
     }
     
-    .container > div:first-child > div:last-child {
-        order: -1;
+    .editor-grid {
+        grid-template-columns: 1fr;
     }
     
-    .image-thumbnails {
-        grid-template-columns: repeat(4, 1fr) !important;
-    }
-    
-    .modal-content {
-        max-width: 95%;
-        max-height: 80%;
-    }
-    
-    .close-modal {
-        top: 10px;
-        right: 20px;
-        font-size: 30px;
-    }
-    
-    .modal-caption {
-        bottom: 10px;
-        font-size: 0.9rem;
-        padding: 0.5rem 1rem;
+    .preset-buttons {
+        grid-template-columns: 1fr;
     }
 }
 </style>
+
+<script>
+// Enhanced Announcement Editor
+function applyAnnouncementPreset(preset) {
+    const presets = {
+        sale: {
+            bgColor: '#FF4444',
+            textColor: '#FFFFFF',
+            borderColor: '#CC0000',
+            title: '🔥 PROMOÇÃO ESPECIAL',
+            content: 'Descontos incríveis em produtos selecionados! Aproveite esta oportunidade única.'
+        },
+        new: {
+            bgColor: '#4CAF50',
+            textColor: '#FFFFFF', 
+            borderColor: '#388E3C',
+            title: '✨ NOVIDADE',
+            content: 'Confira nossos novos produtos chegando direto do ateliê!'
+        },
+        event: {
+            bgColor: '#2196F3',
+            textColor: '#FFFFFF',
+            borderColor: '#1976D2',
+            title: '📅 EVENTO ESPECIAL',
+            content: 'Participe do nosso evento exclusivo e ganhe brindes especiais!'
+        },
+        seasonal: {
+            bgColor: '#FF9800',
+            textColor: '#FFFFFF',
+            borderColor: '#F57C00',
+            title: '🍂 COLEÇÃO OUTONO',
+            content: 'Descubra nossa nova coleção inspirada nas cores do outono!'
+        }
+    };
+    
+    const data = presets[preset];
+    if (data) {
+        document.getElementById('title').value = data.title;
+        document.getElementById('content').value = data.content;
+        document.getElementById('bgColor').value = data.bgColor;
+        document.getElementById('textColor').value = data.textColor;
+        document.getElementById('borderColor').value = data.borderColor;
+        updatePreview();
+    }
+}
+
+function exportAnnouncementCode() {
+    const title = document.getElementById('title').value;
+    const content = document.getElementById('content').value;
+    const bgColor = document.getElementById('bgColor').value;
+    const textColor = document.getElementById('textColor').value;
+    const borderColor = document.getElementById('borderColor').value;
+    
+    const html = '<div class="custom-announcement" style="background: ' + bgColor + '; color: ' + textColor + '; border-left: 5px solid ' + borderColor + '; padding: 2rem; border-radius: 15px; margin: 1rem 0; box-shadow: 0 5px 15px rgba(0,0,0,0.1);"><h3 style="margin-bottom: 1rem; font-size: 1.3rem;">' + title + '</h3><p style="line-height: 1.6; margin: 0;">' + content + '</p></div>';
+    
+    // Copy to clipboard
+    navigator.clipboard.writeText(html).then(() => {
+        alert('✅ Código HTML copiado para a área de transferência!');
+    });
+}
+
+function updatePreview() {
+    const title = document.getElementById('title').value || 'Título do Anúncio';
+    const content = document.getElementById('content').value || 'Conteúdo do anúncio aparecerá aqui...';
+    const bgColor = document.getElementById('bgColor').value;
+    const textColor = document.getElementById('textColor').value;
+    const borderColor = document.getElementById('borderColor').value;
+    
+    const previewCard = document.querySelector('.announcement-card');
+    previewCard.style.background = bgColor;
+    previewCard.style.color = textColor;
+    previewCard.style.borderLeftColor = borderColor;
+    
+    document.getElementById('preview-title').textContent = title;
+    document.getElementById('preview-content').textContent = content;
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    updatePreview();
+});
+</script>
 {% endblock %}'''
-    
-    with open('templates/product.html', 'w', encoding='utf-8') as f:
-        f.write(content)
-    print("✅ templates/product.html criado!")
-
-def update_base_html():
-    """Atualiza o base.html para usar o logo.jpg"""
-    try:
-        with open('templates/base.html', 'r', encoding='utf-8') as f:
-            content = f.read()
         
-        # Substitui o logo por imagem se existe logo.jpg
-        if os.path.exists('static/images/logo.jpg'):
-            logo_old = '''<div class="logo-circle">
-                            <i class="fas fa-heart"></i>
-                        </div>'''
-            
-            logo_new = '''<div class="logo-circle">
-                            <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="Prima Arte" 
-                                 style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
-                        </div>'''
-            
-            content = content.replace(logo_old, logo_new)
-            
-            with open('templates/base.html', 'w', encoding='utf-8') as f:
-                f.write(content)
-            print("✅ Logo atualizado no base.html!")
+        os.makedirs('templates/admin', exist_ok=True)
+        with open(announcement_file, 'w', encoding='utf-8') as f:
+            f.write(announcement_content)
+    
+    print("✅ Editor de anúncios criado/melhorado!")
+
+def criar_rotas_editor():
+    """Cria as rotas necessárias para o editor"""
+    print("⚙️ Criando rotas do editor...")
+    
+    routes_code = '''
+# Novas rotas para o editor visual
+@app.route('/admin/page-editor')
+def admin_page_editor():
+    """Editor visual da página principal"""
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('admin_login'))
+    return render_template('admin/page_editor.html')
+
+@app.route('/admin/page-editor/save', methods=['POST'])
+def admin_page_editor_save():
+    """Salva configurações do editor"""
+    if not session.get('admin_logged_in'):
+        return jsonify({'success': False, 'error': 'Not authenticated'})
+    
+    try:
+        settings = request.get_json()
+        
+        # Salvar configurações em arquivo JSON
+        config_file = 'page_config.json'
+        with open(config_file, 'w', encoding='utf-8') as f:
+            json.dump(settings, f, ensure_ascii=False, indent=2)
+        
+        return jsonify({'success': True})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+
+@app.route('/admin/page-editor/load')
+def admin_page_editor_load():
+    """Carrega configurações do editor"""
+    if not session.get('admin_logged_in'):
+        return jsonify({'success': False, 'error': 'Not authenticated'})
+    
+    try:
+        config_file = 'page_config.json'
+        if os.path.exists(config_file):
+            with open(config_file, 'r', encoding='utf-8') as f:
+                settings = json.load(f)
         else:
-            print("⚠️  Logo.jpg não encontrado em static/images/")
+            # Configurações padrão
+            settings = {
+                "hero": {
+                    "background": "#87CEEB",
+                    "gradient": "#20B2AA",
+                    "title": "Artesanato Único",
+                    "subtitle": "História Especial",
+                    "description": "Cada peça é cuidadosamente criada à mão...",
+                    "logoSize": "280"
+                },
+                "colors": {
+                    "primary": "#20B2AA",
+                    "secondary": "#87CEEB", 
+                    "accent": "#FFD700",
+                    "text": "#333333"
+                }
+            }
+        
+        return jsonify({'success': True, 'data': settings})
     except Exception as e:
-        print(f"⚠️  Erro ao atualizar base.html: {e}")
+        return jsonify({'success': False, 'error': str(e)})
 
-def update_index_html():
-    """Atualiza index.html para usar slugs"""
-    try:
-        with open('templates/index.html', 'r', encoding='utf-8') as f:
+def add_editor_link_to_dashboard():
+    """Adiciona link do editor visual no dashboard"""
+    dashboard_file = 'templates/admin/dashboard.html'
+    if os.path.exists(dashboard_file):
+        with open(dashboard_file, 'r', encoding='utf-8') as f:
             content = f.read()
         
-        # Substitui os links para usar slugs
-        old_link = '''<a href="{{ url_for('product_detail', product_id=product.id) }}" class="btn btn-primary">'''
-        new_link = '''<a href="{{ url_for('product_detail', product_slug=product.name|slug) }}" class="btn-product-view">'''
+        # Adicionar card do editor visual
+        editor_card = """
+            <div class="dashboard-card">
+                <div class="card-icon">
+                    <i class="fas fa-paint-brush"></i>
+                </div>
+                <div class="card-content">
+                    <h3>Editor Visual</h3>
+                    <p>Personalize a aparência da página principal</p>
+                    <a href="{{ url_for('admin_page_editor') }}" class="card-link">
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>"""
         
-        content = content.replace(old_link, new_link)
+        # Inserir antes do fechamento da grid
+        if '</div><!-- dashboard-grid -->' in content:
+            content = content.replace('</div><!-- dashboard-grid -->', editor_card + '\\n            </div><!-- dashboard-grid -->')
+        elif '</div>' in content:
+            # Se não houver o comentário, inserir antes do último </div> da seção
+            last_div_pos = content.rfind('</div>')
+            if last_div_pos != -1:
+                content = content[:last_div_pos] + editor_card + '\\n        ' + content[last_div_pos:]
         
-        # Corrige o texto do botão se necessário
-        content = content.replace('Ver Detalhes</a>', '<i class="fas fa-eye"></i> Ver Detalhes</a>')
-        
-        with open('templates/index.html', 'w', encoding='utf-8') as f:
+        with open(dashboard_file, 'w', encoding='utf-8') as f:
             f.write(content)
-        print("✅ index.html atualizado!")
-    except Exception as e:
-        print(f"⚠️  Erro ao atualizar index.html: {e}")
 
-def main():
-    """Executa todas as atualizações"""
-    print("🎨 " + "="*60)
-    print("   PRIMA ARTE - APLICANDO TODAS AS CORREÇÕES")
-    print("="*60)
-    print()
+# Executar adição do link
+add_editor_link_to_dashboard()
+'''
     
-    print("🔧 Atualizando arquivos...")
-    print()
+    with open('editor_routes.py', 'w', encoding='utf-8') as f:
+        f.write(routes_code)
     
-    try:
-        # 1. Atualiza app.py
-        update_app_py()
-        
-        # 2. Cria templates atualizados
-        create_products_html()
-        create_cart_html()
-        create_product_html()
-        
-        # 3. Atualiza templates existentes
-        update_base_html()
-        update_index_html()
-        
-        print()
-        print("🎊 " + "="*60)
-        print("   ✅ TODAS AS CORREÇÕES APLICADAS COM SUCESSO!")
-        print("="*60)
-        print()
-        print("🚀 Mudanças aplicadas:")
-        print("   ✅ URLs amigáveis com slugs")
-        print("   ✅ Fotos aparecem no carrinho")
-        print("   ✅ WhatsApp com texto limpo") 
-        print("   ✅ Zoom nas imagens de produto")
-        print("   ✅ Modal para ver imagem grande")
-        print("   ✅ Logo.jpg integrado (se existir)")
-        print()
-        print("📱 Teste agora:")
-        print("   • Adicione produtos ao carrinho")
-        print("   • Veja as URLs amigáveis")
-        print("   • Teste o zoom nas imagens")
-        print("   • Finalize um pedido no WhatsApp")
-        print()
-        
-    except Exception as e:
-        print(f"❌ Erro durante a atualização: {e}")
-        print("Verifique se todos os arquivos existem e tente novamente.")
+    print("✅ Arquivo com rotas do editor criado!")
+    print("📝 Para ativar, adicione as rotas do arquivo 'editor_routes.py' ao seu app.py")
 
 if __name__ == "__main__":
-    main()
+    aplicar_sistema_edicao_completo()

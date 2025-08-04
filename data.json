@@ -44,9 +44,10 @@
       "id": "anuncio-1",
       "title": "Novidades de Verão! 🌻",
       "content": "Estamos preparando uma coleção especial para o verão com cores vibrantes e peças únicas!",
-      "image": "",
+      "image": "/static/uploads/1754265725_bolsafloral.jpg",
       "active": true,
-      "created_at": "2025-01-15T08:00:00"
+      "created_at": "2025-01-15T08:00:00",
+      "updated_at": "2025-08-03T21:02:05.489989"
     }
   ],
   "admin_password": "primaarte2025"

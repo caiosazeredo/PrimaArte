@@ -73,7 +73,7 @@ def slug_filter(text):
 @app.template_global()
 def product_url(product):
     """Gera URL amigável para produto"""
-    return url_for('product_detail', product_identifier=create_slug(product['name']))
+    return url_for('product_detail', product_slug=create_slug(product['name']))
 
 # ================================
 # ROTAS PRINCIPAIS
@@ -103,8 +103,8 @@ def products():
                          products=products, 
                          current_category=category)
 
-@app.route('/produto/<product_identifier>')
-def product_detail(product_identifier):
+@app.route('/produto/<product_slug>')
+def product_detail(product_slug):
     """Detalhes do produto com slug amigável ou ID"""
     data = load_data()
     
@@ -112,7 +112,7 @@ def product_detail(product_identifier):
     product = None
     for p in data['products']:
         product_slug_generated = create_slug(p['name'])
-        if product_slug_generated == product_identifier or p['id'] == product_identifier:
+        if product_slug_generated == product_slug or p['id'] == product_slug:
             product = p
             break
     

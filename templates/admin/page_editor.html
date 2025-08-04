@@ -1,0 +1,544 @@
+{% extends "base.html" %}
+
+{% block title %}Editor da Página Principal - Prima Arte Admin{% endblock %}
+
+{% block content %}
+<section class="visual-editor">
+    <div class="editor-container">
+        <!-- Painel de Controle -->
+        <div class="editor-panel">
+            <div class="panel-header">
+                <h2><i class="fas fa-paint-brush"></i> Editor Visual</h2>
+                <div class="panel-actions">
+                    <button class="btn-preview" onclick="togglePreview()">
+                        <i class="fas fa-eye"></i> Preview
+                    </button>
+                    <button class="btn-save" onclick="saveChanges()">
+                        <i class="fas fa-save"></i> Salvar
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Configurações do Hero -->
+            <div class="editor-section">
+                <h3><i class="fas fa-image"></i> Hero Section</h3>
+                
+                <div class="control-group">
+                    <label for="heroBackground">Cor de Fundo</label>
+                    <input type="color" id="heroBackground" value="#87CEEB" onchange="updateHero()">
+                </div>
+                
+                <div class="control-group">
+                    <label for="heroGradient">Gradiente Secundário</label>
+                    <input type="color" id="heroGradient" value="#20B2AA" onchange="updateHero()">
+                </div>
+                
+                <div class="control-group">
+                    <label for="heroTitle">Título Principal</label>
+                    <input type="text" id="heroTitle" value="Artesanato Único" onchange="updateHero()">
+                </div>
+                
+                <div class="control-group">
+                    <label for="heroSubtitle">Subtítulo</label>
+                    <input type="text" id="heroSubtitle" value="História Especial" onchange="updateHero()">
+                </div>
+                
+                <div class="control-group">
+                    <label for="heroDescription">Descrição</label>
+                    <textarea id="heroDescription" onchange="updateHero()">Cada peça é cuidadosamente criada à mão, combinando técnicas tradicionais com o charme carioca.</textarea>
+                </div>
+                
+                <div class="control-group">
+                    <label for="logoSize">Tamanho da Logo</label>
+                    <input type="range" id="logoSize" min="200" max="400" value="280" onchange="updateHero()">
+                    <span class="range-value">280px</span>
+                </div>
+            </div>
+            
+            <!-- Configurações de Cores -->
+            <div class="editor-section">
+                <h3><i class="fas fa-palette"></i> Paleta de Cores</h3>
+                
+                <div class="color-palette">
+                    <div class="color-item">
+                        <label>Cor Primária</label>
+                        <input type="color" id="primaryColor" value="#20B2AA" onchange="updateColors()">
+                    </div>
+                    <div class="color-item">
+                        <label>Cor Secundária</label>
+                        <input type="color" id="secondaryColor" value="#87CEEB" onchange="updateColors()">
+                    </div>
+                    <div class="color-item">
+                        <label>Cor de Destaque</label>
+                        <input type="color" id="accentColor" value="#FFD700" onchange="updateColors()">
+                    </div>
+                    <div class="color-item">
+                        <label>Texto Principal</label>
+                        <input type="color" id="textColor" value="#333333" onchange="updateColors()">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Presets -->
+            <div class="editor-section">
+                <h3><i class="fas fa-magic"></i> Estilos Predefinidos</h3>
+                
+                <div class="preset-buttons">
+                    <button class="preset-btn" onclick="applyPreset('tropical')">
+                        🏝️ Tropical
+                    </button>
+                    <button class="preset-btn" onclick="applyPreset('ocean')">
+                        🌊 Oceano
+                    </button>
+                    <button class="preset-btn" onclick="applyPreset('sunset')">
+                        🌅 Pôr do Sol
+                    </button>
+                    <button class="preset-btn" onclick="applyPreset('vintage')">
+                        📷 Vintage
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Preview -->
+        <div class="editor-preview">
+            <div class="preview-header">
+                <h3><i class="fas fa-desktop"></i> Preview da Página</h3>
+                <div class="device-selector">
+                    <button class="device-btn active" data-device="desktop">
+                        <i class="fas fa-desktop"></i>
+                    </button>
+                    <button class="device-btn" data-device="tablet">
+                        <i class="fas fa-tablet-alt"></i>
+                    </button>
+                    <button class="device-btn" data-device="mobile">
+                        <i class="fas fa-mobile-alt"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="preview-container">
+                <iframe id="previewFrame" src="{{ url_for('index') }}?preview=1"></iframe>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+/* Editor Styles */
+.visual-editor {
+    background: #f5f5f5;
+    min-height: 100vh;
+    padding: 0;
+}
+
+.editor-container {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    height: 100vh;
+}
+
+.editor-panel {
+    background: white;
+    border-right: 1px solid #e0e0e0;
+    overflow-y: auto;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+}
+
+.panel-header {
+    background: linear-gradient(135deg, #20B2AA, #87CEEB);
+    color: white;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.panel-header h2 {
+    margin: 0;
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.panel-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-preview, .btn-save {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    transition: all 0.3s ease;
+}
+
+.btn-preview:hover, .btn-save:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.editor-section {
+    padding: 1.5rem;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.editor-section h3 {
+    color: #20B2AA;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.control-group {
+    margin-bottom: 1rem;
+}
+
+.control-group label {
+    display: block;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.3rem;
+    font-size: 0.9rem;
+}
+
+.control-group input,
+.control-group textarea {
+    width: 100%;
+    padding: 0.6rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 5px;
+    font-family: inherit;
+    transition: border-color 0.3s ease;
+}
+
+.control-group input:focus,
+.control-group textarea:focus {
+    border-color: #20B2AA;
+    outline: none;
+}
+
+.control-group textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+.control-group input[type="range"] {
+    margin-bottom: 0;
+}
+
+.range-value {
+    font-size: 0.85rem;
+    color: #666;
+    font-weight: 600;
+}
+
+/* Color Palette */
+.color-palette {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+}
+
+.color-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.color-item label {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.color-item input[type="color"] {
+    width: 100%;
+    height: 40px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Presets */
+.preset-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+}
+
+.preset-btn {
+    background: #f8f9fa;
+    border: 2px solid #e0e0e0;
+    padding: 0.8rem 0.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.preset-btn:hover {
+    border-color: #20B2AA;
+    background: #f0f8ff;
+}
+
+/* Preview */
+.editor-preview {
+    background: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+}
+
+.preview-header {
+    background: white;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.preview-header h3 {
+    margin: 0;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.device-selector {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.device-btn {
+    background: #f8f9fa;
+    border: 2px solid #e0e0e0;
+    color: #666;
+    padding: 0.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.device-btn.active,
+.device-btn:hover {
+    border-color: #20B2AA;
+    color: #20B2AA;
+    background: white;
+}
+
+.preview-container {
+    flex: 1;
+    padding: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: start;
+}
+
+#previewFrame {
+    width: 100%;
+    height: calc(100vh - 120px);
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background: white;
+    transition: all 0.3s ease;
+}
+
+/* Device Responsive */
+.device-desktop #previewFrame { width: 100%; }
+.device-tablet #previewFrame { width: 768px; max-width: 100%; }
+.device-mobile #previewFrame { width: 375px; max-width: 100%; }
+
+/* Mobile */
+@media (max-width: 1024px) {
+    .editor-container {
+        grid-template-columns: 1fr;
+        height: auto;
+    }
+    
+    .editor-panel {
+        position: relative;
+        max-height: 400px;
+    }
+    
+    .preview-container {
+        height: 600px;
+    }
+    
+    #previewFrame {
+        height: 100%;
+    }
+}
+</style>
+
+<script>
+// Editor Functions
+function updateHero() {
+    const background = document.getElementById('heroBackground').value;
+    const gradient = document.getElementById('heroGradient').value;
+    const title = document.getElementById('heroTitle').value;
+    const subtitle = document.getElementById('heroSubtitle').value;
+    const description = document.getElementById('heroDescription').value;
+    const logoSize = document.getElementById('logoSize').value;
+    
+    // Update range display
+    document.querySelector('#logoSize + .range-value').textContent = logoSize + 'px';
+    
+    // Apply changes to preview (via postMessage to iframe)
+    const changes = {
+        type: 'updateHero',
+        data: { background, gradient, title, subtitle, description, logoSize }
+    };
+    
+    document.getElementById('previewFrame').contentWindow.postMessage(changes, '*');
+}
+
+function updateColors() {
+    const colors = {
+        primary: document.getElementById('primaryColor').value,
+        secondary: document.getElementById('secondaryColor').value,
+        accent: document.getElementById('accentColor').value,
+        text: document.getElementById('textColor').value
+    };
+    
+    const changes = {
+        type: 'updateColors',
+        data: colors
+    };
+    
+    document.getElementById('previewFrame').contentWindow.postMessage(changes, '*');
+}
+
+function applyPreset(preset) {
+    const presets = {
+        tropical: {
+            heroBackground: '#00CED1',
+            heroGradient: '#20B2AA',
+            primaryColor: '#00CED1',
+            secondaryColor: '#FFD700',
+            accentColor: '#FF6347'
+        },
+        ocean: {
+            heroBackground: '#4682B4',
+            heroGradient: '#1E90FF',
+            primaryColor: '#4682B4',
+            secondaryColor: '#87CEEB',
+            accentColor: '#00BFFF'
+        },
+        sunset: {
+            heroBackground: '#FF6347',
+            heroGradient: '#FFD700',
+            primaryColor: '#FF6347',
+            secondaryColor: '#FFA500',
+            accentColor: '#FF4500'
+        },
+        vintage: {
+            heroBackground: '#8B4513',
+            heroGradient: '#CD853F',
+            primaryColor: '#8B4513',
+            secondaryColor: '#DEB887',
+            accentColor: '#DAA520'
+        }
+    };
+    
+    const preset_data = presets[preset];
+    if (preset_data) {
+        // Update controls
+        Object.keys(preset_data).forEach(key => {
+            const element = document.getElementById(key);
+            if (element) {
+                element.value = preset_data[key];
+            }
+        });
+        
+        // Apply changes
+        updateHero();
+        updateColors();
+    }
+}
+
+function togglePreview() {
+    const frame = document.getElementById('previewFrame');
+    const btn = document.querySelector('.btn-preview');
+    
+    if (frame.style.display === 'none') {
+        frame.style.display = 'block';
+        btn.innerHTML = '<i class="fas fa-eye"></i> Preview';
+    } else {
+        frame.style.display = 'none';
+        btn.innerHTML = '<i class="fas fa-eye-slash"></i> Mostrar';
+    }
+}
+
+function saveChanges() {
+    const settings = {
+        hero: {
+            background: document.getElementById('heroBackground').value,
+            gradient: document.getElementById('heroGradient').value,
+            title: document.getElementById('heroTitle').value,
+            subtitle: document.getElementById('heroSubtitle').value,
+            description: document.getElementById('heroDescription').value,
+            logoSize: document.getElementById('logoSize').value
+        },
+        colors: {
+            primary: document.getElementById('primaryColor').value,
+            secondary: document.getElementById('secondaryColor').value,
+            accent: document.getElementById('accentColor').value,
+            text: document.getElementById('textColor').value
+        }
+    };
+    
+    // Send to server
+    fetch('/admin/page-editor/save', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(settings)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('✅ Configurações salvas com sucesso!');
+        } else {
+            alert('❌ Erro ao salvar configurações');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('❌ Erro ao salvar configurações');
+    });
+}
+
+// Device selector
+document.addEventListener('DOMContentLoaded', function() {
+    const deviceBtns = document.querySelectorAll('.device-btn');
+    const container = document.querySelector('.preview-container');
+    
+    deviceBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            deviceBtns.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            
+            const device = this.dataset.device;
+            container.className = 'preview-container device-' + device;
+        });
+    });
+    
+    // Initialize
+    updateHero();
+    updateColors();
+});
+</script>
+{% endblock %}
