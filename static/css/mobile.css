@@ -1,0 +1,256 @@
+/* Prima Arte - Mobile Optimizations */
+
+/* Mobile Header Layout */
+.mobile-header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* Mobile Menu Styles - mais compacto */
+.mobile-menu-toggle {
+    display: none;
+    flex-direction: column;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0.3rem;
+    z-index: 1001;
+    min-width: 35px;
+}
+
+.hamburger-line {
+    width: 20px;
+    height: 2px;
+    background: var(--dark-brown);
+    margin: 2px 0;
+    transition: all 0.3s ease;
+    border-radius: 1px;
+}
+
+.mobile-menu-toggle.active .hamburger-line:nth-child(1) {
+    transform: rotate(45deg) translate(4px, 4px);
+}
+
+.mobile-menu-toggle.active .hamburger-line:nth-child(2) {
+    opacity: 0;
+}
+
+.mobile-menu-toggle.active .hamburger-line:nth-child(3) {
+    transform: rotate(-45deg) translate(4px, -4px);
+}
+
+.mobile-nav {
+    display: none;
+    position: fixed;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: white;
+    z-index: 1000;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: all 0.3s ease;
+}
+
+.mobile-nav.active {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.mobile-nav ul {
+    flex-direction: column;
+    padding: 0.5rem 0;
+    gap: 0;
+}
+
+.mobile-nav ul li {
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.mobile-nav ul li:last-child {
+    border-bottom: none;
+}
+
+.mobile-nav a {
+    display: block;
+    padding: 0.8rem 1.5rem;
+    color: var(--dark-brown);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.mobile-nav a:hover {
+    background: var(--primary-beige);
+    color: var(--primary-pink);
+}
+
+.mobile-cart-link {
+    position: relative;
+}
+
+.mobile-cart-link .cart-count {
+    background: var(--primary-pink);
+    color: white;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+    font-weight: bold;
+    margin-left: 0.5rem;
+}
+
+/* Desktop/Mobile visibility */
+.desktop-nav {
+    display: flex;
+}
+
+.desktop-actions {
+    display: flex;
+}
+
+body.menu-open {
+    overflow: hidden;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 768px) {
+    .mobile-menu-toggle {
+        display: flex;
+    }
+    
+    .desktop-nav {
+        display: none;
+    }
+    
+    .desktop-actions {
+        display: none;
+    }
+    
+    .header {
+        padding: 0.5rem 0;
+    }
+    
+    .header-content {
+        position: relative;
+        justify-content: space-between;
+    }
+    
+    /* Logo menor para mobile */
+    .logo-text h1 {
+        font-size: 1.3rem;
+        margin: 0;
+        line-height: 1.1;
+    }
+    
+    .logo-text .handmade {
+        font-size: 0.8rem;
+        line-height: 1;
+    }
+    
+    .logo-circle {
+        width: 40px;
+        height: 40px;
+        margin-right: 8px;
+    }
+    
+    .logo a {
+        padding: 0.2rem 0;
+    }
+    
+    /* Container mais compacto */
+    .container {
+        padding: 0 12px;
+    }
+    
+    /* Otimizações para botões sem emoji */
+    .btn-beach-primary,
+    .btn-beach-secondary {
+        font-size: 0.9rem;
+        padding: 0.7rem 1.2rem;
+        min-width: auto;
+    }
+    
+    /* Cards de categoria sem emojis */
+    .category-card {
+        text-align: center;
+        padding: 1.2rem 0.8rem;
+    }
+    
+    .category-card h3 {
+        font-size: 1.1rem;
+        margin-top: 0.4rem;
+    }
+    
+    /* Melhorias gerais para mobile */
+    .hero-content-beach {
+        padding: 1.5rem 0;
+    }
+    
+    .products-grid {
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 1.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .header {
+        padding: 0.3rem 0;
+    }
+    
+    .logo-text h1 {
+        font-size: 1.1rem;
+    }
+    
+    .logo-text .handmade {
+        font-size: 0.75rem;
+    }
+    
+    .logo-circle {
+        width: 35px;
+        height: 35px;
+        margin-right: 6px;
+    }
+    
+    .mobile-nav a {
+        padding: 0.7rem 1.2rem;
+        font-size: 0.85rem;
+    }
+    
+    .container {
+        padding: 0 10px;
+    }
+    
+    .products-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    /* Menu hamburger ainda menor */
+    .hamburger-line {
+        width: 18px;
+        height: 2px;
+    }
+    
+    .mobile-menu-toggle {
+        padding: 0.2rem;
+    }
+}
+
+/* Animações suaves */
+@media (prefers-reduced-motion: no-preference) {
+    .mobile-nav {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .hamburger-line {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+}

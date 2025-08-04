@@ -1,5 +1,3 @@
-@import url('mobile.css');
-
 /* Prima Arte - Estilos Gerais */
 :root {
     --primary-gold: #D4AF37;

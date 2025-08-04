@@ -20,7 +20,7 @@ app.secret_key = 'prima-arte-secret-key-2025'
 
 # Configurações
 WHATSAPP_NUMBER = '+5521973108293'
-INSTAGRAM_URL = 'https://www.instagram.com/primaarte2025/'
+INSTAGRAM_URL = 'htt    ps://www.instagram.com/primaarte2025/'
 UPLOAD_FOLDER = 'static/uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
