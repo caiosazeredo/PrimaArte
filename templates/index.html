@@ -273,31 +273,46 @@
         </div>
         
         <div class="categories-grid-beach">
-            <div class="category-card-beach">
+            <div class="category-card-beach" data-aos="fade-up" data-aos-delay="0">
                 <div class="category-icon-beach">
                     <i class="fas fa-heart"></i>
                 </div>
-                <h3>Com Amor</h3>
-                <p>Peças feitas com carinho e dedicação especial</p>
-                <a href="{{ url_for('products', categoria='com-amor') }}" class="btn-category-beach">Ver Produtos</a>
+                <div class="category-content">
+                    <h3>Com Amor</h3>
+                    <p>Peças feitas com carinho e dedicação especial</p>
+                    <a href="{{ url_for('products', categoria='com-amor') }}" class="btn-category-beach">
+                        <span>Ver Produtos</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
             </div>
             
-            <div class="category-card-beach">
+            <div class="category-card-beach" data-aos="fade-up" data-aos-delay="100">
                 <div class="category-icon-beach">
                     <i class="fas fa-sun"></i>
                 </div>
-                <h3>Carioca</h3>
-                <p>Inspiração da Cidade Maravilhosa em cada detalhe</p>
-                <a href="{{ url_for('products', categoria='carioca') }}" class="btn-category-beach">Ver Produtos</a>
+                <div class="category-content">
+                    <h3>Carioca</h3>
+                    <p>Inspiração da Cidade Maravilhosa em cada detalhe</p>
+                    <a href="{{ url_for('products', categoria='carioca') }}" class="btn-category-beach">
+                        <span>Ver Produtos</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
             </div>
             
-            <div class="category-card-beach">
+            <div class="category-card-beach" data-aos="fade-up" data-aos-delay="200">
                 <div class="category-icon-beach">
                     <i class="fas fa-star"></i>
                 </div>
-                <h3>Único</h3>
-                <p>Peças exclusivas e personalizadas para você</p>
-                <a href="{{ url_for('products', categoria='unico') }}" class="btn-category-beach">Ver Produtos</a>
+                <div class="category-content">
+                    <h3>Único</h3>
+                    <p>Peças exclusivas e personalizadas para você</p>
+                    <a href="{{ url_for('products', categoria='unico') }}" class="btn-category-beach">
+                        <span>Ver Produtos</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
@@ -307,19 +322,21 @@
 <section class="contact-cta-beach">
     <div class="container">
         <div class="cta-content-beach">
-            <div class="cta-text-beach">
+            <div class="cta-text-beach" data-aos="fade-right">
                 <h2>Vamos Conversar?</h2>
                 <p>Entre em contato conosco pelo WhatsApp e descubra como podemos criar algo especial para você!</p>
             </div>
-            <div class="cta-actions-beach">
+            <div class="cta-actions-beach" data-aos="fade-left" data-aos-delay="200">
                 <a href="https://wa.me/5521973108293?text=Olá! Gostaria de conhecer mais sobre os produtos da Prima Arte!" 
                    target="_blank" class="btn-whatsapp-beach">
                     <i class="fab fa-whatsapp"></i>
-                    Chamar no WhatsApp
+                    <span>Chamar no WhatsApp</span>
+                    <div class="btn-glow"></div>
                 </a>
                 <a href="https://www.instagram.com/primaarte2025/" target="_blank" class="btn-instagram-beach">
                     <i class="fab fa-instagram"></i>
-                    Seguir no Instagram
+                    <span>Seguir no Instagram</span>
+                    <div class="btn-glow"></div>
                 </a>
             </div>
         </div>
@@ -576,6 +593,236 @@
     margin: 2rem 0;
 }
 
+/* Categories Section Optimized */
+.categories-beach {
+    padding: 5rem 0;
+    background: linear-gradient(135deg, #F0F8FF, #E6F3FF);
+}
+
+.categories-grid-beach {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.category-card-beach {
+    background: white;
+    padding: 2rem;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 8px 30px rgba(32, 178, 170, 0.1);
+    border: 1px solid rgba(32, 178, 170, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.category-card-beach:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 50px rgba(32, 178, 170, 0.2);
+}
+
+.category-card-beach::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(32, 178, 170, 0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.category-card-beach:hover::before {
+    left: 100%;
+}
+
+.category-icon-beach {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #20B2AA, #87CEEB);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    font-size: 2rem;
+    color: white;
+    box-shadow: 0 8px 25px rgba(32, 178, 170, 0.3);
+    transition: all 0.3s ease;
+}
+
+.category-card-beach:hover .category-icon-beach {
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 15px 40px rgba(32, 178, 170, 0.4);
+}
+
+.category-content h3 {
+    font-family: var(--font-heading);
+    font-size: 1.8rem;
+    color: #20B2AA;
+    margin-bottom: 1rem;
+    transition: color 0.3s ease;
+}
+
+.category-card-beach:hover .category-content h3 {
+    color: #4682B4;
+}
+
+.category-content p {
+    color: #4682B4;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    font-size: 1rem;
+}
+
+.btn-category-beach {
+    background: linear-gradient(135deg, #20B2AA, #87CEEB);
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-category-beach:hover {
+    background: linear-gradient(135deg, #87CEEB, #20B2AA);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(32, 178, 170, 0.3);
+}
+
+.btn-category-beach i {
+    transition: transform 0.3s ease;
+}
+
+.btn-category-beach:hover i {
+    transform: translateX(5px);
+}
+
+/* Contact CTA Section Optimized */
+.contact-cta-beach {
+    padding: 5rem 0;
+    background: linear-gradient(135deg, #20B2AA 0%, #4682B4 50%, #87CEEB 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.contact-cta-beach::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120"><path d="M0,96L48,80C96,64,192,32,288,37.3C384,43,480,85,576,112C672,139,768,149,864,128C960,107,1056,53,1152,42.7C1248,32,1344,64,1392,80L1440,96L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z" fill="rgba(255,255,255,0.1)"/></svg>') repeat-x;
+    animation: wave 8s ease-in-out infinite;
+}
+
+.cta-content-beach {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+}
+
+.cta-text-beach {
+    color: white;
+}
+
+.cta-text-beach h2 {
+    font-family: var(--font-heading);
+    font-size: 3rem;
+    margin-bottom: 1.5rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.cta-text-beach p {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    opacity: 0.95;
+}
+
+.cta-actions-beach {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.btn-whatsapp-beach,
+.btn-instagram-beach {
+    padding: 1.2rem 2rem;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-whatsapp-beach {
+    background: rgba(37, 211, 102, 0.9);
+    color: white;
+}
+
+.btn-instagram-beach {
+    background: rgba(225, 48, 108, 0.9);
+    color: white;
+}
+
+.btn-glow {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s ease;
+}
+
+.btn-whatsapp-beach:hover .btn-glow,
+.btn-instagram-beach:hover .btn-glow {
+    left: 100%;
+}
+
+.btn-whatsapp-beach:hover {
+    background: rgba(37, 211, 102, 1);
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 15px 40px rgba(37, 211, 102, 0.4);
+}
+
+.btn-instagram-beach:hover {
+    background: rgba(225, 48, 108, 1);
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 15px 40px rgba(225, 48, 108, 0.4);
+}
+
+.btn-whatsapp-beach i,
+.btn-instagram-beach i {
+    font-size: 1.5rem;
+    transition: transform 0.3s ease;
+}
+
+.btn-whatsapp-beach:hover i,
+.btn-instagram-beach:hover i {
+    transform: scale(1.2) rotate(5deg);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .products-grid-beach {
@@ -587,6 +834,96 @@
         font-size: 2.2rem;
         flex-direction: column;
         gap: 0.5rem;
+    }
+    
+    .categories-grid-beach {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        margin-top: 2rem;
+    }
+    
+    .category-card-beach {
+        padding: 1.5rem;
+    }
+    
+    .category-icon-beach {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .category-content h3 {
+        font-size: 1.5rem;
+    }
+    
+    .category-content p {
+        font-size: 0.9rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .btn-category-beach {
+        padding: 0.8rem 1.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .cta-content-beach {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        text-align: center;
+    }
+    
+    .cta-text-beach h2 {
+        font-size: 2.2rem;
+    }
+    
+    .cta-text-beach p {
+        font-size: 1rem;
+    }
+    
+    .cta-actions-beach {
+        gap: 1rem;
+    }
+    
+    .btn-whatsapp-beach,
+    .btn-instagram-beach {
+        padding: 1rem 1.5rem;
+        font-size: 1rem;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .categories-beach {
+        padding: 3rem 0;
+    }
+    
+    .contact-cta-beach {
+        padding: 3rem 0;
+    }
+    
+    .category-card-beach {
+        padding: 1.2rem;
+    }
+    
+    .category-icon-beach {
+        width: 50px;
+        height: 50px;
+        font-size: 1.3rem;
+    }
+    
+    .category-content h3 {
+        font-size: 1.3rem;
+    }
+    
+    .cta-text-beach h2 {
+        font-size: 1.8rem;
+    }
+    
+    .btn-whatsapp-beach,
+    .btn-instagram-beach {
+        padding: 0.8rem 1.2rem;
+        font-size: 0.9rem;
     }
 }
 </style>
