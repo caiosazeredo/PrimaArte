@@ -287,11 +287,6 @@ def checkout():
     message += f"\n *VALOR TOTAL: R$ {total:.2f}*\n"
     message += "═" * 35 + "\n\n"
     message += " Olá! Gostaria de finalizar este pedido!\n\n"
-    message += " *Próximos passos:*\n"
-    message += "• Confirmaremos os itens do pedido\n"
-    message += "• Combinaremos forma de pagamento\n"
-    message += "• Definiremos entrega/retirada\n\n"
-    message += " Obrigado por escolher a Prima Arte! "
     
     # URL do WhatsApp com encoding correto
     whatsapp_url = f"https://wa.me/{WHATSAPP_NUMBER.replace('+', '').replace(' ', '')}?text={urllib.parse.quote(message)}"
