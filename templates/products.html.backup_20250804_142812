@@ -20,8 +20,8 @@
                 <a href="{{ url_for('products') }}" class="filter-btn {% if not current_category %}active{% endif %}">
                     <i class="fas fa-th-large"></i> Todos
                 </a>
-                <a href="{{ url_for('products', categoria='bolsa') }}" class="filter-btn {% if current_category == 'bolsa' %}active{% endif %}">
-                    <i class="fas fa-cut"></i> Bolsa
+                <a href="{{ url_for('products', categoria='costura') }}" class="filter-btn {% if current_category == 'costura' %}active{% endif %}">
+                    <i class="fas fa-cut"></i> Costura
                 </a>
                 <a href="{{ url_for('products', categoria='decoracao') }}" class="filter-btn {% if current_category == 'decoracao' %}active{% endif %}">
                     <i class="fas fa-home"></i> Decoração

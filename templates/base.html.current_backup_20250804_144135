@@ -5,20 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Prima Arte - Ateliê Feito à Mão{% endblock %}</title>
     
+    <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
     <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/favicon.svg') }}">
     <link rel="apple-touch-icon" href="{{ url_for('static', filename='images/favicon.svg') }}">
     
+    <!-- Meta tags -->
     <meta name="description" content="Ateliê Prima Arte - Artesanato feito à mão com amor. Bolsas, acessórios e peças únicas do Rio de Janeiro.">
     <meta name="theme-color" content="#8B4513">
     
+    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <!-- CSS -->
+    <!-- CSS Principal -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css"/>
-    
+    <!-- CSS Específico por Página -->
     {% block page_css %}{% endblock %}
 </head>
 <body>
@@ -50,27 +54,27 @@
                 <div class="header-actions">
                     <a href="{{ url_for('cart') }}" class="cart-btn">
                         <i class="fas fa-shopping-cart"></i>
-                        <span class="cart-count">{{ session.get('cart', [])|length }}</span>
+                        <span class="cart-count">0</span>
                     </a>
                 </div>
             </div>
         </div>
     </header>
 
-    <main class="main-content">
+    <main>
+        <!-- Mensagens Flash -->
         {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-        <div class="flash-messages">
-            {% for category, message in messages %}
-            <div class="flash flash-{{ category }}">
-                <span>{{ message }}</span>
-                <button class="flash-close" onclick="this.parentElement.remove()">×</button>
-            </div>
-            {% endfor %}
-        </div>
-        {% endif %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash-message {{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
         {% endwith %}
-        
+
         {% block content %}{% endblock %}
     </main>
 
@@ -78,8 +82,9 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h3><i class="fas fa-heart"></i> Prima Arte</h3>
-                    <p>Artesanato feito à mão com amor e dedicação. Cada peça é única e especial.</p>
+                    <h3>Prima Arte</h3>
+                    <p>Artesanato feito à mão com amor no Rio de Janeiro.</p>
+                    <p>Cada peça carrega a energia e beleza da Cidade Maravilhosa.</p>
                     <div class="social-links">
                         <a href="https://www.instagram.com/primaarte2025/" target="_blank">
                             <i class="fab fa-instagram"></i>
@@ -91,21 +96,60 @@
                 </div>
                 
                 <div class="footer-section">
-                    <h3><i class="fas fa-phone"></i> Contato</h3>
+                    <h3>Contato</h3>
                     <p><i class="fab fa-whatsapp"></i> (21) 97310-8293</p>
                     <p><i class="fab fa-instagram"></i> @primaarte2025</p>
                     <p><i class="fas fa-map-marker-alt"></i> Rio de Janeiro, RJ</p>
                 </div>
+                
+                <div class="footer-section">
+                    <h3>Informações</h3>
+                    <p>Produtos artesanais únicos</p>
+                    <p>Entregamos em todo o Brasil</p>
+                    <p>Aceitamos encomendas especiais</p>
+                </div>
             </div>
             
             <div class="footer-bottom">
-                <p>&copy; 2025 Prima Arte - Feito com ❤️ por Flávia & Valéria</p>
+                <p>&copy; 2025 Prima Arte. Todos os direitos reservados. Feito com ❤️ para Valéria & Flávia.</p>
             </div>
         </div>
     </footer>
 
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-    
-    <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
+    <script>
+        // Remove mensagens flash após 5 segundos
+        setTimeout(() => {
+            const flashMessages = document.querySelectorAll('.flash-message');
+            flashMessages.forEach(message => {
+                message.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => message.remove(), 300);
+            });
+        }, 5000);
+
+        // Atualiza contador do carrinho
+        function updateCartCount() {
+            // Implementar lógica do carrinho se necessário
+        }
+
+        // Animação de entrada para elementos
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in');
+                }
+            });
+        }, observerOptions);
+
+        // Observa elementos para animação
+        document.addEventListener('DOMContentLoaded', () => {
+            const elements = document.querySelectorAll('.card, .section');
+            elements.forEach(el => observer.observe(el));
+        });
+    </script>
 </body>
 </html>

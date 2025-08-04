@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/products.css') }}">
+{% endblock %}
+
+{% block title %}Produtos - Prima Arte{% endblock %}
+
+{% block content %}
+<section class="products-section">
+    <div class="container">
+        <div class="page-header">
+            <h1>
+                {% if current_category %}
+                    Categoria: {{ current_category|title }}
+                {% else %}
+                    Nossos Produtos
+                {% endif %}
+            </h1>
+            <p>Peças artesanais feitas com amor no Rio de Janeiro</p>
+        </div>
+
+        <!-- Filtros -->
+        <div class="filters">
+            <div class="filter-group">
+                <label>Categoria:</label>
+                <select onchange="filterByCategory(this.value)">
+                    <option value="">Todas as categorias</option>
+                    <option value="costura" {% if current_category == 'costura' %}selected{% endif %}>Costura</option>
+                    <option value="croche" {% if current_category == 'croche' %}selected{% endif %}>Crochê</option>
+                    <option value="bordado" {% if current_category == 'bordado' %}selected{% endif %}>Bordado</option>
+                </select>
+            </div>
+        </div>
+
+        {% if products %}
+        <div class="products-grid">
+            {% for product in products %}
+            <div class="product-card">
+                <div class="product-image">
+                    {% if product.images and product.images|length > 0 %}
+                    <img src="{{ product.images[0] }}" alt="{{ product.name }}">
+                    {% else %}
+                    <div class="no-image">
+                        <i class="fas fa-image"></i>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Badge de Promoção -->
+                    {% if product.promotion_active and product.promotional_price and product.promotional_price < product.price %}
+                    <div class="promotion-badge">
+                        {{ ((product.price - product.promotional_price) / product.price * 100)|round|int }}% OFF
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="product-info">
+                    <h3 class="product-title">{{ product.name }}</h3>
+                    <p class="product-description">{{ product.description[:100] }}{% if product.description|length > 100 %}...{% endif %}</p>
+                    
+                    <!-- Sistema de Preços na Grid -->
+                    <div class="product-price-grid">
+                        {% if product.promotion_active and product.promotional_price and product.promotional_price < product.price %}
+                        <!-- Com Promoção -->
+                        <div class="price-with-promotion">
+                            <span class="original-price">R$ {{ "%.2f"|format(product.price) }}</span>
+                            <span class="promotional-price">R$ {{ "%.2f"|format(product.promotional_price) }}</span>
+                        </div>
+                        {% else %}
+                        <!-- Preço Normal -->
+                        <div class="price-normal">
+                            <span class="current-price">R$ {{ "%.2f"|format(product.price) }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="product-actions">
+                        <a href="{{ url_for('product_detail', product_slug=product.name|slug) }}" class="btn-product-view">
+                            <i class="fas fa-eye"></i> Ver Detalhes
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-box-open"></i>
+            <h3>
+                {% if current_category %}
+                    Nenhum produto encontrado nesta categoria
+                {% else %}
+                    Nenhum produto cadastrado ainda
+                {% endif %}
+            </h3>
+            <p>
+                {% if current_category %}
+                    Tente uma categoria diferente ou entre em contato conosco!
+                {% else %}
+                    Em breve teremos produtos incríveis aqui!
+                {% endif %}
+            </p>
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-top: 2rem;">
+                {% if current_category %}
+                <a href="{{ url_for('products') }}" class="btn-primary-large">
+                    <i class="fas fa-th-large"></i> Ver Todos
+                </a>
+                {% endif %}
+                <a href="https://wa.me/5521973108293" target="_blank" class="btn-secondary-large">
+                    <i class="fab fa-whatsapp"></i> Fale Conosco
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<script>
+function filterByCategory(category) {
+    if (category === '') {
+        window.location.href = "{{ url_for('products') }}";
+    } else {
+        window.location.href = "{{ url_for('products') }}?categoria=" + category;
+    }
+}
+</script>
+{% endblock %}

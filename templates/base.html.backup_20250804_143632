@@ -5,20 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Prima Arte - Ateliê Feito à Mão{% endblock %}</title>
     
+    <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
     <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/favicon.svg') }}">
     <link rel="apple-touch-icon" href="{{ url_for('static', filename='images/favicon.svg') }}">
     
+    <!-- Meta tags -->
     <meta name="description" content="Ateliê Prima Arte - Artesanato feito à mão com amor. Bolsas, acessórios e peças únicas do Rio de Janeiro.">
     <meta name="theme-color" content="#8B4513">
     
+    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <!-- CSS -->
+    <!-- CSS Principal -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css"/>
-    
+    <!-- CSS Específico por Página -->
     {% block page_css %}{% endblock %}
 </head>
 <body>
@@ -41,8 +45,10 @@
                 <nav class="main-nav">
                     <ul>
                         <li><a href="{{ url_for('index') }}"><i class="fas fa-home"></i> Início</a></li>
-                        <li><a href="{{ url_for('products') }}"><i class="fas fa-box-open"></i> Produtos</a></li>
-                        <li><a href="{{ url_for('about') }}"><i class="fas fa-heart"></i> Sobre</a></li>
+                        <li><a href="{{ url_for('products') }}"><i class="fas fa-box-open"></i> Produtos</a>
+                    <a href="{{ url_for('about') }}">
+                        <i class="fas fa-heart"></i> Sobre
+                    </a></li>
                         <li><a href="https://www.instagram.com/primaarte2025/" target="_blank"><i class="fab fa-instagram"></i> Instagram</a></li>
                     </ul>
                 </nav>
@@ -105,7 +111,5 @@
     </footer>
 
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-    
-    <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
 </body>
 </html>

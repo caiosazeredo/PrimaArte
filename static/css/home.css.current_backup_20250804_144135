@@ -1,0 +1,285 @@
+/* Prima Arte - Estilos da Página Inicial - Sistema de Preços Melhorado */
+
+/* ================================
+   HERO SECTION - MINI CARDS COM PREÇOS
+   ================================ */
+.mini-card {
+    position: relative;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.mini-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.mini-card img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.mini-card:hover img {
+    transform: scale(1.1);
+}
+
+.mini-no-image {
+    width: 100%;
+    height: 120px;
+    background: linear-gradient(135deg, #87CEEB, #4682B4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 2rem;
+}
+
+.mini-promotion-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: linear-gradient(135deg, #ff4444, #cc0000);
+    color: white;
+    padding: 0.3rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    box-shadow: 0 2px 10px rgba(255, 68, 68, 0.4);
+    z-index: 2;
+}
+
+.mini-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,0.8));
+    padding: 1rem 0.8rem 0.8rem;
+    color: white;
+}
+
+.mini-info h4 {
+    font-size: 0.9rem;
+    margin: 0 0 0.5rem 0;
+    font-weight: 600;
+}
+
+.mini-price-promotion {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.mini-original-price {
+    font-size: 0.75rem;
+    text-decoration: line-through;
+    color: rgba(255,255,255,0.7);
+}
+
+.mini-promotional-price {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #FFD700;
+}
+
+.mini-price {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #FFD700;
+}
+
+.mini-actions {
+    margin-top: 0.5rem;
+}
+
+.card-link-beach {
+    background: rgba(255,255,255,0.2);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 15px;
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.card-link-beach:hover {
+    background: rgba(255,215,0,0.9);
+    color: #333;
+}
+
+/* ================================
+   PRODUTOS EM DESTAQUE - SISTEMA DE PREÇOS
+   ================================ */
+.product-card-beach {
+    position: relative;
+}
+
+.promotion-badge-beach {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: linear-gradient(135deg, #ff4444, #cc0000);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    box-shadow: 0 3px 15px rgba(255, 68, 68, 0.4);
+    z-index: 2;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.product-price-beach-container {
+    margin: 1rem 0;
+}
+
+.price-with-promotion-beach {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.original-price-beach {
+    font-size: 1rem;
+    color: #999;
+    text-decoration: line-through;
+    font-weight: 400;
+}
+
+.promotional-price-beach {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #FFD700;
+}
+
+.product-price-beach {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #FFD700;
+    margin: 0;
+}
+
+/* ================================
+   MELHORIAS GERAIS
+   ================================ */
+.product-info-beach {
+    padding: 2rem;
+    display: grid;
+    grid-template-rows: auto auto 1fr auto auto;
+    gap: 0.8rem;
+    height: 100%;
+}
+
+.product-info-beach h3 {
+    font-family: var(--font-heading);
+    font-size: 1.4rem;
+    color: #20B2AA;
+    line-height: 1.3;
+    margin: 0;
+    grid-row: 1;
+}
+
+.product-info-beach p {
+    color: #4682B4;
+    line-height: 1.5;
+    font-size: 0.95rem;
+    margin: 0;
+    grid-row: 2;
+    flex-grow: 1;
+}
+
+.btn-buy-beach {
+    width: 100%;
+    background: linear-gradient(135deg, #20B2AA, #87CEEB);
+    color: white;
+    text-decoration: none;
+    padding: 1rem 2rem;
+    border-radius: 15px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    min-height: 50px;
+    margin: 0;
+    grid-row: 5;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 5px 20px rgba(32, 178, 170, 0.3);
+}
+
+.btn-buy-beach:hover {
+    background: linear-gradient(135deg, #87CEEB, #20B2AA);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(32, 178, 170, 0.4);
+}
+
+/* ================================
+   RESPONSIVIDADE
+   ================================ */
+@media (max-width: 768px) {
+    .mini-promotional-price,
+    .mini-price {
+        font-size: 0.9rem;
+    }
+    
+    .mini-original-price {
+        font-size: 0.7rem;
+    }
+    
+    .promotional-price-beach,
+    .product-price-beach {
+        font-size: 1.5rem;
+    }
+    
+    .original-price-beach {
+        font-size: 0.9rem;
+    }
+    
+    .mini-info h4 {
+        font-size: 0.8rem;
+    }
+    
+    .card-link-beach {
+        font-size: 0.7rem;
+        padding: 0.4rem 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .promotional-price-beach,
+    .product-price-beach {
+        font-size: 1.3rem;
+    }
+    
+    .promotion-badge-beach,
+    .mini-promotion-badge {
+        font-size: 0.75rem;
+        padding: 0.4rem 0.8rem;
+    }
+    
+    .product-info-beach {
+        padding: 1.5rem;
+    }
+    
+    .mini-card img,
+    .mini-no-image {
+        height: 100px;
+    }
+}

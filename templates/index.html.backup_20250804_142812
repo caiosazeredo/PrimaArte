@@ -93,16 +93,9 @@
                                 </div>
                             </div>
                             <div class="card-info-beach">
-    <h4>{{ product.name }}</h4>
-    <div class="price-section-beach">
-        {% if product.promotion_active and product.promotional_price %}
-            <span class="regular-price-beach">R$ {{ "%.2f"|format(product.price) }}</span>
-            <span class="promotional-price-beach">R$ {{ "%.2f"|format(product.promotional_price) }}</span>
-        {% else %}
-            <span class="card-price-beach">R$ {{ "%.2f"|format(product.price) }}</span>
-        {% endif %}
-    </div>
-</div>
+                                <h4>{{ product.name }}</h4>
+                                <span class="card-price-beach">R$ {{ "%.2f"|format(product.price) }}</span>
+                            </div>
                         </div>
                         {% endfor %}
                     </div>
@@ -180,60 +173,54 @@
             </p>
         </div>
         
-<div class="products-grid-beach">
-    {% for product in featured_products %}
-    <div class="product-card-beach" data-aos="fade-up" data-aos-delay="{{ loop.index0 * 100 }}">
-        <div class="product-image-beach">
-            {% if product.images and product.images|length > 0 %}
-            <img src="{{ product.images[0] }}" alt="{{ product.name }}">
-            {% else %}
-            <div class="no-image-beach">
-                <i class="fas fa-image"></i>
-            </div>
-            {% endif %}
-
-            {% if product.promotion_active and product.promotional_price %}
-                <div class="promotion-badge-beach">
-                    <i class="fas fa-fire"></i>
-                    {% set discount = ((product.price - product.promotional_price) / product.price * 100) | round %}
-                    {{ discount }}% OFF
+        <div class="products-grid-beach">
+            {% for product in featured_products %}
+            <div class="product-card-beach" data-aos="fade-up" data-aos-delay="{{ loop.index0 * 100 }}">
+                <div class="product-image-beach">
+                    {% if product.images and product.images|length > 0 %}
+                    <img src="{{ product.images[0] }}" alt="{{ product.name }}">
+                    {% else %}
+                    <div class="no-image-beach">
+                        <i class="fas fa-image"></i>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="product-badge-beach">
+                        <i class="fas fa-star"></i>
+                        Destaque
+                    </div>
+                    
+                    <div class="product-hover-beach">
+                        <a href="{{ url_for('product_detail', product_slug=product.name|slug) }}" class="btn-view-beach">
+                            <i class="fas fa-eye"></i>
+                            Ver Detalhes
+                        </a>
+                    </div>
                 </div>
-            {% elif product.featured %}
-                <div class="product-badge-beach">
-                    <i class="fas fa-star"></i>
-                    Destaque
+                
+                <div class="product-info-beach">
+                    <h3>{{ product.name }}</h3>
+                    <p>{{ product.description[:80] }}{% if product.description|length > 80 %}...{% endif %}</p>
+                    <div class="product-price-beach">R$ {{ "%.2f"|format(product.price) }}</div>
+                    
+                    <a href="{{ url_for('product_detail', product_slug=product.name|slug) }}" class="btn-buy-beach">
+                        <i class="fas fa-shopping-cart"></i>
+                        Comprar Agora
+                    </a>
                 </div>
-            {% endif %}
-            
-            <div class="product-hover-beach">
-                <a href="{{ url_for('product_detail', product_slug=product.name|slug) }}" class="btn-view-beach">
-                    <i class="fas fa-eye"></i>
-                    Ver Detalhes
-                </a>
             </div>
+            {% endfor %}
         </div>
         
-        <div class="product-info-beach">
-            <h3>{{ product.name }}</h3>
-            <p>{{ product.description[:80] }}{% if product.description|length > 80 %}...{% endif %}</p>
-            
-            <div class="product-price-beach">
-                {% if product.promotion_active and product.promotional_price %}
-                    <span class="regular-price-main">R$ {{ "%.2f"|format(product.price) }}</span>
-                    <span class="promotional-price-main">R$ {{ "%.2f"|format(product.promotional_price) }}</span>
-                {% else %}
-                    <span>R$ {{ "%.2f"|format(product.price) }}</span>
-                {% endif %}
-            </div>
-            
-            <a href="{{ url_for('product_detail', product_slug=product.name|slug) }}" class="btn-buy-beach">
-                <i class="fas fa-shopping-cart"></i>
-                Comprar Agora
+        <div class="view-all-beach">
+            <a href="{{ url_for('products') }}" class="btn-view-all-beach">
+                <i class="fas fa-th-large"></i>
+                Ver Todos os Produtos
+                <i class="fas fa-arrow-right"></i>
             </a>
         </div>
     </div>
-    {% endfor %}
-</div>
+</section>
 {% endif %}
 
 {% if announcements %}
@@ -241,7 +228,7 @@
     <div class="container">
         <h2 class="announcements-title-beach">
             <i class="fas fa-bullhorn"></i>
-            Novidades!
+            Novidades da Praia
         </h2>
         <div class="announcements-grid-beach">
             {% for announcement in announcements %}

@@ -1,0 +1,316 @@
+{% extends "base.html" %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/product-detail.css') }}">
+{% endblock %}
+
+{% block title %}{{ product.name }} - Prima Arte{% endblock %}
+
+{% block content %}
+<section class="product-section">
+    <div class="container">
+        <!-- Breadcrumb -->
+        <nav class="breadcrumb">
+            <a href="{{ url_for('index') }}"><i class="fas fa-home"></i> Início</a>
+            <span class="breadcrumb-separator">/</span>
+            <a href="{{ url_for('products') }}">Produtos</a>
+            <span class="breadcrumb-separator">/</span>
+            <span class="current">{{ product.name }}</span>
+        </nav>
+
+        <div class="product-detail">
+            <!-- Galeria de Imagens -->
+            <div class="product-gallery">
+                <div class="main-image-container">
+                    {% if product.images and product.images|length > 0 %}
+                    <img src="{{ product.images[0] }}" alt="{{ product.name }}" class="main-image" id="mainImage">
+                    <div class="zoom-indicator">
+                        <i class="fas fa-search-plus"></i>
+                        <span>Clique para ampliar</span>
+                    </div>
+                    {% else %}
+                    <div class="no-image-placeholder">
+                        <i class="fas fa-image"></i>
+                        <span>Sem imagem</span>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                {% if product.images and product.images|length > 1 %}
+                <div class="image-thumbnails">
+                    {% for image in product.images %}
+                    <img src="{{ image }}" alt="{{ product.name }}" class="thumbnail{% if loop.first %} active{% endif %}" onclick="changeMainImage('{{ image }}', this)">
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Informações do Produto -->
+            <div class="product-info">
+                <div class="product-header">
+                    <h1 class="product-title">{{ product.name }}</h1>
+                    
+                    <!-- Sistema de Preços Profissional -->
+                    <div class="price-section">
+                        {% if product.promotion_active and product.promotional_price and product.promotional_price < product.price %}
+                        <!-- Com Promoção -->
+                        <div class="price-promotion">
+                            <div class="original-price">
+                                <span class="price-label">De:</span>
+                                <span class="price-value">R$ {{ "%.2f"|format(product.price) }}</span>
+                            </div>
+                            <div class="promotional-price">
+                                <span class="price-label">Por:</span>
+                                <span class="price-value">R$ {{ "%.2f"|format(product.promotional_price) }}</span>
+                            </div>
+                            <div class="savings">
+                                <span class="savings-text">Economia de R$ {{ "%.2f"|format(product.price - product.promotional_price) }}</span>
+                                <span class="discount-badge">{{ ((product.price - product.promotional_price) / product.price * 100)|round|int }}% OFF</span>
+                            </div>
+                        </div>
+                        {% else %}
+                        <!-- Preço Normal -->
+                        <div class="price-normal">
+                            <span class="price-value">R$ {{ "%.2f"|format(product.price) }}</span>
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Informações de Parcelamento -->
+                        <div class="installment-info">
+                            <i class="fas fa-credit-card"></i>
+                            <span>ou 3x de R$ {{ "%.2f"|format((product.promotional_price if (product.promotion_active and product.promotional_price) else product.price) / 3) }} sem juros</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Categoria -->
+                <div class="product-category">
+                    <i class="fas fa-tag"></i>
+                    {{ product.category|title }}
+                </div>
+
+                <!-- Descrição -->
+                <div class="product-description">
+                    <h3><i class="fas fa-info-circle"></i> Descrição</h3>
+                    <p>{{ product.description }}</p>
+                </div>
+
+                <!-- Formulário de Compra -->
+                <div class="purchase-form">
+                    <div class="form-group">
+                        <label for="quantity">
+                            <i class="fas fa-sort-numeric-up"></i> Quantidade
+                        </label>
+                        <div class="quantity-selector">
+                            <button type="button" class="qty-btn" onclick="changeQuantity(-1)">−</button>
+                            <input type="number" id="quantity" value="1" min="1" max="10" readonly>
+                            <button type="button" class="qty-btn" onclick="changeQuantity(1)">+</button>
+                        </div>
+                    </div>
+
+                    <!-- Calcular Frete -->
+                    <div class="shipping-calculator">
+                        <h4><i class="fas fa-truck"></i> Calcular Frete</h4>
+                        <div class="shipping-input">
+                            <input type="text" id="cep" placeholder="Digite seu CEP" maxlength="9">
+                            <button type="button" class="btn-calculate-shipping" onclick="calculateShipping()">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                        <div id="shipping-results" class="shipping-results"></div>
+                    </div>
+
+                    <!-- Botões de Ação -->
+                    <div class="action-buttons">
+                        <button class="btn-buy-now" onclick="buyNow()">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span>Comprar Agora</span>
+                        </button>
+                        
+                        <button class="btn-whatsapp" onclick="contactWhatsApp()">
+                            <i class="fab fa-whatsapp"></i>
+                            <span>Conversar no WhatsApp</span>
+                        </button>
+                    </div>
+
+                    <!-- Garantias e Políticas -->
+                    <div class="policies">
+                        <div class="policy-item">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>Compra 100% segura</span>
+                        </div>
+                        <div class="policy-item">
+                            <i class="fas fa-undo"></i>
+                            <span>7 dias para trocas</span>
+                        </div>
+                        <div class="policy-item">
+                            <i class="fas fa-medal"></i>
+                            <span>Produto artesanal</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Compartilhar -->
+        <div class="share-section">
+            <h3><i class="fas fa-share-alt"></i> Compartilhe com seus amigos</h3>
+            <div class="share-buttons">
+                <button onclick="shareWhatsApp()" class="share-btn whatsapp">
+                    <i class="fab fa-whatsapp"></i>
+                    WhatsApp
+                </button>
+                <button onclick="shareFacebook()" class="share-btn facebook">
+                    <i class="fab fa-facebook-f"></i>
+                    Facebook
+                </button>
+                <button onclick="shareTwitter()" class="share-btn twitter">
+                    <i class="fab fa-twitter"></i>
+                    Twitter
+                </button>
+                <button onclick="copyLink()" class="share-btn copy">
+                    <i class="fas fa-link"></i>
+                    Copiar Link
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+// Mudança de imagem principal
+function changeMainImage(imageSrc, thumbnail) {
+    document.getElementById('mainImage').src = imageSrc;
+    
+    // Remove active de todas as thumbnails
+    document.querySelectorAll('.thumbnail').forEach(thumb => {
+        thumb.classList.remove('active');
+    });
+    
+    // Adiciona active na thumbnail clicada
+    thumbnail.classList.add('active');
+}
+
+// Controle de quantidade
+function changeQuantity(change) {
+    const quantityInput = document.getElementById('quantity');
+    let currentValue = parseInt(quantityInput.value);
+    let newValue = currentValue + change;
+    
+    if (newValue >= 1 && newValue <= 10) {
+        quantityInput.value = newValue;
+    }
+}
+
+// Máscara para CEP
+document.getElementById('cep').addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\D/g, '');
+    if (value.length > 5) {
+        value = value.replace(/^(\d{5})(\d{1,3})/, '$1-$2');
+    }
+    e.target.value = value;
+});
+
+// Calcular frete (simulação)
+function calculateShipping() {
+    const cep = document.getElementById('cep').value;
+    const resultsDiv = document.getElementById('shipping-results');
+    
+    if (cep.length < 9) {
+        alert('Digite um CEP válido');
+        return;
+    }
+    
+    resultsDiv.innerHTML = `
+        <div class="shipping-option">
+            <strong>PAC:</strong> R$ 15,90 - até 8 dias úteis
+        </div>
+        <div class="shipping-option">
+            <strong>SEDEX:</strong> R$ 25,90 - até 3 dias úteis
+        </div>
+    `;
+}
+
+// Comprar agora
+function buyNow() {
+    const quantity = document.getElementById('quantity').value;
+    const productName = "{{ product.name }}";
+    const price = {{ product.promotional_price if (product.promotion_active and product.promotional_price) else product.price }};
+    const total = (price * quantity).toFixed(2);
+    
+    const message = `Olá! Gostaria de comprar:\n\n` +
+                   `📦 Produto: ${productName}\n` +
+                   `📊 Quantidade: ${quantity}\n` +
+                   `💰 Total: R$ ${total}\n\n` +
+                   `Pode me ajudar com o pedido?`;
+    
+    const whatsappUrl = `https://wa.me/5521973108293?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+}
+
+// Contato WhatsApp
+function contactWhatsApp() {
+    const productName = "{{ product.name }}";
+    const message = `Olá! Tenho interesse no produto: ${productName}\n\nPode me dar mais informações?`;
+    const whatsappUrl = `https://wa.me/5521973108293?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+}
+
+// Funções de compartilhamento
+function shareWhatsApp() {
+    const url = window.location.href;
+    const text = `Olhe que produto incrível da Prima Arte: {{ product.name }}`;
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`;
+    window.open(whatsappUrl, '_blank');
+}
+
+function shareFacebook() {
+    const url = window.location.href;
+    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+    window.open(facebookUrl, '_blank');
+}
+
+function shareTwitter() {
+    const url = window.location.href;
+    const text = `Produto incrível da Prima Arte: {{ product.name }}`;
+    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+    window.open(twitterUrl, '_blank');
+}
+
+function copyLink() {
+    navigator.clipboard.writeText(window.location.href).then(() => {
+        alert('Link copiado para a área de transferência!');
+    });
+}
+
+// Zoom na imagem
+document.getElementById('mainImage').addEventListener('click', function() {
+    const img = this;
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.9);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        cursor: pointer;
+    `;
+    
+    const zoomedImg = document.createElement('img');
+    zoomedImg.src = img.src;
+    zoomedImg.style.cssText = 'max-width: 90%; max-height: 90%; object-fit: contain;';
+    
+    modal.appendChild(zoomedImg);
+    document.body.appendChild(modal);
+    
+    modal.addEventListener('click', () => {
+        document.body.removeChild(modal);
+    });
+});
+</script>
+{% endblock %}

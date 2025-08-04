@@ -1,0 +1,519 @@
+{% extends "base.html" %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/product-detail.css') }}">
+{% endblock %}
+
+{% block title %}{{ product.name }} - Prima Arte{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="product-detail">
+            <!-- Galeria de Imagens -->
+            <div class="product-gallery">
+                {% if product.images and product.images|length > 0 %}
+                <!-- Imagem Principal -->
+                <div class="main-image-container">
+                    <img id="mainImage" src="{{ product.images[0] }}" alt="{{ product.name }}" 
+                         class="main-image" onclick="openImageModal(0)">
+                    <div class="zoom-indicator">
+                        <i class="fas fa-search-plus"></i>
+                        <span>Clique para ampliar</span>
+                    </div>
+                </div>
+                
+                <!-- Miniaturas -->
+                {% if product.images|length > 1 %}
+                <div class="image-thumbnails">
+                    {% for image in product.images %}
+                    <img src="{{ image }}" alt="{{ product.name }}" 
+                         onclick="changeMainImage('{{ image }}', {{ loop.index0 }})"
+                         class="thumbnail" data-index="{{ loop.index0 }}">
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% else %}
+                <div class="no-image-product">
+                    <i class="fas fa-image"></i>
+                    <p>Sem imagem disponível</p>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Informações do Produto -->
+            <div class="product-info">
+                <h1 class="product-title">{{ product.name }}</h1>
+                
+                <div class="product-price-container">
+                    {% if product.promotion_active and product.promotional_price %}
+                        <div class="promotion-badge">
+                            <i class="fas fa-fire"></i>
+                            {% set discount = ((product.price - product.promotional_price) / product.price * 100) | round %}
+                            {{ discount }}% OFF - Oferta Especial!
+                        </div>
+                        
+                        <div class="price-display">
+                            <span class="regular-price">De: R$ {{ "%.2f"|format(product.price) }}</span>
+                            <span class="promotional-price">
+                                Por: R$ {{ "%.2f"|format(product.promotional_price) }}
+                                <i class="fas fa-tag" style="color: #4CAF50; font-size: 0.8em;"></i>
+                            </span>
+                            {% set savings = product.price - product.promotional_price %}
+                            <div class="savings-amount">
+                                Você economiza R$ {{ "%.2f"|format(savings) }}!
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="regular-price-only">R$ {{ "%.2f"|format(product.price) }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="product-category">
+                    <i class="fas fa-tag"></i>
+                    <span>{{ product.category|title }}</span>
+                </div>
+                
+                <div class="product-description">
+                    <h3><i class="fas fa-info-circle"></i> Descrição</h3>
+                    <p>{{ product.description }}</p>
+                </div>
+                
+                <!-- Formulário de Compra -->
+                <form action="{{ url_for('add_to_cart') }}" method="POST" class="purchase-form">
+                    <input type="hidden" name="product_id" value="{{ product.id }}">
+                    <input type="hidden" name="current_price" value="{% if product.promotion_active and product.promotional_price %}{{ product.promotional_price }}{% else %}{{ product.price }}{% endif %}">
+                    
+                    <div class="form-group">
+                        <label for="quantity">
+                            <i class="fas fa-sort-numeric-up"></i> Quantidade:
+                        </label>
+                        <div class="quantity-selector">
+                            <button type="button" onclick="decreaseQuantity()" class="qty-btn">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <input type="number" name="quantity" id="quantity" value="1" min="1" max="10" readonly>
+                            <button type="button" onclick="increaseQuantity()" class="qty-btn">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="description">
+                            <i class="fas fa-comment-alt"></i> Observações (opcional):
+                        </label>
+                        <textarea name="description" id="description" 
+                                  placeholder="Personalizações, cores específicas, tamanhos, etc."></textarea>
+                    </div>
+                    
+                    <div class="purchase-actions">
+                        <button type="submit" class="btn-add-cart">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span>Adicionar ao Carrinho</span>
+                        </button>
+                        
+                        <a href="https://wa.me/5521973108293?text=Olá! Tenho interesse no produto: {{ product.name }}" 
+                           target="_blank" class="btn-whatsapp">
+                            <i class="fab fa-whatsapp"></i>
+                            <span>Falar no WhatsApp</span>
+                        </a>
+                    </div>
+                </form>
+                
+                <!-- Garantias -->
+                <div class="product-guarantees">
+                    <div class="guarantee-item">
+                        <i class="fas fa-heart"></i>
+                        <span>Feito à mão com amor</span>
+                    </div>
+                    <div class="guarantee-item">
+                        <i class="fas fa-star"></i>
+                        <span>Qualidade premium</span>
+                    </div>
+                    <div class="guarantee-item">
+                        <i class="fas fa-shipping-fast"></i>
+                        <span>Entrega rápida</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Modal de Zoom Avançado com Controles -->
+<div id="imageModal" class="image-modal">
+    <div class="modal-header">
+        <h3 id="modalTitle">{{ product.name }}</h3>
+        <div class="modal-controls">
+            <button class="zoom-btn" onclick="zoomOut()" title="Diminuir zoom">
+                <i class="fas fa-search-minus"></i>
+            </button>
+            <button class="zoom-btn" onclick="resetZoom()" title="Zoom original">
+                <i class="fas fa-expand-arrows-alt"></i>
+            </button>
+            <button class="zoom-btn" onclick="zoomIn()" title="Aumentar zoom">
+                <i class="fas fa-search-plus"></i>
+            </button>
+            <button class="close-modal" onclick="closeImageModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+    
+    <div class="modal-content-wrapper">
+        <!-- Botão Anterior -->
+        <button class="nav-btn nav-prev" onclick="previousImage()">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        
+        <!-- Container de Imagem com Zoom -->
+        <div class="modal-image-container" id="imageContainer">
+            <img class="modal-image" id="modalImage" alt="{{ product.name }}">
+            
+            <div class="zoom-level">
+                <span id="zoomLevel">100%</span>
+            </div>
+        </div>
+        
+        <!-- Botão Próximo -->
+        <button class="nav-btn nav-next" onclick="nextImage()">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+    </div>
+    
+    <!-- Miniaturas no Modal -->
+    {% if product.images and product.images|length > 1 %}
+    <div class="modal-thumbnails">
+        {% for image in product.images %}
+        <img src="{{ image }}" alt="{{ product.name }}" 
+             onclick="goToImage({{ loop.index0 }})"
+             class="modal-thumbnail" data-index="{{ loop.index0 }}">
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <div class="modal-instructions">
+        <span>Setas do teclado: navegar • + / -: zoom • ESC: fechar • Scroll: zoom</span>
+    </div>
+</div>
+
+<script>
+let currentImageIndex = 0;
+let currentZoom = 1;
+let minZoom = 0.5;
+let maxZoom = 3;
+let isDragging = false;
+let startX, startY, startTransformX = 0, startTransformY = 0;
+
+let productImages = [
+    {% for image in product.images %}
+    "{{ image }}"{% if not loop.last %},{% endif %}
+    {% endfor %}
+];
+
+function changeMainImage(imageUrl, index) {
+    document.getElementById('mainImage').src = imageUrl;
+    currentImageIndex = index;
+    
+    // Remove active class from all thumbnails
+    document.querySelectorAll('.thumbnail').forEach(thumb => {
+        thumb.classList.remove('active');
+    });
+    
+    // Add active class to clicked thumbnail
+    const thumbnail = document.querySelector(`[data-index="${index}"]`);
+    if (thumbnail) {
+        thumbnail.classList.add('active');
+    }
+}
+
+function openImageModal(index = 0) {
+    currentImageIndex = index;
+    
+    const modal = document.getElementById('imageModal');
+    const modalImg = document.getElementById('modalImage');
+    const counter = document.getElementById('imageCounter');
+    
+    modal.style.display = 'block';
+    modalImg.src = productImages[currentImageIndex];
+    counter.textContent = `${currentImageIndex + 1} / ${productImages.length}`;
+    
+    // CORREÇÃO: Iniciar sempre com zoom 100% (fit-to-container)
+    currentZoom = 1;
+    resetImagePosition();
+    updateZoomLevel();
+    updateModalThumbnails();
+    
+    // Prevent body scroll
+    document.body.style.overflow = 'hidden';
+}
+
+function closeImageModal() {
+    const modal = document.getElementById('imageModal');
+    modal.style.display = 'none';
+    document.body.style.overflow = 'auto';
+    currentZoom = 1;
+    resetImagePosition();
+}
+
+function nextImage() {
+    if (currentImageIndex < productImages.length - 1) {
+        currentImageIndex++;
+    } else {
+        currentImageIndex = 0;
+    }
+    updateModalImage();
+}
+
+function previousImage() {
+    if (currentImageIndex > 0) {
+        currentImageIndex--;
+    } else {
+        currentImageIndex = productImages.length - 1;
+    }
+    updateModalImage();
+}
+
+function goToImage(index) {
+    currentImageIndex = index;
+    updateModalImage();
+}
+
+function updateModalImage() {
+    const modalImg = document.getElementById('modalImage');
+    const counter = document.getElementById('imageCounter');
+    
+    modalImg.src = productImages[currentImageIndex];
+    counter.textContent = `${currentImageIndex + 1} / ${productImages.length}`;
+    
+    // Reset zoom when changing images
+    currentZoom = 1;
+    resetImagePosition();
+    updateModalThumbnails();
+}
+
+function updateModalThumbnails() {
+    document.querySelectorAll('.modal-thumbnail').forEach((thumb, index) => {
+        thumb.classList.toggle('active', index === currentImageIndex);
+    });
+}
+
+// Funções de Zoom Corrigidas
+function zoomIn() {
+    if (currentZoom < maxZoom) {
+        currentZoom = Math.min(currentZoom + 0.25, maxZoom);
+        applyZoom();
+    }
+}
+
+function zoomOut() {
+    if (currentZoom > minZoom) {
+        currentZoom = Math.max(currentZoom - 0.25, minZoom);
+        applyZoom();
+    }
+}
+
+function resetZoom() {
+    currentZoom = 1;
+    resetImagePosition();
+    applyZoom();
+}
+
+function applyZoom() {
+    const modalImg = document.getElementById('modalImage');
+    const container = document.getElementById('imageContainer');
+    
+    // CORREÇÃO: Aplicar zoom corretamente
+    modalImg.style.transform = `scale(${currentZoom}) translate(${startTransformX}px, ${startTransformY}px)`;
+    updateZoomLevel();
+    
+    // Ajustar cursor baseado no zoom
+    if (currentZoom > 1 && container) {
+        container.style.cursor = 'grab';
+    } else if (container) {
+        container.style.cursor = 'default';
+        // Reset position when zoom is 1 or less
+        if (currentZoom <= 1) {
+            resetImagePosition();
+        }
+    }
+}
+
+function resetImagePosition() {
+    startTransformX = 0;
+    startTransformY = 0;
+    const modalImg = document.getElementById('modalImage');
+    if (modalImg) {
+        modalImg.style.transform = `scale(${currentZoom})`;
+    }
+}
+
+function updateZoomLevel() {
+    const zoomLevelElement = document.getElementById('zoomLevel');
+    if (zoomLevelElement) {
+        zoomLevelElement.textContent = `${Math.round(currentZoom * 100)}%`;
+    }
+}
+
+function increaseQuantity() {
+    const qty = document.getElementById('quantity');
+    if (qty && parseInt(qty.value) < 10) {
+        qty.value = parseInt(qty.value) + 1;
+    }
+}
+
+function decreaseQuantity() {
+    const qty = document.getElementById('quantity');
+    if (qty && parseInt(qty.value) > 1) {
+        qty.value = parseInt(qty.value) - 1;
+    }
+}
+
+// Event Listeners
+document.addEventListener('DOMContentLoaded', function() {
+    // Set first thumbnail as active
+    const firstThumbnail = document.querySelector('.thumbnail');
+    if (firstThumbnail) {
+        firstThumbnail.classList.add('active');
+    }
+    
+    // Modal drag functionality
+    const imageContainer = document.getElementById('imageContainer');
+    const modalImage = document.getElementById('modalImage');
+    
+    if (imageContainer && modalImage) {
+        // Mouse events
+        imageContainer.addEventListener('mousedown', startDrag);
+        document.addEventListener('mousemove', drag);
+        document.addEventListener('mouseup', endDrag);
+        
+        // Touch events for mobile
+        imageContainer.addEventListener('touchstart', startDragTouch, {passive: false});
+        document.addEventListener('touchmove', dragTouch, {passive: false});
+        document.addEventListener('touchend', endDrag);
+    }
+    
+    // Keyboard navigation
+    document.addEventListener('keydown', function(e) {
+        const modal = document.getElementById('imageModal');
+        if (modal && modal.style.display === 'block') {
+            switch(e.key) {
+                case 'Escape':
+                    closeImageModal();
+                    break;
+                case 'ArrowLeft':
+                    previousImage();
+                    break;
+                case 'ArrowRight':
+                    nextImage();
+                    break;
+                case '+':
+                case '=':
+                    zoomIn();
+                    break;
+                case '-':
+                    zoomOut();
+                    break;
+                case '0':
+                    resetZoom();
+                    break;
+            }
+        }
+    });
+    
+    // Mouse wheel zoom
+    const modal = document.getElementById('imageModal');
+    if (modal) {
+        modal.addEventListener('wheel', function(e) {
+            if (e.target.closest('.modal-image-container')) {
+                e.preventDefault();
+                if (e.deltaY < 0) {
+                    zoomIn();
+                } else {
+                    zoomOut();
+                }
+            }
+        }, {passive: false});
+        
+        // Click outside modal to close
+        modal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeImageModal();
+            }
+        });
+    }
+});
+
+// Drag functions
+function startDrag(e) {
+    if (currentZoom <= 1) return;
+    
+    isDragging = true;
+    startX = e.clientX;
+    startY = e.clientY;
+    const container = document.getElementById('imageContainer');
+    if (container) {
+        container.style.cursor = 'grabbing';
+    }
+}
+
+function startDragTouch(e) {
+    if (currentZoom <= 1) return;
+    
+    isDragging = true;
+    const touch = e.touches[0];
+    startX = touch.clientX;
+    startY = touch.clientY;
+    e.preventDefault();
+}
+
+function drag(e) {
+    if (!isDragging || currentZoom <= 1) return;
+    
+    e.preventDefault();
+    const deltaX = e.clientX - startX;
+    const deltaY = e.clientY - startY;
+    
+    startTransformX += deltaX;
+    startTransformY += deltaY;
+    
+    const modalImg = document.getElementById('modalImage');
+    if (modalImg) {
+        modalImg.style.transform = `scale(${currentZoom}) translate(${startTransformX}px, ${startTransformY}px)`;
+    }
+    
+    startX = e.clientX;
+    startY = e.clientY;
+}
+
+function dragTouch(e) {
+    if (!isDragging || currentZoom <= 1) return;
+    
+    e.preventDefault();
+    const touch = e.touches[0];
+    const deltaX = touch.clientX - startX;
+    const deltaY = touch.clientY - startY;
+    
+    startTransformX += deltaX;
+    startTransformY += deltaY;
+    
+    const modalImg = document.getElementById('modalImage');
+    if (modalImg) {
+        modalImg.style.transform = `scale(${currentZoom}) translate(${startTransformX}px, ${startTransformY}px)`;
+    }
+    
+    startX = touch.clientX;
+    startY = touch.clientY;
+}
+
+function endDrag() {
+    isDragging = false;
+    const container = document.getElementById('imageContainer');
+    if (container && currentZoom > 1) {
+        container.style.cursor = 'grab';
+    }
+}
+
+</script>
+{% endblock %}

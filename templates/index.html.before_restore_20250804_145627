@@ -1,0 +1,280 @@
+{% extends "base.html" %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+{% endblock %}
+
+{% block title %}Prima Arte - Ateliê Feito à Mão{% endblock %}
+
+{% block content %}
+<!-- Hero Beach Section -->
+<section class="hero-beach">
+    <div class="container">
+        <div class="hero-content-beach">
+            <div class="hero-text-beach">
+                <div class="hero-badge-beach">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>Rio de Janeiro, RJ</span>
+                </div>
+                
+                <h1 class="hero-title-beach">
+                    Artesanato Único
+                    <span class="highlight-beach">História Especial</span>
+                </h1>
+                
+                <div class="hero-description-beach">
+                    <p>
+                        Cada peça é cuidadosamente criada à mão, combinando
+                        técnicas tradicionais com o charme carioca.
+                    </p>
+                    <p>
+                        Do nosso ateliê no Rio para sua casa, levamos 
+                        <strong>amor em cada costura</strong>.
+                    </p>
+                    
+                    <div class="beach-features">
+                        <div class="feature-beach">
+                            <div class="feature-icon-beach">
+                                <i class="fas fa-heart"></i>
+                            </div>
+                            <span>Com Amor</span>
+                        </div>
+                        <div class="feature-beach">
+                            <div class="feature-icon-beach">
+                                <i class="fas fa-sun"></i>
+                            </div>
+                            <span>Carioca</span>
+                        </div>
+                        <div class="feature-beach">
+                            <div class="feature-icon-beach">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <span>Único</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="hero-showcase-beach">
+                {% if featured_products %}
+                <div class="products-preview-beach">
+                    <h3 class="preview-title-beach">
+                        <i class="fas fa-sparkles"></i>
+                        Destaques do Ateliê
+                    </h3>
+                    <div class="preview-grid-beach">
+                        {% for product in featured_products[:3] %}
+                        <div class="preview-card-beach" style="--delay: {{ loop.index0 * 0.2 }}s;">
+                            <div class="card-image-beach">
+                                {% if product.images and product.images|length > 0 %}
+                                <img src="{{ product.images[0] }}" alt="{{ product.name }}">
+                                {% else %}
+                                <div class="card-placeholder-beach">
+                                    <i class="fas fa-image"></i>
+                                </div>
+                                {% endif %}
+                                
+                                <!-- Badge de Promoção -->
+                                {% if product.promotion_active and product.promotional_price %}
+                                <div class="promotion-badge-preview">
+                                    <i class="fas fa-fire"></i>
+                                    {{ ((product.price - product.promotional_price) / product.price * 100)|round|int }}% OFF
+                                </div>
+                                {% endif %}
+                                
+                                <div class="card-overlay-beach">
+                                    <a href="{{ url_for('product_detail', product_slug=product.name|slug) }}" class="card-link-beach">
+                                        <i class="fas fa-eye"></i>
+                                        Ver
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="card-info-beach">
+                                <h4>{{ product.name }}</h4>
+                                
+                                <!-- Preços Corrigidos -->
+                                {% if product.promotion_active and product.promotional_price %}
+                                <div class="price-with-promotion-preview">
+                                    <span class="regular-price-preview">R$ {{ "%.2f"|format(product.price) }}</span>
+                                    <span class="promotional-price-preview">R$ {{ "%.2f"|format(product.promotional_price) }}</span>
+                                </div>
+                                {% else %}
+                                <span class="card-price-beach">R$ {{ "%.2f"|format(product.price) }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="hero-actions-beach">
+            <a href="{{ url_for('products') }}" class="btn-beach-primary">
+                <i class="fas fa-shopping-bag"></i>
+                <span>Explorar Produtos</span>
+                <div class="wave-effect"></div>
+            </a>
+            
+            <a href="https://wa.me/5521973108293?text=Olá! Gostaria de conhecer mais sobre a Prima Arte" 
+               target="_blank" class="btn-beach-secondary">
+                <i class="fab fa-whatsapp"></i>
+                <span>Conversar no WhatsApp</span>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Beach Story Section -->
+<section class="beach-story">
+    <div class="container">
+        <div class="story-content-beach">
+            <div class="story-text-beach">
+                <h2 class="story-title-beach">
+                    <i class="fas fa-map-marker-alt"></i>
+                    Direto do Rio de Janeiro
+                </h2>
+                <p>
+                    Nossa história começou nas areias cariocas, onde a criatividade encontra a brisa do mar. 
+                    Inspiradas pela beleza natural da Cidade Maravilhosa, criamos peças que carregam 
+                    toda a energia e alegria do Rio.
+                </p>
+                <p>
+                    Cada produto é uma pequena obra de arte, feita com as mãos e o coração de artesãs 
+                    apaixonadas por sua terra e sua arte.
+                </p>
+            </div>
+            <div class="story-visual-beach">
+                <div class="beach-icons">
+                    <div class="beach-icon-item">
+                        <i class="fas fa-palette"></i>
+                        <span>Design Carioca</span>
+                    </div>
+                    <div class="beach-icon-item">
+                        <i class="fas fa-hands"></i>
+                        <span>Feito à Mão</span>
+                    </div>
+                    <div class="beach-icon-item">
+                        <i class="fas fa-heart"></i>
+                        <span>Com Carinho</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% if featured_products %}
+<section class="featured-beach">
+    <div class="container">
+        <div class="section-header-beach">
+            <h2 class="section-title-beach">
+                <i class="fas fa-star"></i>
+                Produtos em Destaque
+                <i class="fas fa-star"></i>
+            </h2>
+            <p class="section-subtitle-beach">
+                Peças especiais que capturam a essência carioca
+            </p>
+        </div>
+        
+        <div class="products-grid-beach">
+            {% for product in featured_products %}
+            <div class="product-card-beach {% if product.promotion_active and product.promotional_price %}has-promotion{% endif %}" data-aos="fade-up" data-aos-delay="{{ loop.index0 * 100 }}">
+                <div class="product-image-beach">
+                    {% if product.images and product.images|length > 0 %}
+                    <img src="{{ product.images[0] }}" alt="{{ product.name }}">
+                    {% else %}
+                    <div class="no-image-beach">
+                        <i class="fas fa-image"></i>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Badge de Promoção OU Destaque -->
+                    {% if product.promotion_active and product.promotional_price %}
+                    <div class="promotion-badge-main">
+                        <i class="fas fa-fire"></i>
+                        {{ ((product.price - product.promotional_price) / product.price * 100)|round|int }}% OFF
+                    </div>
+                    {% else %}
+                    <div class="product-badge-beach">
+                        <i class="fas fa-star"></i>
+                        Destaque
+                    </div>
+                    {% endif %}
+                    
+                    <div class="product-hover-beach">
+                        <a href="{{ url_for('product_detail', product_slug=product.name|slug) }}" class="btn-view-beach">
+                            <i class="fas fa-eye"></i>
+                            Ver Detalhes
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="product-info-beach">
+                    <h3>{{ product.name }}</h3>
+                    <p>{{ product.description[:80] }}{% if product.description|length > 80 %}...{% endif %}</p>
+                    
+                    <!-- Seção de Preços CORRIGIDA -->
+                    <div class="product-pricing-main">
+                        {% if product.promotion_active and product.promotional_price %}
+                        <div class="price-promotion-main">
+                            <span class="regular-price-main">R$ {{ "%.2f"|format(product.price) }}</span>
+                            <span class="promotional-price-main">R$ {{ "%.2f"|format(product.promotional_price) }}</span>
+                            <span class="savings-main">
+                                <i class="fas fa-piggy-bank"></i>
+                                Economize R$ {{ "%.2f"|format(product.price - product.promotional_price) }}
+                            </span>
+                        </div>
+                        {% else %}
+                        <div class="price-regular-main">
+                            <span class="price-value-main">R$ {{ "%.2f"|format(product.price) }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="view-all-beach">
+            <a href="{{ url_for('products') }}" class="btn-view-all-beach">
+                <i class="fas fa-th-large"></i>
+                Ver Todos os Produtos
+                <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% if announcements %}
+<section class="announcements-beach">
+    <div class="container">
+        <div class="section-header-beach">
+            <h2 class="section-title-beach">
+                <i class="fas fa-bullhorn"></i>
+                Novidades do Ateliê
+            </h2>
+        </div>
+        
+        <div class="announcements-grid-beach">
+            {% for announcement in announcements %}
+            <div class="announcement-card-beach" data-aos="fade-up" data-aos-delay="{{ loop.index0 * 200 }}">
+                {% if announcement.image %}
+                <div class="announcement-image-beach">
+                    <img src="{{ announcement.image }}" alt="{{ announcement.title }}">
+                </div>
+                {% endif %}
+                <div class="announcement-content-beach">
+                    <h3>{{ announcement.title }}</h3>
+                    <p>{{ announcement.content }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endblock %}

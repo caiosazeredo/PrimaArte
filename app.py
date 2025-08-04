@@ -1,4 +1,3 @@
-import time
 # -*- coding: utf-8 -*-
 """
 🎨 PRIMA ARTE - APLICAÇÃO PRINCIPAL
@@ -33,19 +32,6 @@ DATA_FILE = 'data.json'
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-
-def get_product_current_price(product):
-    """Retorna o preço atual do produto (promocional se ativo, normal se não)"""
-    if product.get('promotion_active', False) and product.get('promotional_price'):
-        return float(product['promotional_price'])
-    return float(product['price'])
-
-def calculate_discount_percentage(original_price, promotional_price):
-    """Calcula a porcentagem de desconto"""
-    if not promotional_price or promotional_price >= original_price:
-        return 0
-    return round(((original_price - promotional_price) / original_price) * 100)
 
 def load_data():
     """Carrega dados do arquivo JSON"""
@@ -88,25 +74,39 @@ def create_slug(text):
     
     return text
 
+# ================================
+# FUNÇÕES AUXILIARES PARA PREÇOS
+# ================================
+def get_product_current_price(product):
+    """Retorna o preço atual do produto (promocional se ativo, senão regular)"""
+    if product.get('promotion_active') and product.get('promotional_price'):
+        return product['promotional_price']
+    return product['price']
+
+def calculate_discount_percentage(regular_price, promotional_price):
+    """Calcula a porcentagem de desconto"""
+    if not promotional_price or promotional_price >= regular_price:
+        return 0
+    return round(((regular_price - promotional_price) / regular_price) * 100)
+
+# ================================
+# FILTROS E FUNÇÕES GLOBAIS PARA TEMPLATES
+# ================================
 @app.template_filter('slug')
 def slug_filter(text):
     """Filtro para criar slugs"""
     return create_slug(text)
-# Filtros para templates
+
 @app.template_filter('calculate_discount')
 def calculate_discount_filter(regular_price, promotional_price):
     """Calcula desconto para usar nos templates"""
-    if not promotional_price or promotional_price >= regular_price:
-        return 0
-    return round(((regular_price - promotional_price) / regular_price) * 100)
+    return calculate_discount_percentage(regular_price, promotional_price)
 
 @app.template_global()
 def get_current_price(product):
     """Retorna preço atual do produto para templates"""
     return get_product_current_price(product)
 
-
-# Função auxiliar para gerar URL do produto
 @app.template_global()
 def product_url(product):
     """Gera URL amigável para produto"""
@@ -122,7 +122,7 @@ def index():
     data = load_data()
     featured_products = [p for p in data['products'] if p.get('featured', False)][:6]
     
-    # Adiciona preço atual para cada produto em destaque
+    # Adiciona preço atual e desconto para cada produto em destaque
     for product in featured_products:
         product['current_price'] = get_product_current_price(product)
         if product.get('promotion_active') and product.get('promotional_price'):
@@ -143,7 +143,7 @@ def products():
     if category:
         products = [p for p in products if p.get('category', '').lower() == category.lower()]
     
-    # Adiciona preço atual para cada produto
+    # Adiciona preço atual e desconto para cada produto
     for product in products:
         product['current_price'] = get_product_current_price(product)
         if product.get('promotion_active') and product.get('promotional_price'):
@@ -169,6 +169,12 @@ def product_detail(product_slug):
     if not product:
         flash('Produto não encontrado!', 'error')
         return redirect(url_for('products'))
+    
+    # Adiciona informações de preço
+    product['current_price'] = get_product_current_price(product)
+    if product.get('promotion_active') and product.get('promotional_price'):
+        product['discount_percent'] = calculate_discount_percentage(product['price'], product['promotional_price'])
+        product['savings'] = product['price'] - product['promotional_price']
     
     return render_template('product.html', product=product)
 
@@ -263,12 +269,13 @@ def checkout():
     for item in cart_items:
         product = next((p for p in data['products'] if p['id'] == item['product_id']), None)
         if product:
-            item_total = product['price'] * item['quantity']
+            current_price = get_product_current_price(product)
+            item_total = current_price * item['quantity']
             total += item_total
             
             message += f"*Item {item_count}:* {product['name']}\n"
             message += f"   • Quantidade: {item['quantity']} unidade(s)\n"
-            message += f"   • Preço unitário: R$ {product['price']:.2f}\n"
+            message += f"   • Preço unitário: R$ {current_price:.2f}\n"
             
             if item.get('description'):
                 message += f"   • Observações: {item['description']}\n"

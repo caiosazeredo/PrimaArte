@@ -1,0 +1,256 @@
+{% extends "base.html" %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/product-detail.css') }}">
+{% endblock %}
+
+{% block title %}{{ product.name }} - Prima Arte{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="product-detail">
+            <!-- Galeria de Imagens -->
+            <div class="product-gallery">
+                <div class="main-image-container">
+                    {% if product.images and product.images|length > 0 %}
+                    <img src="{{ product.images[0] }}" alt="{{ product.name }}" class="main-image" id="mainImage">
+                    <div class="zoom-indicator">
+                        <i class="fas fa-search-plus"></i> Clique para ampliar
+                    </div>
+                    {% else %}
+                    <div class="main-image-placeholder">
+                        <i class="fas fa-image"></i>
+                        <p>Sem imagem</p>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Badge de Promoção -->
+                    {% if product.promotion_active and product.promotional_price %}
+                    <div class="promotion-badge-detail">
+                        <i class="fas fa-fire"></i>
+                        {{ ((product.price - product.promotional_price) / product.price * 100)|round|int }}% OFF
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Thumbnails -->
+                {% if product.images and product.images|length > 1 %}
+                <div class="image-thumbnails">
+                    {% for image in product.images %}
+                    <img src="{{ image }}" alt="{{ product.name }}" 
+                         class="thumbnail {% if loop.first %}active{% endif %}"
+                         onclick="changeMainImage('{{ image }}', this)">
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Informações do Produto -->
+            <div class="product-info">
+                <div class="product-header">
+                    <h1 class="product-title">{{ product.name }}</h1>
+                    <div class="product-category">
+                        <i class="fas fa-tag"></i>
+                        {{ product.category.title() }}
+                    </div>
+                </div>
+                
+                <!-- Seção de Preços -->
+                <div class="product-pricing">
+                    {% if product.promotion_active and product.promotional_price %}
+                    <div class="pricing-promotion">
+                        <div class="regular-price-detail">
+                            <span class="price-label">De:</span>
+                            <span class="price-value">R$ {{ "%.2f"|format(product.price) }}</span>
+                        </div>
+                        <div class="promotional-price-detail">
+                            <span class="price-label">Por apenas:</span>
+                            <span class="price-value">R$ {{ "%.2f"|format(product.promotional_price) }}</span>
+                        </div>
+                        <div class="savings-info">
+                            <div class="savings-amount">
+                                <i class="fas fa-piggy-bank"></i>
+                                Você economiza R$ {{ "%.2f"|format(product.price - product.promotional_price) }}
+                            </div>
+                            <div class="promotion-timer">
+                                <i class="fas fa-clock"></i>
+                                Oferta por tempo limitado!
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="pricing-regular">
+                        <div class="regular-price-only">
+                            <span class="price-label">Preço:</span>
+                            <span class="price-value">R$ {{ "%.2f"|format(product.price) }}</span>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Descrição -->
+                <div class="product-description">
+                    <h3><i class="fas fa-info-circle"></i> Descrição</h3>
+                    <p>{{ product.description }}</p>
+                </div>
+                
+                <!-- Características -->
+                <div class="product-features">
+                    <h3><i class="fas fa-star"></i> Características</h3>
+                    <div class="features-grid">
+                        <div class="feature-item">
+                            <i class="fas fa-hand-holding-heart"></i>
+                            <span>Feito à mão</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-leaf"></i>
+                            <span>Materiais de qualidade</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-gem"></i>
+                            <span>Peça única</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-heart"></i>
+                            <span>Carioca</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Formulário de Contato -->
+                <div class="product-contact">
+                    <h3><i class="fas fa-shopping-cart"></i> Interessou? Entre em contato!</h3>
+                    <div class="contact-options">
+                        <a href="https://wa.me/5521973108293?text=Olá! Tenho interesse na {{ product.name }}. Podemos conversar?" 
+                           target="_blank" class="btn-whatsapp-large">
+                           <i class="fab fa-whatsapp"></i>
+                           Conversar no WhatsApp
+                        </a>
+                        <button type="button" class="btn-info-large" onclick="toggleOrderForm()">
+                            <i class="fas fa-clipboard-list"></i>
+                            Solicitar Orçamento
+                        </button>
+                    </div>
+                    
+                    <!-- Formulário de Orçamento -->
+                    <div class="order-form" id="orderForm" style="display: none;">
+                        <h4><i class="fas fa-pencil-alt"></i> Solicitar Orçamento</h4>
+                        <div class="form-row">
+                            <input type="text" placeholder="Seu nome" required>
+                            <input type="email" placeholder="Seu e-mail" required>
+                        </div>
+                        <div class="form-row">
+                            <input type="tel" placeholder="WhatsApp (11) 99999-9999" required>
+                            <select required>
+                                <option value="">Quantidade desejada</option>
+                                <option value="1">1 unidade</option>
+                                <option value="2">2 unidades</option>
+                                <option value="3">3 unidades</option>
+                                <option value="outros">Mais de 3 unidades</option>
+                            </select>
+                        </div>
+                        <textarea placeholder="Observações ou personalizações desejadas" rows="3"></textarea>
+                        <button type="button" class="btn-submit" onclick="sendBudgetRequest()">
+                            <i class="fas fa-paper-plane"></i>
+                            Enviar Solicitação
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Informações de Entrega -->
+                <div class="delivery-info">
+                    <h3><i class="fas fa-shipping-fast"></i> Informações de Entrega</h3>
+                    <div class="delivery-options">
+                        <div class="delivery-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <div>
+                                <strong>Rio de Janeiro - RJ</strong>
+                                <span>Entrega local disponível</span>
+                            </div>
+                        </div>
+                        <div class="delivery-item">
+                            <i class="fas fa-truck"></i>
+                            <div>
+                                <strong>Todo o Brasil</strong>
+                                <span>Enviamos pelos Correios</span>
+                            </div>
+                        </div>
+                        <div class="delivery-item">
+                            <i class="fas fa-clock"></i>
+                            <div>
+                                <strong>Prazo de Confecção</strong>
+                                <span>7 a 15 dias úteis</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+// Mudar imagem principal
+function changeMainImage(imageSrc, thumbnail) {
+    document.getElementById('mainImage').src = imageSrc;
+    
+    // Remove active de todas as thumbnails
+    document.querySelectorAll('.thumbnail').forEach(thumb => {
+        thumb.classList.remove('active');
+    });
+    
+    // Adiciona active na thumbnail clicada
+    thumbnail.classList.add('active');
+}
+
+// Toggle do formulário de orçamento
+function toggleOrderForm() {
+    const form = document.getElementById('orderForm');
+    form.style.display = form.style.display === 'none' ? 'block' : 'none';
+}
+
+// Enviar solicitação de orçamento
+function sendBudgetRequest() {
+    const form = document.getElementById('orderForm');
+    const inputs = form.querySelectorAll('input, select, textarea');
+    let message = `Olá! Gostaria de solicitar um orçamento para: {{ product.name }}\n\n`;
+    
+    inputs.forEach(input => {
+        if (input.value) {
+            message += `${input.placeholder}: ${input.value}\n`;
+        }
+    });
+    
+    const whatsappUrl = `https://wa.me/5521973108293?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank');
+}
+
+// Zoom na imagem
+document.addEventListener('DOMContentLoaded', function() {
+    const mainImage = document.getElementById('mainImage');
+    if (mainImage) {
+        mainImage.addEventListener('click', function() {
+            // Cria overlay para zoom
+            const overlay = document.createElement('div');
+            overlay.className = 'image-zoom-overlay';
+            overlay.innerHTML = `
+                <div class="zoom-container">
+                    <img src="${this.src}" alt="{{ product.name }}">
+                    <button class="zoom-close">&times;</button>
+                </div>
+            `;
+            
+            document.body.appendChild(overlay);
+            
+            // Fecha o zoom ao clicar no X ou fora da imagem
+            overlay.addEventListener('click', function(e) {
+                if (e.target === overlay || e.target.classList.contains('zoom-close')) {
+                    document.body.removeChild(overlay);
+                }
+            });
+        });
+    }
+});
+</script>
+{% endblock %}

@@ -1,268 +1,8 @@
-{% extends "base.html" %}
+/* Prima Arte - Estilos da Página Inicial (Beach Theme) */
 
-{% block page_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
-{% endblock %}
-
-{% block content %}
-<!-- Hero Section Praiano -->
-<section class="hero-beach">
-    <div class="beach-background">
-        <div class="waves-pattern"></div>
-        <div class="floating-elements">
-                        <div class="beach-element" style="--delay: 0s;"><i class="fas fa-umbrella-beach"></i></div>
-            <div class="beach-element" style="--delay: 1s;"><i class="fas fa-sun"></i></div>
-            <div class="beach-element palm-tree" style="--delay: 2s;"><i class="fas fa-tree"></i></div>
-            <div class="beach-element" style="--delay: 3s;"><i class="fas fa-shell"></i></div>
-            <div class="beach-element palm-tree" style="--delay: 4s;"><i class="fas fa-seedling"></i></div>
-            <div class="beach-element" style="--delay: 5s;"><i class="fas fa-starfish"></i></div>
-            <div class="beach-element palm-tree-large" style="--delay: 6s;">🌴</div>
-            <div class="beach-element palm-tree-large" style="--delay: 7s;">🥥</div>
-        </div>
-    </div>
-    
-    <div class="container">
-        <div class="hero-content-beach">
-            <div class="hero-main">
-                <!-- Logo central da Prima Arte -->
-                <div class="logo-showcase">
-                    <div class="logo-frame">
-                        <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="Prima Arte" class="logo-main">
-                        <div class="logo-glow"></div>
-                    </div>
-                </div>
-                
-                <div class="hero-text-beach">
-                    <h1 class="beach-title">
-                        <span class="title-line">Artesanato Único</span>
-                        <span class="title-sub">História Especial</span>
-                    </h1>
-                    
-                    <p class="beach-description">
-                        Cada peça é cuidadosamente criada à mão, combinando técnicas tradicionais 
-                        com o charme carioca. Do nosso ateliê no Rio para sua casa, levamos 
-                        <strong>amor em cada costura</strong>.
-                    </p>
-                    
-                    <div class="beach-features">
-                        <div class="feature-beach">
-                            <div class="feature-icon-beach">
-                                <i class="fas fa-heart"></i>
-                            </div>
-                            <span>Com Amor</span>
-                        </div>
-                        <div class="feature-beach">
-                            <div class="feature-icon-beach">
-                                <i class="fas fa-sun"></i>
-                            </div>
-                            <span>Carioca</span>
-                        </div>
-                        <div class="feature-beach">
-                            <div class="feature-icon-beach">
-                                <i class="fas fa-star"></i>
-                            </div>
-                            <span>Único</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="hero-showcase-beach">
-                {% if featured_products %}
-                <div class="products-preview-beach">
-                    <h3 class="preview-title-beach">
-                        <i class="fas fa-sparkles"></i>
-                        Destaques do Ateliê
-                    </h3>
-                    <div class="preview-grid-beach">
-                        {% for product in featured_products[:3] %}
-                        <div class="preview-card-beach" style="--delay: {{ loop.index0 * 0.2 }}s;">
-                            <div class="card-image-beach">
-                                {% if product.images and product.images|length > 0 %}
-                                <img src="{{ product.images[0] }}" alt="{{ product.name }}">
-                                {% else %}
-                                <div class="card-placeholder-beach">
-                                    <i class="fas fa-image"></i>
-                                </div>
-                                {% endif %}
-                                <div class="card-overlay-beach">
-                                    <a href="{{ url_for('product_detail', product_slug=product.name|slug) }}" class="card-link-beach">
-                                        <i class="fas fa-eye"></i>
-                                        Ver
-                                    </a>
-                                </div>
-                            </div>
-                            <div class="card-info-beach">
-    <h4>{{ product.name }}</h4>
-    <div class="price-section-beach">
-        {% if product.promotion_active and product.promotional_price %}
-            <span class="regular-price-beach">R$ {{ "%.2f"|format(product.price) }}</span>
-            <span class="promotional-price-beach">R$ {{ "%.2f"|format(product.promotional_price) }}</span>
-        {% else %}
-            <span class="card-price-beach">R$ {{ "%.2f"|format(product.price) }}</span>
-        {% endif %}
-    </div>
-</div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                {% endif %}
-            </div>
-        </div>
-        
-        <div class="hero-actions-beach">
-            <a href="{{ url_for('products') }}" class="btn-beach-primary">
-                <i class="fas fa-shopping-bag"></i>
-                <span>Explorar Produtos</span>
-                <div class="wave-effect"></div>
-            </a>
-            
-            <a href="https://wa.me/5521973108293?text=Olá! Gostaria de conhecer mais sobre a Prima Arte" 
-               target="_blank" class="btn-beach-secondary">
-                <i class="fab fa-whatsapp"></i>
-                <span>Conversar no WhatsApp</span>
-            </a>
-        </div>
-    </div>
-</section>
-
-<!-- Beach Story Section -->
-<section class="beach-story">
-    <div class="container">
-        <div class="story-content-beach">
-            <div class="story-text-beach">
-                <h2 class="story-title-beach">
-                    <i class="fas fa-map-marker-alt"></i>
-                    Direto do Rio de Janeiro
-                </h2>
-                <p>
-                    Nossa história começou nas areias cariocas, onde a criatividade encontra a brisa do mar. 
-                    Inspiradas pela beleza natural da Cidade Maravilhosa, criamos peças que carregam 
-                    toda a energia e alegria do Rio.
-                </p>
-                <p>
-                    Cada produto é uma pequena obra de arte, feita com as mãos e o coração de artesãs 
-                    apaixonadas por sua terra e sua arte.
-                </p>
-            </div>
-            <div class="story-visual-beach">
-                <div class="beach-icons">
-                    <div class="beach-icon-item">
-                        <i class="fas fa-palette"></i>
-                        <span>Design Carioca</span>
-                    </div>
-                    <div class="beach-icon-item">
-                        <i class="fas fa-hands"></i>
-                        <span>Feito à Mão</span>
-                    </div>
-                    <div class="beach-icon-item">
-                        <i class="fas fa-heart"></i>
-                        <span>Com Carinho</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-{% if featured_products %}
-<section class="featured-beach">
-    <div class="container">
-        <div class="section-header-beach">
-            <h2 class="section-title-beach">
-                <i class="fas fa-star"></i>
-                Produtos em Destaque
-                <i class="fas fa-star"></i>
-            </h2>
-            <p class="section-subtitle-beach">
-                Peças especiais que capturam a essência carioca
-            </p>
-        </div>
-        
-<div class="products-grid-beach">
-    {% for product in featured_products %}
-    <div class="product-card-beach" data-aos="fade-up" data-aos-delay="{{ loop.index0 * 100 }}">
-        <div class="product-image-beach">
-            {% if product.images and product.images|length > 0 %}
-            <img src="{{ product.images[0] }}" alt="{{ product.name }}">
-            {% else %}
-            <div class="no-image-beach">
-                <i class="fas fa-image"></i>
-            </div>
-            {% endif %}
-
-            {% if product.promotion_active and product.promotional_price %}
-                <div class="promotion-badge-beach">
-                    <i class="fas fa-fire"></i>
-                    {% set discount = ((product.price - product.promotional_price) / product.price * 100) | round %}
-                    {{ discount }}% OFF
-                </div>
-            {% elif product.featured %}
-                <div class="product-badge-beach">
-                    <i class="fas fa-star"></i>
-                    Destaque
-                </div>
-            {% endif %}
-            
-            <div class="product-hover-beach">
-                <a href="{{ url_for('product_detail', product_slug=product.name|slug) }}" class="btn-view-beach">
-                    <i class="fas fa-eye"></i>
-                    Ver Detalhes
-                </a>
-            </div>
-        </div>
-        
-        <div class="product-info-beach">
-            <h3>{{ product.name }}</h3>
-            <p>{{ product.description[:80] }}{% if product.description|length > 80 %}...{% endif %}</p>
-            
-            <div class="product-price-beach">
-                {% if product.promotion_active and product.promotional_price %}
-                    <span class="regular-price-main">R$ {{ "%.2f"|format(product.price) }}</span>
-                    <span class="promotional-price-main">R$ {{ "%.2f"|format(product.promotional_price) }}</span>
-                {% else %}
-                    <span>R$ {{ "%.2f"|format(product.price) }}</span>
-                {% endif %}
-            </div>
-            
-            <a href="{{ url_for('product_detail', product_slug=product.name|slug) }}" class="btn-buy-beach">
-                <i class="fas fa-shopping-cart"></i>
-                Comprar Agora
-            </a>
-        </div>
-    </div>
-    {% endfor %}
-</div>
-{% endif %}
-
-{% if announcements %}
-<section class="announcements-beach">
-    <div class="container">
-        <h2 class="announcements-title-beach">
-            <i class="fas fa-bullhorn"></i>
-            Novidades!
-        </h2>
-        <div class="announcements-grid-beach">
-            {% for announcement in announcements %}
-            <div class="announcement-card-beach">
-                <div class="announcement-header-beach">
-                    <div class="announcement-icon-beach">
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <span class="announcement-badge-beach">Novidade</span>
-                </div>
-                <h3>{{ announcement.title }}</h3>
-                <p>{{ announcement.content }}</p>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-</section>
-{% endif %}
-
-<style>
-/* Hero Section Praiano */
+/* ================================
+   HERO SECTION PRAIANO
+   ================================ */
 .hero-beach {
     position: relative;
     min-height: 100vh;
@@ -316,11 +56,36 @@
 .beach-element:nth-child(3) { top: 60%; left: 8%; }
 .beach-element:nth-child(4) { bottom: 25%; right: 12%; }
 .beach-element:nth-child(5) { top: 45%; left: 15%; }
+.beach-element:nth-child(6) { bottom: 35%; right: 8%; }
+.beach-element:nth-child(7) { top: 30%; left: 12%; }
+.beach-element:nth-child(8) { bottom: 15%; right: 20%; }
+
+.palm-tree {
+    color: rgba(34, 139, 34, 0.3) !important;
+    font-size: 3rem !important;
+}
+
+.palm-tree-large {
+    font-size: 4rem !important;
+    color: rgba(34, 139, 34, 0.4);
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    animation: palmSway 12s ease-in-out infinite !important;
+}
+
+.palm-tree-large:nth-child(7) { top: 10%; right: 5%; }
+.palm-tree-large:nth-child(8) { top: 70%; left: 3%; }
 
 @keyframes beachFloat {
     0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.2; }
     33% { transform: translateY(-15px) rotate(5deg); opacity: 0.4; }
     66% { transform: translateY(10px) rotate(-3deg); opacity: 0.3; }
+}
+
+@keyframes palmSway {
+    0%, 100% { transform: translateY(0) rotate(-2deg); }
+    25% { transform: translateY(-10px) rotate(2deg); }
+    50% { transform: translateY(-5px) rotate(-1deg); }
+    75% { transform: translateY(-15px) rotate(3deg); }
 }
 
 .hero-content-beach {
@@ -330,6 +95,12 @@
     gap: 3rem;
     position: relative;
     z-index: 2;
+}
+
+.hero-main {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
 }
 
 /* Logo Showcase */
@@ -629,7 +400,9 @@
     transform: translateY(-3px);
 }
 
-/* Beach Story */
+/* ================================
+   BEACH STORY
+   ================================ */
 .beach-story {
     padding: 5rem 0;
     background: linear-gradient(135deg, #F0F8FF, #E6F3FF);
@@ -693,7 +466,9 @@
     font-size: 1.1rem;
 }
 
-/* Featured Products Beach */
+/* ================================
+   FEATURED PRODUCTS BEACH
+   ================================ */
 .featured-beach {
     padding: 5rem 0;
     background: white;
@@ -731,6 +506,7 @@
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 2.5rem;
     margin-bottom: 3rem;
+    align-items: stretch;
 }
 
 .product-card-beach {
@@ -740,6 +516,9 @@
     box-shadow: 0 8px 30px rgba(32, 178, 170, 0.1);
     transition: all 0.3s ease;
     border: 1px solid rgba(32, 178, 170, 0.1);
+    display: grid;
+    grid-template-rows: 250px 1fr;
+    height: 100%;
 }
 
 .product-card-beach:hover {
@@ -750,6 +529,7 @@
 .product-image-beach {
     position: relative;
     overflow: hidden;
+    grid-row: 1;
 }
 
 .product-image-beach img {
@@ -833,28 +613,36 @@
 
 .product-info-beach {
     padding: 2rem;
+    display: grid;
+    grid-template-rows: auto auto 1fr auto auto;
+    gap: 0.8rem;
+    grid-row: 2;
 }
 
 .product-info-beach h3 {
     font-family: var(--font-heading);
     font-size: 1.4rem;
     color: #20B2AA;
-    margin-bottom: 0.8rem;
     line-height: 1.3;
+    margin: 0;
+    grid-row: 1;
 }
 
 .product-info-beach p {
     color: #4682B4;
     line-height: 1.5;
-    margin-bottom: 1rem;
     font-size: 0.95rem;
+    margin: 0;
+    grid-row: 2;
 }
 
 .product-price-beach {
     font-size: 1.6rem;
     font-weight: 700;
     color: #FFD700;
-    margin-bottom: 1.5rem;
+    margin: 0;
+    grid-row: 4;
+    align-self: end;
 }
 
 .btn-buy-beach {
@@ -871,6 +659,8 @@
     gap: 0.5rem;
     transition: all 0.3s ease;
     min-height: 50px;
+    margin: 0;
+    grid-row: 5;
 }
 
 .btn-buy-beach:hover {
@@ -903,7 +693,9 @@
     box-shadow: 0 15px 45px rgba(70, 130, 180, 0.4);
 }
 
-/* Announcements Beach */
+/* ================================
+   ANNOUNCEMENTS BEACH
+   ================================ */
 .announcements-beach {
     padding: 4rem 0;
     background: linear-gradient(135deg, #F0F8FF, #E0F6FF);
@@ -981,7 +773,9 @@
     line-height: 1.6;
 }
 
-/* Animations */
+/* ================================
+   ANIMAÇÕES
+   ================================ */
 @keyframes logoFloat {
     from {
         opacity: 0;
@@ -1037,7 +831,21 @@
     }
 }
 
-/* Responsive */
+/* AOS Animation */
+[data-aos] {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s ease;
+}
+
+[data-aos].aos-animate {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ================================
+   RESPONSIVO HOME
+   ================================ */
 @media (max-width: 768px) {
     .hero-content-beach {
         grid-template-columns: 1fr;
@@ -1113,63 +921,47 @@
     }
 }
 
-/* AOS Animation */
-[data-aos] {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: all 0.6s ease;
+
+/* ================================
+
+
+/* ================================
+   PROMOÇÕES PÁGINA PRINCIPAL CORRIGIDAS
+   ================================ */
+.promotion-badge-preview {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: linear-gradient(135deg, #FF6B6B, #FF4757);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 15px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    box-shadow: 0 3px 10px rgba(255, 107, 107, 0.4);
+    z-index: 2;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
 }
 
-[data-aos].aos-animate {
-    opacity: 1;
-    transform: translateY(0);
+.price-with-promotion-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
 }
 
-/* Palmeiras especiais */
-.palm-tree {
-    color: rgba(34, 139, 34, 0.3) !important;
-    font-size: 3rem !important;
+.regular-price-preview {
+    font-size: 0.85rem;
+    color: #999;
+    text-decoration: line-through;
+    font-weight: 400;
 }
 
-.palm-tree-large {
-    font-size: 4rem !important;
-    color: rgba(34, 139, 34, 0.4);
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-    animation: palmSway 12s ease-in-out infinite !important;
+.promotional-price-preview {
+    font-size: 1.1rem;
+    color: #4CAF50;
+    font-weight: 700;
 }
-
-.palm-tree-large:nth-child(7) { top: 10%; right: 5%; }
-.palm-tree-large:nth-child(8) { top: 70%; left: 3%; }
-
-@keyframes palmSway {
-    0%, 100% { transform: translateY(0) rotate(-2deg); }
-    25% { transform: translateY(-10px) rotate(2deg); }
-    50% { transform: translateY(-5px) rotate(-1deg); }
-    75% { transform: translateY(-15px) rotate(3deg); }
-}
-
-/* Mais elementos de praia */
-.beach-element:nth-child(6) { bottom: 35%; right: 8%; }
-.beach-element:nth-child(7) { top: 30%; left: 12%; }
-.beach-element:nth-child(8) { bottom: 15%; right: 20%; }
-</style>
-
-<script>
-// Simple AOS-like animation
-function animateOnScroll() {
-    const elements = document.querySelectorAll('[data-aos]');
-    elements.forEach(element => {
-        const elementTop = element.getBoundingClientRect().top;
-        const elementVisible = 150;
-        if (elementTop < window.innerHeight - elementVisible) {
-            element.classList.add('aos-animate');
-        }
-    });
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    animateOnScroll();
-    window.addEventListener('scroll', animateOnScroll);
-});
-</script>
-{% endblock %}

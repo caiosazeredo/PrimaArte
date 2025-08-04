@@ -1,0 +1,637 @@
+/* Prima Arte - Estilos da Página Individual do Produto - Versão Profissional */
+
+/* ================================
+   BREADCRUMB
+   ================================ */
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.breadcrumb a {
+    color: var(--primary-gold);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.breadcrumb a:hover {
+    color: var(--primary-pink);
+}
+
+.breadcrumb-separator {
+    color: #ccc;
+}
+
+.current {
+    color: var(--dark-brown);
+    font-weight: 500;
+}
+
+/* ================================
+   LAYOUT PRINCIPAL
+   ================================ */
+.product-section {
+    padding: 2rem 0;
+    background: #fafafa;
+}
+
+.product-detail {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+    max-width: 1200px;
+    margin: 0 auto;
+    background: white;
+    padding: 3rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+}
+
+/* ================================
+   GALERIA DE IMAGENS
+   ================================ */
+.product-gallery {
+    position: sticky;
+    top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.main-image-container {
+    position: relative;
+    margin-bottom: 1rem;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    cursor: pointer;
+}
+
+.main-image {
+    width: 100%;
+    height: 500px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.main-image:hover {
+    transform: scale(1.02);
+}
+
+.zoom-indicator {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    background: rgba(0,0,0,0.8);
+    color: white;
+    padding: 10px 15px;
+    border-radius: 25px;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    backdrop-filter: blur(10px);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.main-image-container:hover .zoom-indicator {
+    opacity: 1;
+}
+
+.no-image-placeholder {
+    width: 100%;
+    height: 500px;
+    background: linear-gradient(135deg, var(--primary-beige), #e0e0e0);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+    font-size: 1.2rem;
+    gap: 1rem;
+}
+
+.no-image-placeholder i {
+    font-size: 4rem;
+}
+
+.image-thumbnails {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 0.8rem;
+}
+
+.thumbnail {
+    width: 100%;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 10px;
+    cursor: pointer;
+    border: 3px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.thumbnail:hover,
+.thumbnail.active {
+    border-color: var(--primary-gold);
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(218, 165, 32, 0.3);
+}
+
+/* ================================
+   INFORMAÇÕES DO PRODUTO
+   ================================ */
+.product-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.product-header {
+    border-bottom: 2px solid var(--primary-beige);
+    padding-bottom: 2rem;
+}
+
+.product-title {
+    font-family: var(--font-heading);
+    font-size: 2.5rem;
+    color: var(--dark-brown);
+    margin: 0 0 1.5rem 0;
+    line-height: 1.2;
+}
+
+/* ================================
+   SISTEMA DE PREÇOS PROFISSIONAL
+   ================================ */
+.price-section {
+    margin-bottom: 1.5rem;
+}
+
+.price-promotion {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.original-price,
+.promotional-price {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+}
+
+.original-price .price-label {
+    font-size: 1rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.original-price .price-value {
+    font-size: 1.2rem;
+    color: #999;
+    text-decoration: line-through;
+    font-weight: 400;
+}
+
+.promotional-price .price-label {
+    font-size: 1.1rem;
+    color: var(--primary-gold);
+    font-weight: 600;
+}
+
+.promotional-price .price-value {
+    font-size: 2.5rem;
+    color: var(--primary-pink);
+    font-weight: 700;
+}
+
+.price-normal .price-value {
+    font-size: 2.5rem;
+    color: var(--primary-pink);
+    font-weight: 700;
+}
+
+.savings {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.savings-text {
+    background: linear-gradient(135deg, #e8f5e8, #d4edda);
+    color: #155724;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.discount-badge {
+    background: linear-gradient(135deg, var(--primary-gold), #ffa000);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    box-shadow: 0 3px 15px rgba(218, 165, 32, 0.3);
+}
+
+.installment-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding: 1rem;
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-radius: 10px;
+    color: #495057;
+    font-weight: 500;
+}
+
+.installment-info i {
+    color: var(--primary-gold);
+}
+
+/* ================================
+   CATEGORIA E DESCRIÇÃO
+   ================================ */
+.product-category {
+    background: linear-gradient(135deg, var(--primary-gold), var(--primary-pink));
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.5rem;
+    border-radius: 25px;
+    font-size: 1rem;
+    font-weight: 600;
+    width: fit-content;
+    box-shadow: 0 5px 20px rgba(218, 165, 32, 0.3);
+}
+
+.product-description {
+    background: #f8f9fa;
+    padding: 2rem;
+    border-radius: 15px;
+    border-left: 4px solid var(--primary-gold);
+}
+
+.product-description h3 {
+    color: var(--dark-brown);
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.product-description p {
+    line-height: 1.7;
+    color: #555;
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+/* ================================
+   FORMULÁRIO DE COMPRA
+   ================================ */
+.purchase-form {
+    padding: 2.5rem;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #fff, #f8f9fa);
+    border: 2px solid var(--primary-beige);
+    box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+}
+
+.form-group {
+    margin-bottom: 2rem;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    color: var(--dark-brown);
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.quantity-selector {
+    display: flex;
+    align-items: center;
+    border: 2px solid var(--primary-gold);
+    border-radius: 15px;
+    overflow: hidden;
+    width: fit-content;
+    box-shadow: 0 3px 15px rgba(218, 165, 32, 0.2);
+}
+
+.qty-btn {
+    background: var(--primary-gold);
+    border: none;
+    color: white;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    font-size: 1.5rem;
+    font-weight: 700;
+    transition: all 0.3s ease;
+}
+
+.qty-btn:hover {
+    background: var(--primary-pink);
+    transform: scale(1.1);
+}
+
+#quantity {
+    width: 80px;
+    height: 50px;
+    text-align: center;
+    border: none;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--dark-brown);
+    background: white;
+}
+
+/* ================================
+   CALCULADORA DE FRETE
+   ================================ */
+.shipping-calculator {
+    background: #f8f9fa;
+    padding: 2rem;
+    border-radius: 15px;
+    border: 1px solid #dee2e6;
+}
+
+.shipping-calculator h4 {
+    color: var(--dark-brown);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.shipping-input {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+#cep {
+    flex: 1;
+    padding: 1rem 1.5rem;
+    border: 2px solid #dee2e6;
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+#cep:focus {
+    outline: none;
+    border-color: var(--primary-gold);
+}
+
+.btn-calculate-shipping {
+    background: var(--primary-gold);
+    color: white;
+    border: none;
+    padding: 1rem 1.5rem;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-calculate-shipping:hover {
+    background: var(--primary-pink);
+    transform: translateY(-2px);
+}
+
+.shipping-results {
+    margin-top: 1rem;
+}
+
+.shipping-option {
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    border-left: 3px solid var(--primary-gold);
+}
+
+/* ================================
+   BOTÕES DE AÇÃO
+   ================================ */
+.action-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.btn-buy-now {
+    background: linear-gradient(135deg, var(--primary-pink), #ad1457);
+    color: white;
+    border: none;
+    padding: 1.5rem 2rem;
+    border-radius: 15px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 5px 20px rgba(233, 30, 99, 0.3);
+}
+
+.btn-buy-now:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(233, 30, 99, 0.4);
+}
+
+.btn-whatsapp {
+    background: linear-gradient(135deg, #25d366, #128c7e);
+    color: white;
+    border: none;
+    padding: 1.5rem 2rem;
+    border-radius: 15px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 5px 20px rgba(37, 211, 102, 0.3);
+}
+
+.btn-whatsapp:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(37, 211, 102, 0.4);
+}
+
+/* ================================
+   POLÍTICAS E GARANTIAS
+   ================================ */
+.policies {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    padding-top: 2rem;
+    border-top: 1px solid #dee2e6;
+}
+
+.policy-item {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 1rem;
+    background: linear-gradient(135deg, #e8f5e8, #f8f9fa);
+    border-radius: 10px;
+    color: #495057;
+    font-weight: 500;
+}
+
+.policy-item i {
+    color: var(--primary-gold);
+    font-size: 1.2rem;
+}
+
+/* ================================
+   COMPARTILHAMENTO
+   ================================ */
+.share-section {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 20px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+    margin-top: 3rem;
+    text-align: center;
+}
+
+.share-section h3 {
+    color: var(--dark-brown);
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    font-size: 1.5rem;
+}
+
+.share-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.share-btn {
+    padding: 1rem 1.5rem;
+    border: none;
+    border-radius: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+}
+
+.share-btn.whatsapp {
+    background: linear-gradient(135deg, #25d366, #128c7e);
+    color: white;
+}
+
+.share-btn.facebook {
+    background: linear-gradient(135deg, #1877f2, #166fe5);
+    color: white;
+}
+
+.share-btn.twitter {
+    background: linear-gradient(135deg, #1da1f2, #0d8bd9);
+    color: white;
+}
+
+.share-btn.copy {
+    background: linear-gradient(135deg, #6c757d, #495057);
+    color: white;
+}
+
+.share-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+}
+
+/* ================================
+   RESPONSIVIDADE
+   ================================ */
+@media (max-width: 768px) {
+    .product-detail {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        padding: 2rem;
+    }
+    
+    .product-title {
+        font-size: 2rem;
+    }
+    
+    .promotional-price .price-value,
+    .price-normal .price-value {
+        font-size: 2rem;
+    }
+    
+    .action-buttons {
+        grid-template-columns: 1fr;
+    }
+    
+    .share-buttons {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .policies {
+        grid-template-columns: 1fr;
+    }
+    
+    .main-image {
+        height: 300px;
+    }
+}
+
+@media (max-width: 480px) {
+    .product-section {
+        padding: 1rem 0;
+    }
+    
+    .product-detail {
+        padding: 1.5rem;
+    }
+    
+    .product-title {
+        font-size: 1.8rem;
+    }
+    
+    .purchase-form {
+        padding: 1.5rem;
+    }
+    
+    .share-buttons {
+        grid-template-columns: 1fr;
+    }
+}

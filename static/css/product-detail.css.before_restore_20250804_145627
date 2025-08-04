@@ -1,0 +1,735 @@
+/* Prima Arte - CSS Perfeito para Páginas de Produto */
+
+/* ================================
+   PÁGINA PRINCIPAL - PROMOÇÕES
+   ================================ */
+
+/* Badge de promoção no preview */
+.promotion-badge-preview {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: linear-gradient(135deg, #FF6B6B, #FF4757);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 15px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    box-shadow: 0 3px 10px rgba(255, 107, 107, 0.4);
+    z-index: 2;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+/* Preços no preview */
+.price-with-promotion-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.regular-price-preview {
+    font-size: 0.85rem;
+    color: #999;
+    text-decoration: line-through;
+    font-weight: 400;
+}
+
+.promotional-price-preview {
+    font-size: 1.1rem;
+    color: #4CAF50;
+    font-weight: 700;
+}
+
+/* Badge de promoção principal */
+.promotion-badge-main {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: linear-gradient(135deg, #FF6B6B, #FF4757);
+    color: white;
+    padding: 10px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+    z-index: 2;
+    animation: promotionPulse 2s infinite;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+@keyframes promotionPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+/* Cards com promoção */
+.product-card-beach.has-promotion {
+    border: 2px solid #4CAF50;
+    box-shadow: 0 10px 30px rgba(76, 175, 80, 0.15);
+}
+
+.product-card-beach.has-promotion:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 40px rgba(76, 175, 80, 0.2);
+}
+
+/* Seção de preços na página principal */
+.product-pricing-main {
+    margin: 1rem 0;
+}
+
+.price-promotion-main {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.regular-price-main {
+    font-size: 1rem;
+    color: #999;
+    text-decoration: line-through;
+    font-weight: 400;
+}
+
+.promotional-price-main {
+    font-size: 1.8rem;
+    color: #4CAF50;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.savings-main {
+    background: #4CAF50;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.price-regular-main .price-value-main {
+    font-size: 1.6rem;
+    color: var(--primary-pink);
+    font-weight: 700;
+}
+
+/* ================================
+   PÁGINA INDIVIDUAL - DESIGN PERFEITO
+   ================================ */
+.product-detail-perfect {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Galeria de Imagens */
+.product-gallery-perfect {
+    position: sticky;
+    top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.main-image-container-perfect {
+    position: relative;
+    background: #f8f9fa;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 15px 50px rgba(0,0,0,0.15);
+}
+
+.main-image-perfect {
+    width: 100%;
+    height: 500px;
+    object-fit: cover;
+    cursor: zoom-in;
+    transition: transform 0.3s ease;
+}
+
+.main-image-perfect:hover {
+    transform: scale(1.02);
+}
+
+.main-image-placeholder-perfect {
+    width: 100%;
+    height: 500px;
+    background: var(--primary-beige);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--gray);
+}
+
+.main-image-placeholder-perfect i {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.promotion-badge-perfect {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: linear-gradient(135deg, #FF6B6B, #FF4757);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 25px;
+    font-size: 1rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+    z-index: 2;
+    animation: promotionPulse 2s infinite;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.zoom-indicator-perfect {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(0,0,0,0.8);
+    color: white;
+    padding: 12px 18px;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    backdrop-filter: blur(10px);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    font-weight: 500;
+}
+
+.main-image-container-perfect:hover .zoom-indicator-perfect {
+    opacity: 1;
+}
+
+.image-thumbnails-perfect {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 0.8rem;
+}
+
+.thumbnail-perfect {
+    width: 100%;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 12px;
+    cursor: pointer;
+    border: 3px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.thumbnail-perfect:hover,
+.thumbnail-perfect.active {
+    border-color: var(--primary-gold);
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(218, 165, 32, 0.4);
+}
+
+/* Informações do Produto */
+.product-info-perfect {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.product-header-perfect {
+    border-bottom: 2px solid var(--primary-beige);
+    padding-bottom: 1.5rem;
+}
+
+.product-title-perfect {
+    font-family: var(--font-heading);
+    font-size: 2.8rem;
+    color: var(--dark-brown);
+    margin: 0 0 1rem 0;
+    line-height: 1.2;
+}
+
+.product-category-perfect {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--primary-beige);
+    color: var(--dark-brown);
+    padding: 10px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* SEÇÃO DE PREÇOS PERFEITA */
+.product-pricing-perfect {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    padding: 2rem;
+    border-radius: 20px;
+    border: 2px solid var(--primary-beige);
+}
+
+.pricing-with-promotion .price-from {
+    margin-bottom: 0.5rem;
+}
+
+.pricing-with-promotion .price-from .price-label {
+    font-size: 1rem;
+    color: var(--gray);
+    display: block;
+    margin-bottom: 0.3rem;
+}
+
+.regular-price-perfect {
+    font-size: 1.4rem;
+    color: #999;
+    text-decoration: line-through;
+    font-weight: 500;
+}
+
+.pricing-with-promotion .price-for {
+    margin-bottom: 1.5rem;
+}
+
+.pricing-with-promotion .price-for .price-label {
+    font-size: 1.2rem;
+    color: var(--dark-brown);
+    font-weight: 600;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.promotional-price-perfect {
+    font-size: 3.2rem;
+    color: #4CAF50;
+    font-weight: 800;
+    display: block;
+    line-height: 1;
+}
+
+.pricing-regular .price-only .price-label {
+    font-size: 1.2rem;
+    color: var(--dark-brown);
+    font-weight: 600;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.regular-price-only {
+    font-size: 2.8rem;
+    color: var(--primary-pink);
+    font-weight: 800;
+    display: block;
+    line-height: 1;
+}
+
+.promotion-badges {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.savings-badge-perfect {
+    background: #4CAF50;
+    color: white;
+    padding: 14px 18px;
+    border-radius: 15px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.95rem;
+}
+
+.urgency-badge-perfect {
+    background: #FF6B6B;
+    color: white;
+    padding: 14px 18px;
+    border-radius: 15px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.95rem;
+    animation: urgency 2s infinite;
+}
+
+@keyframes urgency {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; }
+}
+
+/* Descrição e Características */
+.product-description-perfect,
+.product-features-perfect {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 15px;
+    border: 1px solid var(--primary-beige);
+}
+
+.product-description-perfect h3,
+.product-features-perfect h3 {
+    font-family: var(--font-heading);
+    color: var(--dark-brown);
+    margin: 0 0 1rem 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.4rem;
+}
+
+.product-description-perfect p {
+    color: var(--gray);
+    line-height: 1.7;
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.features-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.feature-item-perfect {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    background: var(--primary-beige);
+    border-radius: 10px;
+    font-weight: 600;
+    color: var(--dark-brown);
+}
+
+.feature-item-perfect i {
+    color: var(--primary-gold);
+    font-size: 1.2rem;
+}
+
+/* Ações de Compra */
+.product-actions-perfect {
+    background: white;
+    padding: 2rem;
+    border-radius: 20px;
+    border: 2px solid var(--primary-gold);
+    box-shadow: 0 10px 30px rgba(218, 165, 32, 0.1);
+}
+
+.product-actions-perfect h3 {
+    font-family: var(--font-heading);
+    color: var(--dark-brown);
+    margin: 0 0 1.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.5rem;
+}
+
+.action-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.btn-whatsapp-perfect {
+    background: linear-gradient(135deg, #25D366, #22C55E);
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 15px;
+    text-decoration: none;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+}
+
+.btn-whatsapp-perfect:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(37, 211, 102, 0.3);
+}
+
+.btn-budget-perfect {
+    background: linear-gradient(135deg, var(--primary-teal), #38BDF8);
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 15px;
+    border: none;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+    cursor: pointer;
+    font-family: var(--font-body);
+}
+
+.btn-budget-perfect:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(38, 198, 218, 0.3);
+}
+
+/* Formulário de Orçamento */
+.budget-form-perfect {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 15px;
+    margin-top: 1rem;
+    border: 1px solid #e9ecef;
+}
+
+.budget-form-perfect h4 {
+    margin: 0 0 1rem 0;
+    color: var(--dark-brown);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.budget-form-perfect input,
+.budget-form-perfect select,
+.budget-form-perfect textarea {
+    padding: 12px;
+    border: 2px solid var(--primary-beige);
+    border-radius: 10px;
+    font-family: var(--font-body);
+    font-size: 1rem;
+}
+
+.budget-form-perfect textarea {
+    grid-column: 1 / -1;
+    resize: vertical;
+}
+
+.btn-send-budget {
+    background: linear-gradient(135deg, var(--primary-pink), #EC4899);
+    color: white;
+    padding: 14px 24px;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    width: 100%;
+    justify-content: center;
+}
+
+.btn-send-budget:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(236, 72, 153, 0.3);
+}
+
+/* Informações de Entrega */
+.delivery-info-perfect {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 15px;
+    border: 1px solid var(--primary-beige);
+}
+
+.delivery-info-perfect h3 {
+    font-family: var(--font-heading);
+    color: var(--dark-brown);
+    margin: 0 0 1rem 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.4rem;
+}
+
+.delivery-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.delivery-item-perfect {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px;
+    background: var(--primary-beige);
+    border-radius: 10px;
+}
+
+.delivery-item-perfect i {
+    color: var(--primary-gold);
+    font-size: 1.3rem;
+    width: 25px;
+    text-align: center;
+}
+
+.delivery-item-perfect div {
+    display: flex;
+    flex-direction: column;
+}
+
+.delivery-item-perfect strong {
+    color: var(--dark-brown);
+    font-size: 0.95rem;
+    margin-bottom: 3px;
+}
+
+.delivery-item-perfect span {
+    color: var(--gray);
+    font-size: 0.85rem;
+}
+
+/* Zoom da Imagem */
+.image-zoom-overlay-perfect {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    cursor: pointer;
+}
+
+.zoom-container-perfect {
+    position: relative;
+    max-width: 90vw;
+    max-height: 90vh;
+}
+
+.zoom-container-perfect img {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 15px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+
+.zoom-close-perfect {
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    background: white;
+    border: none;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    color: var(--dark-brown);
+    font-weight: bold;
+}
+
+/* Responsividade */
+@media (max-width: 968px) {
+    .product-detail-perfect {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    .product-gallery-perfect {
+        position: relative;
+        top: 0;
+    }
+    
+    .main-image-perfect {
+        height: 400px;
+    }
+    
+    .product-title-perfect {
+        font-size: 2.2rem;
+    }
+    
+    .promotional-price-perfect {
+        font-size: 2.5rem;
+    }
+    
+    .regular-price-only {
+        font-size: 2.2rem;
+    }
+    
+    .action-buttons {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .features-list {
+        grid-template-columns: 1fr;
+    }
+    
+    .promotion-badges {
+        grid-template-columns: 1fr;
+    }
+    
+    .delivery-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 576px) {
+    .product-title-perfect {
+        font-size: 1.8rem;
+    }
+    
+    .main-image-perfect {
+        height: 300px;
+    }
+    
+    .promotional-price-perfect {
+        font-size: 2rem;
+    }
+    
+    .regular-price-only {
+        font-size: 1.8rem;
+    }
+    
+    .product-actions-perfect,
+    .product-pricing-perfect {
+        padding: 1.5rem;
+    }
+}

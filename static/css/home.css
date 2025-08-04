@@ -920,3 +920,165 @@
         align-items: center;
     }
 }
+
+
+/* ================================
+   PROMOÇÕES NA PÁGINA PRINCIPAL
+   ================================ */
+.promotion-badge-home {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: linear-gradient(135deg, #FF6B6B, #FF4757);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+    z-index: 2;
+    animation: promotionPulse 2s infinite;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+@keyframes promotionPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.price-section-home {
+    margin: 1rem 0;
+}
+
+.price-promotion-home {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.regular-price-home {
+    font-size: 1rem;
+    color: #999;
+    text-decoration: line-through;
+    font-weight: 400;
+}
+
+.promotional-price-home {
+    font-size: 1.8rem;
+    color: #4CAF50;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.savings-badge-home {
+    background: #4CAF50;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 15px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.price-regular-home .price-value-home {
+    font-size: 1.6rem;
+    color: var(--primary-pink);
+    font-weight: 700;
+}
+
+/* Cards com promoção recebem destaque especial */
+.featured-card-beach:has(.promotion-badge-home) {
+    border: 2px solid #4CAF50;
+    box-shadow: 0 10px 30px rgba(76, 175, 80, 0.15);
+}
+
+.featured-card-beach:has(.promotion-badge-home):hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 40px rgba(76, 175, 80, 0.2);
+}
+
+.price-section-beach {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+}
+
+.regular-price-beach {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: line-through;
+}
+
+.promotional-price-beach {
+    color: #FFF;
+    font-weight: 700;
+    font-size: 1.2rem;
+    background-color: #4CAF50;
+    padding: 2px 8px;
+    border-radius: 10px;
+}
+/* --- Estilos de Preço para Destaques do Ateliê (Topo) --- */
+.card-info-beach {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+}
+
+.price-container-beach {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.regular-price-beach {
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: line-through;
+    font-size: 0.9rem;
+}
+
+.promotional-price-beach {
+    color: #FFD700;
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+/* --- Estilos de Preço para Seção Principal de Destaques --- */
+.product-price-beach {
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #FFD700;
+    margin-bottom: 1.5rem;
+}
+
+.regular-price-main {
+    font-size: 1rem;
+    color: #aaa;
+    text-decoration: line-through;
+    font-weight: 500;
+}
+
+.promotional-price-main {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #4CAF50; /* Verde para destacar a promoção */
+}
+
+/* Garante que o preço normal mantenha o estilo original quando não há promoção */
+.product-price-beach span:only-child {
+    color: #FFD700;
+    font-size: 1.6rem;
+    font-weight: 700;
+}
