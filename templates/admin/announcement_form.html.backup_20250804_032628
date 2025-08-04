@@ -1,9 +1,5 @@
 {% extends "base.html" %}
 
-{% block page_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
-{% endblock %}
-
 {% block title %}{% if announcement %}Editar Anúncio{% else %}Novo Anúncio{% endif %} - Admin Prima Arte{% endblock %}
 
 {% block content %}

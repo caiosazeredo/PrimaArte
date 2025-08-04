@@ -1,9 +1,5 @@
 {% extends "base.html" %}
 
-{% block page_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/products.css') }}">
-{% endblock %}
-
 {% block title %}Produtos - Prima Arte{% endblock %}
 
 {% block content %}

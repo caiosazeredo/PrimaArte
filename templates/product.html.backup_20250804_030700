@@ -1,9 +1,5 @@
 {% extends "base.html" %}
 
-{% block page_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/product-detail.css') }}">
-{% endblock %}
-
 {% block title %}{{ product.name }} - Prima Arte{% endblock %}
 
 {% block content %}
@@ -181,8 +177,291 @@
 </div>
 
 <style>
+/* Product Detail Styles */
+.product-detail {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+}
 
-/* Modal de Zoom Corrigido */
+.product-gallery {
+    position: sticky;
+    top: 2rem;
+}
+
+.main-image-container {
+    position: relative;
+    margin-bottom: 1rem;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+}
+
+.main-image {
+    width: 100%;
+    height: 500px;
+    object-fit: cover;
+    cursor: zoom-in;
+    transition: transform 0.3s ease;
+}
+
+.main-image:hover {
+    transform: scale(1.02);
+}
+
+.zoom-indicator {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    backdrop-filter: blur(10px);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.main-image-container:hover .zoom-indicator {
+    opacity: 1;
+}
+
+.image-thumbnails {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 0.5rem;
+}
+
+.thumbnail {
+    width: 100%;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 10px;
+    cursor: pointer;
+    border: 3px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.thumbnail:hover {
+    border-color: var(--primary-gold);
+    transform: scale(1.05);
+}
+
+.thumbnail.active {
+    border-color: var(--primary-gold);
+    box-shadow: 0 0 20px rgba(218, 165, 32, 0.3);
+}
+
+/* Product Info Styles */
+.product-info {
+    padding: 1rem 0;
+}
+
+.product-title {
+    font-family: var(--font-heading);
+    font-size: 2.5rem;
+    color: var(--dark-brown);
+    margin-bottom: 1rem;
+    line-height: 1.2;
+}
+
+.product-price-container {
+    margin-bottom: 1.5rem;
+}
+
+.product-price {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--primary-pink);
+    display: block;
+}
+
+.price-note {
+    font-size: 0.9rem;
+    color: #666;
+    font-style: italic;
+}
+
+.product-category {
+    background: linear-gradient(135deg, var(--primary-gold), var(--primary-pink));
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 2rem;
+}
+
+.product-description {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 15px;
+    margin-bottom: 2rem;
+    border-left: 4px solid var(--primary-gold);
+}
+
+.product-description h3 {
+    color: var(--dark-brown);
+    font-size: 1.1rem;
+    margin-bottom: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.product-description p {
+    line-height: 1.6;
+    color: #555;
+}
+
+/* Form Styles */
+.purchase-form {
+    background: white;
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    color: var(--dark-brown);
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.quantity-selector {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    width: fit-content;
+    border: 2px solid var(--primary-gold);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.qty-btn {
+    background: var(--primary-gold);
+    border: none;
+    color: white;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s ease;
+}
+
+.qty-btn:hover {
+    background: var(--primary-pink);
+}
+
+#quantity {
+    width: 60px;
+    height: 40px;
+    text-align: center;
+    border: none;
+    background: white;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+#description {
+    width: 100%;
+    min-height: 100px;
+    padding: 1rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-family: inherit;
+    resize: vertical;
+    transition: border-color 0.3s ease;
+}
+
+#description:focus {
+    border-color: var(--primary-gold);
+    outline: none;
+}
+
+.purchase-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.btn-add-cart, .btn-whatsapp {
+    padding: 1rem 2rem;
+    border-radius: 15px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    border: none;
+    min-height: 60px;
+}
+
+.btn-add-cart {
+    background: linear-gradient(135deg, var(--primary-gold), var(--primary-pink));
+    color: white;
+}
+
+.btn-add-cart:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.btn-whatsapp {
+    background: #25D366;
+    color: white;
+}
+
+.btn-whatsapp:hover {
+    background: #1fd655;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(37, 211, 102, 0.3);
+}
+
+.product-guarantees {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.guarantee-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem;
+    background: #f8f9fa;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    color: var(--dark-brown);
+}
+
+.guarantee-item i {
+    color: var(--primary-gold);
+    font-size: 1.2rem;
+}
+
+/* Modal Styles Melhorados */
 .image-modal {
     display: none;
     position: fixed;
@@ -274,8 +553,6 @@
     max-height: 90%;
     overflow: hidden;
     cursor: grab;
-    border-radius: 10px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
 }
 
 .modal-image-container:active {
@@ -283,11 +560,12 @@
 }
 
 .modal-image {
-    display: block;
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
     border-radius: 10px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    animation: zoomIn 0.3s ease;
     transition: transform 0.3s ease;
     transform-origin: center center;
 }
@@ -393,8 +671,47 @@
     text-align: center;
 }
 
-/* Responsivo */
+.no-image-product {
+    background: linear-gradient(135deg, var(--primary-gold), var(--primary-pink));
+    color: white;
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    font-size: 3rem;
+}
+
+.no-image-product p {
+    font-size: 1.2rem;
+    margin-top: 1rem;
+}
+
+/* Responsive */
 @media (max-width: 768px) {
+    .product-detail {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    .product-gallery {
+        position: static;
+    }
+    
+    .main-image {
+        height: 300px;
+    }
+    
+    .product-title {
+        font-size: 2rem;
+    }
+    
+    .purchase-actions {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
     .modal-content-wrapper {
         padding: 60px 20px 100px;
     }
@@ -434,15 +751,28 @@
     }
 }
 
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes zoomIn {
+    from { 
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to { 
+        opacity: 1;
+        transform: scale(1);
+    }
+}
 </style>
 
 <script>
 let currentImageIndex = 0;
 let currentZoom = 1;
-let minZoom = 0.5;
-let maxZoom = 3;
 let isDragging = false;
-let startX, startY, startTransformX = 0, startTransformY = 0;
+let startX, startY, scrollLeft, scrollTop;
 
 let productImages = [
     {% for image in product.images %}
@@ -460,15 +790,12 @@ function changeMainImage(imageUrl, index) {
     });
     
     // Add active class to clicked thumbnail
-    const thumbnail = document.querySelector(`[data-index="${index}"]`);
-    if (thumbnail) {
-        thumbnail.classList.add('active');
-    }
+    document.querySelector(`[data-index="${index}"]`).classList.add('active');
 }
 
 function openImageModal(index = 0) {
     currentImageIndex = index;
-    
+    currentZoom = 1;
     const modal = document.getElementById('imageModal');
     const modalImg = document.getElementById('modalImage');
     const counter = document.getElementById('imageCounter');
@@ -477,9 +804,6 @@ function openImageModal(index = 0) {
     modalImg.src = productImages[currentImageIndex];
     counter.textContent = `${currentImageIndex + 1} / ${productImages.length}`;
     
-    // CORREÇÃO: Iniciar sempre com zoom 100% (fit-to-container)
-    currentZoom = 1;
-    resetImagePosition();
     updateZoomLevel();
     updateModalThumbnails();
     
@@ -492,7 +816,6 @@ function closeImageModal() {
     modal.style.display = 'none';
     document.body.style.overflow = 'auto';
     currentZoom = 1;
-    resetImagePosition();
 }
 
 function nextImage() {
@@ -527,7 +850,8 @@ function updateModalImage() {
     
     // Reset zoom when changing images
     currentZoom = 1;
-    resetImagePosition();
+    modalImg.style.transform = `scale(${currentZoom})`;
+    updateZoomLevel();
     updateModalThumbnails();
 }
 
@@ -537,73 +861,47 @@ function updateModalThumbnails() {
     });
 }
 
-// Funções de Zoom Corrigidas
+// Funções de Zoom
 function zoomIn() {
-    if (currentZoom < maxZoom) {
-        currentZoom = Math.min(currentZoom + 0.25, maxZoom);
+    if (currentZoom < 3) {
+        currentZoom += 0.25;
         applyZoom();
     }
 }
 
 function zoomOut() {
-    if (currentZoom > minZoom) {
-        currentZoom = Math.max(currentZoom - 0.25, minZoom);
+    if (currentZoom > 0.5) {
+        currentZoom -= 0.25;
         applyZoom();
     }
 }
 
 function resetZoom() {
     currentZoom = 1;
-    resetImagePosition();
     applyZoom();
 }
 
 function applyZoom() {
     const modalImg = document.getElementById('modalImage');
-    const container = document.getElementById('imageContainer');
-    
-    // CORREÇÃO: Aplicar zoom corretamente
-    modalImg.style.transform = `scale(${currentZoom}) translate(${startTransformX}px, ${startTransformY}px)`;
+    modalImg.style.transform = `scale(${currentZoom})`;
     updateZoomLevel();
-    
-    // Ajustar cursor baseado no zoom
-    if (currentZoom > 1 && container) {
-        container.style.cursor = 'grab';
-    } else if (container) {
-        container.style.cursor = 'default';
-        // Reset position when zoom is 1 or less
-        if (currentZoom <= 1) {
-            resetImagePosition();
-        }
-    }
-}
-
-function resetImagePosition() {
-    startTransformX = 0;
-    startTransformY = 0;
-    const modalImg = document.getElementById('modalImage');
-    if (modalImg) {
-        modalImg.style.transform = `scale(${currentZoom})`;
-    }
 }
 
 function updateZoomLevel() {
     const zoomLevelElement = document.getElementById('zoomLevel');
-    if (zoomLevelElement) {
-        zoomLevelElement.textContent = `${Math.round(currentZoom * 100)}%`;
-    }
+    zoomLevelElement.textContent = `${Math.round(currentZoom * 100)}%`;
 }
 
 function increaseQuantity() {
     const qty = document.getElementById('quantity');
-    if (qty && parseInt(qty.value) < 10) {
+    if (parseInt(qty.value) < 10) {
         qty.value = parseInt(qty.value) + 1;
     }
 }
 
 function decreaseQuantity() {
     const qty = document.getElementById('quantity');
-    if (qty && parseInt(qty.value) > 1) {
+    if (parseInt(qty.value) > 1) {
         qty.value = parseInt(qty.value) - 1;
     }
 }
@@ -616,26 +914,10 @@ document.addEventListener('DOMContentLoaded', function() {
         firstThumbnail.classList.add('active');
     }
     
-    // Modal drag functionality
-    const imageContainer = document.getElementById('imageContainer');
-    const modalImage = document.getElementById('modalImage');
-    
-    if (imageContainer && modalImage) {
-        // Mouse events
-        imageContainer.addEventListener('mousedown', startDrag);
-        document.addEventListener('mousemove', drag);
-        document.addEventListener('mouseup', endDrag);
-        
-        // Touch events for mobile
-        imageContainer.addEventListener('touchstart', startDragTouch, {passive: false});
-        document.addEventListener('touchmove', dragTouch, {passive: false});
-        document.addEventListener('touchend', endDrag);
-    }
-    
     // Keyboard navigation
     document.addEventListener('keydown', function(e) {
         const modal = document.getElementById('imageModal');
-        if (modal && modal.style.display === 'block') {
+        if (modal.style.display === 'block') {
             switch(e.key) {
                 case 'Escape':
                     closeImageModal();
@@ -661,97 +943,23 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Mouse wheel zoom
-    const modal = document.getElementById('imageModal');
-    if (modal) {
-        modal.addEventListener('wheel', function(e) {
-            if (e.target.closest('.modal-image-container')) {
-                e.preventDefault();
-                if (e.deltaY < 0) {
-                    zoomIn();
-                } else {
-                    zoomOut();
-                }
+    document.getElementById('imageModal').addEventListener('wheel', function(e) {
+        if (e.target.closest('.modal-image-container')) {
+            e.preventDefault();
+            if (e.deltaY < 0) {
+                zoomIn();
+            } else {
+                zoomOut();
             }
-        }, {passive: false});
-        
-        // Click outside modal to close
-        modal.addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeImageModal();
-            }
-        });
-    }
+        }
+    });
+    
+    // Click outside modal to close
+    document.getElementById('imageModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeImageModal();
+        }
+    });
 });
-
-// Drag functions
-function startDrag(e) {
-    if (currentZoom <= 1) return;
-    
-    isDragging = true;
-    startX = e.clientX;
-    startY = e.clientY;
-    const container = document.getElementById('imageContainer');
-    if (container) {
-        container.style.cursor = 'grabbing';
-    }
-}
-
-function startDragTouch(e) {
-    if (currentZoom <= 1) return;
-    
-    isDragging = true;
-    const touch = e.touches[0];
-    startX = touch.clientX;
-    startY = touch.clientY;
-    e.preventDefault();
-}
-
-function drag(e) {
-    if (!isDragging || currentZoom <= 1) return;
-    
-    e.preventDefault();
-    const deltaX = e.clientX - startX;
-    const deltaY = e.clientY - startY;
-    
-    startTransformX += deltaX;
-    startTransformY += deltaY;
-    
-    const modalImg = document.getElementById('modalImage');
-    if (modalImg) {
-        modalImg.style.transform = `scale(${currentZoom}) translate(${startTransformX}px, ${startTransformY}px)`;
-    }
-    
-    startX = e.clientX;
-    startY = e.clientY;
-}
-
-function dragTouch(e) {
-    if (!isDragging || currentZoom <= 1) return;
-    
-    e.preventDefault();
-    const touch = e.touches[0];
-    const deltaX = touch.clientX - startX;
-    const deltaY = touch.clientY - startY;
-    
-    startTransformX += deltaX;
-    startTransformY += deltaY;
-    
-    const modalImg = document.getElementById('modalImage');
-    if (modalImg) {
-        modalImg.style.transform = `scale(${currentZoom}) translate(${startTransformX}px, ${startTransformY}px)`;
-    }
-    
-    startX = touch.clientX;
-    startY = touch.clientY;
-}
-
-function endDrag() {
-    isDragging = false;
-    const container = document.getElementById('imageContainer');
-    if (container && currentZoom > 1) {
-        container.style.cursor = 'grab';
-    }
-}
-
 </script>
 {% endblock %}

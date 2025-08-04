@@ -1,9 +1,5 @@
 {% extends "base.html" %}
 
-{% block page_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/product-detail.css') }}">
-{% endblock %}
-
 {% block title %}{{ product.name }} - Prima Arte{% endblock %}
 
 {% block content %}
@@ -437,6 +433,7 @@
 </style>
 
 <script>
+
 let currentImageIndex = 0;
 let currentZoom = 1;
 let minZoom = 0.5;
@@ -468,6 +465,7 @@ function changeMainImage(imageUrl, index) {
 
 function openImageModal(index = 0) {
     currentImageIndex = index;
+    resetZoom();
     
     const modal = document.getElementById('imageModal');
     const modalImg = document.getElementById('modalImage');
@@ -477,21 +475,21 @@ function openImageModal(index = 0) {
     modalImg.src = productImages[currentImageIndex];
     counter.textContent = `${currentImageIndex + 1} / ${productImages.length}`;
     
-    // CORREÇÃO: Iniciar sempre com zoom 100% (fit-to-container)
-    currentZoom = 1;
-    resetImagePosition();
     updateZoomLevel();
     updateModalThumbnails();
     
     // Prevent body scroll
     document.body.style.overflow = 'hidden';
+    
+    // Reset transform
+    resetImagePosition();
 }
 
 function closeImageModal() {
     const modal = document.getElementById('imageModal');
     modal.style.display = 'none';
     document.body.style.overflow = 'auto';
-    currentZoom = 1;
+    resetZoom();
     resetImagePosition();
 }
 
@@ -526,7 +524,7 @@ function updateModalImage() {
     counter.textContent = `${currentImageIndex + 1} / ${productImages.length}`;
     
     // Reset zoom when changing images
-    currentZoom = 1;
+    resetZoom();
     resetImagePosition();
     updateModalThumbnails();
 }
@@ -554,7 +552,6 @@ function zoomOut() {
 
 function resetZoom() {
     currentZoom = 1;
-    resetImagePosition();
     applyZoom();
 }
 
@@ -562,19 +559,18 @@ function applyZoom() {
     const modalImg = document.getElementById('modalImage');
     const container = document.getElementById('imageContainer');
     
-    // CORREÇÃO: Aplicar zoom corretamente
     modalImg.style.transform = `scale(${currentZoom}) translate(${startTransformX}px, ${startTransformY}px)`;
     updateZoomLevel();
     
     // Ajustar cursor baseado no zoom
-    if (currentZoom > 1 && container) {
+    if (currentZoom > 1) {
         container.style.cursor = 'grab';
-    } else if (container) {
+    } else {
         container.style.cursor = 'default';
         // Reset position when zoom is 1 or less
-        if (currentZoom <= 1) {
-            resetImagePosition();
-        }
+        startTransformX = 0;
+        startTransformY = 0;
+        modalImg.style.transform = `scale(${currentZoom})`;
     }
 }
 
@@ -582,9 +578,7 @@ function resetImagePosition() {
     startTransformX = 0;
     startTransformY = 0;
     const modalImg = document.getElementById('modalImage');
-    if (modalImg) {
-        modalImg.style.transform = `scale(${currentZoom})`;
-    }
+    modalImg.style.transform = `scale(${currentZoom})`;
 }
 
 function updateZoomLevel() {
@@ -596,14 +590,14 @@ function updateZoomLevel() {
 
 function increaseQuantity() {
     const qty = document.getElementById('quantity');
-    if (qty && parseInt(qty.value) < 10) {
+    if (parseInt(qty.value) < 10) {
         qty.value = parseInt(qty.value) + 1;
     }
 }
 
 function decreaseQuantity() {
     const qty = document.getElementById('quantity');
-    if (qty && parseInt(qty.value) > 1) {
+    if (parseInt(qty.value) > 1) {
         qty.value = parseInt(qty.value) - 1;
     }
 }
@@ -626,9 +620,9 @@ document.addEventListener('DOMContentLoaded', function() {
         document.addEventListener('mousemove', drag);
         document.addEventListener('mouseup', endDrag);
         
-        // Touch events for mobile
-        imageContainer.addEventListener('touchstart', startDragTouch, {passive: false});
-        document.addEventListener('touchmove', dragTouch, {passive: false});
+        // Touch events
+        imageContainer.addEventListener('touchstart', startDragTouch);
+        document.addEventListener('touchmove', dragTouch);
         document.addEventListener('touchend', endDrag);
     }
     
@@ -672,7 +666,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     zoomOut();
                 }
             }
-        }, {passive: false});
+        });
         
         // Click outside modal to close
         modal.addEventListener('click', function(e) {
@@ -690,10 +684,7 @@ function startDrag(e) {
     isDragging = true;
     startX = e.clientX;
     startY = e.clientY;
-    const container = document.getElementById('imageContainer');
-    if (container) {
-        container.style.cursor = 'grabbing';
-    }
+    document.getElementById('imageContainer').style.cursor = 'grabbing';
 }
 
 function startDragTouch(e) {
@@ -717,9 +708,7 @@ function drag(e) {
     startTransformY += deltaY;
     
     const modalImg = document.getElementById('modalImage');
-    if (modalImg) {
-        modalImg.style.transform = `scale(${currentZoom}) translate(${startTransformX}px, ${startTransformY}px)`;
-    }
+    modalImg.style.transform = `scale(${currentZoom}) translate(${startTransformX}px, ${startTransformY}px)`;
     
     startX = e.clientX;
     startY = e.clientY;
@@ -737,9 +726,7 @@ function dragTouch(e) {
     startTransformY += deltaY;
     
     const modalImg = document.getElementById('modalImage');
-    if (modalImg) {
-        modalImg.style.transform = `scale(${currentZoom}) translate(${startTransformX}px, ${startTransformY}px)`;
-    }
+    modalImg.style.transform = `scale(${currentZoom}) translate(${startTransformX}px, ${startTransformY}px)`;
     
     startX = touch.clientX;
     startY = touch.clientY;
