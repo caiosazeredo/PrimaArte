@@ -1020,7 +1020,7 @@
     color: #FFF;
     font-weight: 700;
     font-size: 1.2rem;
-    background-color: #4CAF50;
+    background-color: #d44b4b;
     padding: 2px 8px;
     border-radius: 10px;
 }
@@ -1044,13 +1044,6 @@
     text-decoration: line-through;
     font-size: 0.9rem;
 }
-
-.promotional-price-beach {
-    color: #FFD700;
-    font-weight: 700;
-    font-size: 1.1rem;
-}
-
 /* --- Estilos de Preço para Seção Principal de Destaques --- */
 .product-price-beach {
     display: flex;
