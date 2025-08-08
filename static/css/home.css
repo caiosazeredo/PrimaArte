@@ -1066,7 +1066,7 @@
 .promotional-price-main {
     font-size: 1.6rem;
     font-weight: 700;
-    color: #4CAF50; /* Verde para destacar a promoção */
+    color: #a02929; /* Verde para destacar a promoção */
 }
 
 /* Garante que o preço normal mantenha o estilo original quando não há promoção */
