@@ -17,7 +17,6 @@ python app.py
 ### 3. Acessar
 - Site: http://localhost:5000
 - Admin: http://localhost:5000/admin
-- Senha: `primaarte2025`
 
 ## 📱 Integração WhatsApp
 - Número: +55 21 97310-8293
