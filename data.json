@@ -22,15 +22,15 @@
       "name": "Necessarie Estampa Pet",
       "description": "Ótima para levar maquiagens",
       "price": 50.0,
-      "promotional_price": 32.9,
+      "promotional_price": 36.9,
       "promotion_active": true,
       "category": "bolsa",
       "images": [
         "/static/uploads/1754331003_gato.jpg"
       ],
-      "featured": true,
+      "featured": false,
       "created_at": "2025-08-04T15:10:03.791104",
-      "updated_at": "2025-08-04T18:00:22.739862"
+      "updated_at": "2025-08-31T13:00:00.113028"
     },
     {
       "id": "f34475a6-21c9-470a-9a7a-352fd85e48c4",
