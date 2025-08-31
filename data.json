@@ -4,8 +4,8 @@
       "id": "produto-1",
       "name": "Bolsa e Necessaire Dália ",
       "description": "Bolsa de tecido totalmente forrada acompanha de necessaire. Confeccionada com linha 100% algodão e várias padronagens. Perfeita para o dia a dia, combina com qualquer look. Possui alça resistente e forro interno.",
-      "price": 75.0,
-      "promotional_price": 59.9,
+      "price": 89.9,
+      "promotional_price": 76.9,
       "promotion_active": true,
       "category": "bolsa",
       "images": [
@@ -15,7 +15,7 @@
       ],
       "featured": true,
       "created_at": "2025-08-03T19:50:48.264320",
-      "updated_at": "2025-08-04T18:00:14.501680"
+      "updated_at": "2025-08-31T12:34:14.332580"
     },
     {
       "id": "0f9030d3-d724-4f47-ab0e-66e965dc92ae",
@@ -36,16 +36,151 @@
       "id": "f34475a6-21c9-470a-9a7a-352fd85e48c4",
       "name": "Bolsa Lírio",
       "description": "Confeccionada em tecido nylon amassado possui ferragens de ótima qualidade.\r\nMuito versátil pois tem à opção de trocar a alça.\r\n",
-      "price": 150.0,
+      "price": 113.9,
       "promotional_price": 99.9,
-      "promotion_active": true,
+      "promotion_active": false,
       "category": "bolsa",
       "images": [
         "/static/uploads/1754331112_bolsalyrio.jpg"
       ],
-      "featured": true,
+      "featured": false,
       "created_at": "2025-08-04T15:11:52.063819",
-      "updated_at": "2025-08-04T18:00:32.800604"
+      "updated_at": "2025-08-31T12:34:50.459022"
+    },
+    {
+      "id": "513835dc-269c-4320-84a7-bbbcd1271efe",
+      "name": "Bolsa Dália Vermelha🌼",
+      "description": "✨ Seu look do dia mais completo com a Bolsa Dália, versátil e cheia de estilo.\r\n\tCombine cores, leve tudo: a Bolsa Dália é a companheira perfeita do seu dia a dia",
+      "price": 76.9,
+      "promotional_price": 89.9,
+      "promotion_active": true,
+      "category": "bolsa",
+      "images": [
+        "/static/uploads/1756654414_dalia_-_vermelha.png",
+        "/static/uploads/1756654414_dalia_-_vermelha2.png",
+        "/static/uploads/1756654414_dalia_-_vermelha3.png"
+      ],
+      "featured": false,
+      "created_at": "2025-08-31T12:33:34.351107",
+      "updated_at": "2025-08-31T12:33:34.351107"
+    },
+    {
+      "id": "b1bd1a45-90a2-478e-8609-1e60c126580a",
+      "name": "Bolsa Lírio Verde",
+      "description": "🌿 Bolsa Lírio Verde: feita em nylon amassado superleve, espaçosa e com alças que mudam em segundos, pode ser usada no ombro ou transversal, você escolhe!\r\n\t✨A bolsa Lírio acompanha 1 alça.",
+      "price": 113.9,
+      "promotional_price": null,
+      "promotion_active": false,
+      "category": "bolsa",
+      "images": [
+        "/static/uploads/1756654760_bolsalirioverde.jpg",
+        "/static/uploads/1756654760_bolsalirioverde2.jpg",
+        "/static/uploads/1756654760_bolsalirioverde3.jpg",
+        "/static/uploads/1756654760_bolsalirioverde4.jpg"
+      ],
+      "featured": false,
+      "created_at": "2025-08-31T12:39:20.193751",
+      "updated_at": "2025-08-31T12:39:20.193751"
+    },
+    {
+      "id": "cdcc6aba-26ac-41d5-bbbb-9340ed97c318",
+      "name": "Bolsa Amor Perfeito💙",
+      "description": "🪻A Bolsa Amor Perfeito é ideal para aqueles dias de compras: dobrável em formato de carteira, leve e fácil de carregar, mas quando aberta se transforma em uma bolsa reforçada e espaçosa, capaz de acomodar tudo o que você precisa.",
+      "price": 81.9,
+      "promotional_price": null,
+      "promotion_active": false,
+      "category": "bolsa",
+      "images": [
+        "/static/uploads/1756654883_bolsaamorperfeito.png"
+      ],
+      "featured": false,
+      "created_at": "2025-08-31T12:41:23.614231",
+      "updated_at": "2025-08-31T12:41:23.614231"
+    },
+    {
+      "id": "d63af7ec-6031-444c-b4e7-93b67add6ad7",
+      "name": "Bolsa Dália 4 Estampas",
+      "description": "🌼Bolsa Dália: espaçosa, prática e disponível em várias cores para combinar com seu dia a dia",
+      "price": 89.9,
+      "promotional_price": 76.9,
+      "promotion_active": true,
+      "category": "bolsa",
+      "images": [
+        "/static/uploads/1756655017_dalia_azul_e_branca.png",
+        "/static/uploads/1756655017_dalia_azul_e_branca2.png"
+      ],
+      "featured": false,
+      "created_at": "2025-08-31T12:43:37.913810",
+      "updated_at": "2025-08-31T12:44:24.534120"
+    },
+    {
+      "id": "58fffceb-3f31-4902-8fb7-c283359a5eb7",
+      "name": "Bolsa Dália - Azul e Off white",
+      "description": "✨Bolsa Dália: espaçosa, prática e disponível em várias cores para combinar com seu dia a dia e ainda, vem com uma necessaire da mesma estampa da bolsa.",
+      "price": 89.9,
+      "promotional_price": 76.9,
+      "promotion_active": true,
+      "category": "bolsa",
+      "images": [
+        "/static/uploads/1756655216_Bolsa_Dalia_azul_e_Off-white.png",
+        "/static/uploads/1756655216_Bolsa_Dalia_azul_e_Off-white2.png",
+        "/static/uploads/1756655216_Bolsa_Dalia_azul_e_Off-white3.png"
+      ],
+      "featured": false,
+      "created_at": "2025-08-31T12:46:56.260047",
+      "updated_at": "2025-08-31T12:46:56.260047"
+    },
+    {
+      "id": "ea5629ec-a56b-4ab1-b25f-3ddbbfda653b",
+      "name": "Bolsa Azaleia 🌺",
+      "description": "✨Confeccionada em jeans, forro interno e alça com detalhes em couro sintético. Espaçosa, versátil e super fácil de combinar com diferentes looks do dia a dia.",
+      "price": 114.9,
+      "promotional_price": null,
+      "promotion_active": false,
+      "category": "bolsa",
+      "images": [
+        "/static/uploads/1756655496_Bolsa_azaleia.png",
+        "/static/uploads/1756655496_Bolsa_azaleia2.png",
+        "/static/uploads/1756655496_Bolsa_azaleia3.png"
+      ],
+      "featured": false,
+      "created_at": "2025-08-31T12:51:36.260852",
+      "updated_at": "2025-08-31T12:51:36.260852"
+    },
+    {
+      "id": "5e2d5784-9200-4677-b0c1-3f8b5c32c372",
+      "name": "Bolsa Girassol - Arco-íris",
+      "description": "Bolsa Girassol - perfeita para acompanhar seus dias de sol! Seja na piscina, na praia ou no passeio ao ar livre, ela é prática e estilosa. Conta com bolso para proteger seu celular e vem com necessaire.✨",
+      "price": 112.9,
+      "promotional_price": null,
+      "promotion_active": false,
+      "category": "bolsa",
+      "images": [
+        "/static/uploads/1756655612_bolsa_girassol.png",
+        "/static/uploads/1756655612_bolsa_girassol2.png",
+        "/static/uploads/1756655612_bolsa_girassol3.png",
+        "/static/uploads/1756655612_bolsa_girassol4.png"
+      ],
+      "featured": false,
+      "created_at": "2025-08-31T12:53:32.451263",
+      "updated_at": "2025-08-31T12:54:04.047907"
+    },
+    {
+      "id": "c366be4b-ad6f-415b-8967-72ed5215948d",
+      "name": "Bolsa Girassol - Clássica",
+      "description": "A Bolsa Girassol é espaçosa, cheia de charme, vem com necessaire e conta com bolso para proteger seu celular.",
+      "price": 112.9,
+      "promotional_price": null,
+      "promotion_active": false,
+      "category": "bolsa",
+      "images": [
+        "/static/uploads/1756655744_bolsa_girassol_classica.png",
+        "/static/uploads/1756655744_bolsa_girassol_classica2.png",
+        "/static/uploads/1756655744_bolsa_girassol_classica3.png"
+      ],
+      "featured": false,
+      "created_at": "2025-08-31T12:55:44.518419",
+      "updated_at": "2025-08-31T12:56:55.015396"
     }
   ],
   "announcements": [
