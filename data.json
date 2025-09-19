@@ -3,9 +3,9 @@
     {
       "id": "produto-1",
       "name": "Bolsa e Necessaire Dália ",
-      "description": "Bolsa de tecido totalmente forrada acompanha de necessaire. Confeccionada com linha 100% algodão e várias padronagens. Perfeita para o dia a dia, combina com qualquer look. Possui alça resistente e forro interno.",
+      "description": "Bolsa de tecido totalmente forrada acompanha de necessaire. Confeccionada com linha 100% algodão e várias padronagens. Perfeita para o dia a dia, combina com qualquer look. Possui alça resistente e forro interno.\r\n-Material tecido, parte externa e interna.\r\n-Cor, azul e off white.\r\n-Medidas: \r\ncumprimento x largura x altura\r\n45 x 10 x 35cm\r\n-Alça 60cm",
       "price": 89.9,
-      "promotional_price": 76.9,
+      "promotional_price": 71.0,
       "promotion_active": true,
       "category": "bolsa",
       "images": [
@@ -13,9 +13,9 @@
         "/static/uploads/1754312881_bolsafloral2.jpg",
         "/static/uploads/1754312881_bolsafloral3.jpg"
       ],
-      "featured": true,
+      "featured": false,
       "created_at": "2025-08-03T19:50:48.264320",
-      "updated_at": "2025-08-31T12:34:14.332580"
+      "updated_at": "2025-09-18T23:44:13.005317"
     },
     {
       "id": "0f9030d3-d724-4f47-ab0e-66e965dc92ae",
@@ -35,8 +35,8 @@
     {
       "id": "f34475a6-21c9-470a-9a7a-352fd85e48c4",
       "name": "Bolsa Lírio",
-      "description": "Confeccionada em tecido nylon amassado possui ferragens de ótima qualidade.\r\nMuito versátil pois tem à opção de trocar a alça.\r\n",
-      "price": 113.9,
+      "description": "Confeccionada em tecido nylon amassado possui ferragens de ótima qualidade.\r\nMuito versátil pois tem à opção de trocar a alça.\r\n-Material, Nylon amassado, forração interna pipeline.\r\n-Cor azul marinho parte externa e estampado azul com branco forro interno.\r\n-42 x 14 x 25cm.\r\n-Alça 1,40cm, cor azul com listras vermelhas ou totalmente azul.",
+      "price": 103.0,
       "promotional_price": 99.9,
       "promotion_active": false,
       "category": "bolsa",
@@ -45,14 +45,14 @@
       ],
       "featured": false,
       "created_at": "2025-08-04T15:11:52.063819",
-      "updated_at": "2025-08-31T12:34:50.459022"
+      "updated_at": "2025-09-18T23:45:37.738248"
     },
     {
       "id": "513835dc-269c-4320-84a7-bbbcd1271efe",
       "name": "Bolsa Dália Vermelha🌼",
-      "description": "✨ Seu look do dia mais completo com a Bolsa Dália, versátil e cheia de estilo.\r\n\tCombine cores, leve tudo: a Bolsa Dália é a companheira perfeita do seu dia a dia",
-      "price": 76.9,
-      "promotional_price": 89.9,
+      "description": "✨ Seu look do dia mais completo com a Bolsa Dália, versátil e cheia de estilo.\r\n\tCombine cores, leve tudo: a Bolsa Dália é a companheira perfeita do seu dia a dia\r\n-Material tecido, parte externa e interna.\r\n-Cor, azul e off white.\r\n-Medidas: \r\ncumprimento x largura x altura\r\n45 x 10 x 35cm\r\n-Alça 60cm",
+      "price": 89.9,
+      "promotional_price": 71.0,
       "promotion_active": true,
       "category": "bolsa",
       "images": [
@@ -60,15 +60,15 @@
         "/static/uploads/1756654414_dalia_-_vermelha2.png",
         "/static/uploads/1756654414_dalia_-_vermelha3.png"
       ],
-      "featured": true,
+      "featured": false,
       "created_at": "2025-08-31T12:33:34.351107",
-      "updated_at": "2025-08-31T13:01:56.809746"
+      "updated_at": "2025-09-18T23:44:20.769044"
     },
     {
       "id": "b1bd1a45-90a2-478e-8609-1e60c126580a",
       "name": "Bolsa Lírio Verde",
-      "description": "🌿 Bolsa Lírio Verde: feita em nylon amassado superleve, espaçosa e com alças que mudam em segundos, pode ser usada no ombro ou transversal, você escolhe!\r\n\t✨A bolsa Lírio acompanha 1 alça.",
-      "price": 113.9,
+      "description": "🌿 Bolsa Lírio Verde: feita em nylon amassado superleve, espaçosa e com alças que mudam em segundos, pode ser usada no ombro ou transversal, você escolhe!\r\n\t✨A bolsa Lírio acompanha 1 alça.\r\n-Material, Nylon amassado, forração interna pipeline.\r\n-Cor azul marinho parte externa e estampado azul com branco forro interno.\r\n-42 x 14 x 25cm.\r\n-Alça 1,40cm, cor azul com listras vermelhas ou totalmente azul.",
+      "price": 103.0,
       "promotional_price": null,
       "promotion_active": false,
       "category": "bolsa",
@@ -80,13 +80,13 @@
       ],
       "featured": false,
       "created_at": "2025-08-31T12:39:20.193751",
-      "updated_at": "2025-08-31T12:39:20.193751"
+      "updated_at": "2025-09-18T23:45:42.303537"
     },
     {
       "id": "cdcc6aba-26ac-41d5-bbbb-9340ed97c318",
       "name": "Bolsa Amor Perfeito💙",
-      "description": "🪻A Bolsa Amor Perfeito é ideal para aqueles dias de compras: dobrável em formato de carteira, leve e fácil de carregar, mas quando aberta se transforma em uma bolsa reforçada e espaçosa, capaz de acomodar tudo o que você precisa.",
-      "price": 81.9,
+      "description": "🪻A Bolsa Amor Perfeito é ideal para aqueles dias de compras: dobrável em formato de carteira, leve e fácil de carregar, mas quando aberta se transforma em uma bolsa reforçada e espaçosa, capaz de acomodar tudo o que você precisa.\r\n-Material Duratran, parte externa, bolso frontal tricoline e forração interna microfibra.\r\n-Cor predominante preto.\r\n-Medidas:\r\n42 x 17 x 43cm.\r\n-Alça 48cm",
+      "price": 81.0,
       "promotional_price": null,
       "promotion_active": false,
       "category": "bolsa",
@@ -95,14 +95,14 @@
       ],
       "featured": false,
       "created_at": "2025-08-31T12:41:23.614231",
-      "updated_at": "2025-08-31T12:41:23.614231"
+      "updated_at": "2025-09-18T23:46:06.652237"
     },
     {
       "id": "d63af7ec-6031-444c-b4e7-93b67add6ad7",
       "name": "Bolsa Dália 4 Estampas",
-      "description": "🌼Bolsa Dália: espaçosa, prática e disponível em várias cores para combinar com seu dia a dia",
+      "description": "🌼Bolsa Dália: espaçosa, prática e disponível em várias cores para combinar com seu dia a dia\r\n-Material tecido, parte externa e interna.\r\n-Cor, azul e off white.\r\n-Medidas: \r\ncumprimento x largura x altura\r\n45 x 10 x 35cm\r\n-Alça 60cm",
       "price": 89.9,
-      "promotional_price": 76.9,
+      "promotional_price": 71.0,
       "promotion_active": true,
       "category": "bolsa",
       "images": [
@@ -111,14 +111,14 @@
       ],
       "featured": false,
       "created_at": "2025-08-31T12:43:37.913810",
-      "updated_at": "2025-08-31T12:44:24.534120"
+      "updated_at": "2025-09-18T23:44:30.300853"
     },
     {
       "id": "58fffceb-3f31-4902-8fb7-c283359a5eb7",
       "name": "Bolsa Dália - Azul e Off white",
-      "description": "✨Bolsa Dália: espaçosa, prática e disponível em várias cores para combinar com seu dia a dia e ainda, vem com uma necessaire da mesma estampa da bolsa.",
+      "description": "✨Bolsa Dália: espaçosa, prática e disponível em várias cores para combinar com seu dia a dia e ainda, vem com uma necessaire da mesma estampa da bolsa.\r\n-Material tecido, parte externa e interna.\r\n-Cor, azul e off white.\r\n-Medidas: \r\ncumprimento x largura x altura\r\n45 x 10 x 35cm\r\n-Alça 60cm",
       "price": 89.9,
-      "promotional_price": 76.9,
+      "promotional_price": 71.0,
       "promotion_active": true,
       "category": "bolsa",
       "images": [
@@ -126,32 +126,31 @@
         "/static/uploads/1756655216_Bolsa_Dalia_azul_e_Off-white2.png",
         "/static/uploads/1756655216_Bolsa_Dalia_azul_e_Off-white3.png"
       ],
-      "featured": true,
+      "featured": false,
       "created_at": "2025-08-31T12:46:56.260047",
-      "updated_at": "2025-08-31T13:01:11.827909"
+      "updated_at": "2025-09-18T23:44:39.294982"
     },
     {
       "id": "ea5629ec-a56b-4ab1-b25f-3ddbbfda653b",
       "name": "Bolsa Azaleia 🌺",
-      "description": "✨Confeccionada em jeans, forro interno e alça com detalhes em couro sintético. Espaçosa, versátil e super fácil de combinar com diferentes looks do dia a dia.",
-      "price": 114.9,
+      "description": "✨Confeccionada em jeans, forro interno e alça com detalhes em couro sintético. Espaçosa, versátil e super fácil de combinar com diferentes looks do dia a dia.\r\n-Material Jeans parte externa e tricoline parte interna.\r\n-Cor predominante azul.\r\n-Medidas:\r\n42 x 12 x 32cm\r\n-Alça 52cm",
+      "price": 107.0,
       "promotional_price": null,
       "promotion_active": false,
       "category": "bolsa",
       "images": [
-        "/static/uploads/1756655496_Bolsa_azaleia.png",
-        "/static/uploads/1756655496_Bolsa_azaleia2.png",
-        "/static/uploads/1756655496_Bolsa_azaleia3.png"
+        "/static/uploads/1756657266_Bolsa_azaleia2.png",
+        "/static/uploads/1756657266_Bolsa_azaleia1.png"
       ],
-      "featured": false,
+      "featured": true,
       "created_at": "2025-08-31T12:51:36.260852",
-      "updated_at": "2025-08-31T12:51:36.260852"
+      "updated_at": "2025-09-18T23:46:16.196833"
     },
     {
       "id": "5e2d5784-9200-4677-b0c1-3f8b5c32c372",
       "name": "Bolsa Girassol - Arco-íris",
-      "description": "Bolsa Girassol - perfeita para acompanhar seus dias de sol! Seja na piscina, na praia ou no passeio ao ar livre, ela é prática e estilosa. Conta com bolso para proteger seu celular e vem com necessaire.✨",
-      "price": 112.9,
+      "description": "Bolsa Girassol - perfeita para acompanhar seus dias de sol! Seja na piscina, na praia ou no passeio ao ar livre, ela é prática e estilosa. Conta com bolso para proteger seu celular e vem com necessaire.✨\r\n-Material Tela Treliça e duratran\r\n-Cor predominante preto\r\n-Medidas:\r\n48 x 11 x 27cm\r\n-Alça 65cm",
+      "price": 100.0,
       "promotional_price": null,
       "promotion_active": false,
       "category": "bolsa",
@@ -163,13 +162,13 @@
       ],
       "featured": false,
       "created_at": "2025-08-31T12:53:32.451263",
-      "updated_at": "2025-08-31T12:54:04.047907"
+      "updated_at": "2025-09-18T23:46:38.538494"
     },
     {
       "id": "c366be4b-ad6f-415b-8967-72ed5215948d",
       "name": "Bolsa Girassol - Clássica",
-      "description": "A Bolsa Girassol é espaçosa, cheia de charme, vem com necessaire e conta com bolso para proteger seu celular.",
-      "price": 112.9,
+      "description": "A Bolsa Girassol é espaçosa, cheia de charme, vem com necessaire e conta com bolso para proteger seu celular.\r\n-Material Tela Treliça e duratran\r\n-Cor predominante preto\r\n-Medidas:\r\n48 x 11 x 27cm\r\n-Alça 65cm",
+      "price": 100.0,
       "promotional_price": null,
       "promotion_active": false,
       "category": "bolsa",
@@ -180,7 +179,91 @@
       ],
       "featured": false,
       "created_at": "2025-08-31T12:55:44.518419",
-      "updated_at": "2025-08-31T13:01:47.076337"
+      "updated_at": "2025-09-18T23:46:44.955659"
+    },
+    {
+      "id": "0f0212ff-3a23-430c-9b5a-634e89813da1",
+      "name": "Bolsa Lírio Vermelha",
+      "description": "🌺Bolsa Lírio, leve, versátil e com alça removível ótima para acompanhar o seu ritmo.\r\n-Material, Nylon amassado, forração interna pipeline.\r\n-Cor azul marinho parte externa e estampado azul com branco forro interno.\r\n-42 x 14 x 25cm.\r\n-Alça 1,40cm, cor azul com listras vermelhas ou totalmente azul.",
+      "price": 103.0,
+      "promotional_price": null,
+      "promotion_active": false,
+      "category": "bolsa",
+      "images": [
+        "/static/uploads/1756656729_Bolsa_Lirio_Vermelha.png",
+        "/static/uploads/1756656729_Bolsa_Lirio_Vermelha2.png",
+        "/static/uploads/1756656729_Bolsa_Lirio_Vermelha3.png",
+        "/static/uploads/1756656729_Bolsa_Lirio_Vermelha4.png",
+        "/static/uploads/1756656729_Bolsa_Lirio_Vermelha5.png",
+        "/static/uploads/1756656729_Bolsa_Lirio_Vermelha6.png"
+      ],
+      "featured": true,
+      "created_at": "2025-08-31T13:12:09.176100",
+      "updated_at": "2025-09-18T23:45:33.288126"
+    },
+    {
+      "id": "1f33898f-46a3-499d-bbc2-8f5f1bd27e93",
+      "name": "Necessaire Girassol",
+      "description": "Necessaire Girassol - Alegre, funcional e perfeita para levar maquiagens, protetor solar e seus itens essenciais com praticidade.",
+      "price": 50.0,
+      "promotional_price": 37.9,
+      "promotion_active": true,
+      "category": "bolsa",
+      "images": [
+        "/static/uploads/1756656953_Necessaire_Girassol2.jpeg",
+        "/static/uploads/1756656953_Necessaire_Girassol.jpeg"
+      ],
+      "featured": false,
+      "created_at": "2025-08-31T13:15:53.631254",
+      "updated_at": "2025-08-31T13:15:53.631254"
+    },
+    {
+      "id": "a7cc9dd7-c2d5-42c8-9f49-899369582ca7",
+      "name": "Bolsa Lírio Azul🪻",
+      "description": "✨Design minimalista, material nylon amassado, leve e resistente, com detalhe em couro sintético. Pode ser usada no ombro ou na transversal, adaptando-se ao seu estilo e necessidade. Com a troca da alça, você pode combinar com seu look!\r\n-Material, Nylon amassado, forração interna pipeline.\r\n-Cor azul marinho parte externa e estampado azul com branco forro interno.\r\n-42 x 14 x 25cm.\r\n-Alça 1,40cm, cor azul com listras vermelhas ou totalmente azul.",
+      "price": 103.0,
+      "promotional_price": null,
+      "promotion_active": false,
+      "category": "bolsa",
+      "images": [
+        "/static/uploads/1756657056_Bolsa_Lirio_Azul.png",
+        "/static/uploads/1756657056_Bolsa_Lirio_Azul2.png",
+        "/static/uploads/1756657056_Bolsa_Lirio_Azul3.png"
+      ],
+      "featured": false,
+      "created_at": "2025-08-31T13:17:36.280373",
+      "updated_at": "2025-09-18T23:45:53.303167"
+    },
+    {
+      "id": "f268df34-d158-43ce-8d05-3415bd294d42",
+      "name": "Bolsa Hortênsia",
+      "description": "A Bolsa Hortênsia combina sofisticação e praticidade em um design atemporal. Confeccionada em material sintético com textura que remete ao couro envelhecido, sua tonalidade marrom traz um toque clássico e neutro, fácil de combinar com diversos estilos.\r\n\r\nSeu interior é forrado com tecido de estampa espiral delicada, e conta com bolso interno com zíper, ideal para manter pequenos itens organizados e seguros. O fechamento com botão magnético proporciona praticidade no dia a dia.\r\n\r\nO grande destaque fica por conta do lenço de cetim marrom com poás rosas, amarrado na parte frontal da bolsa, adicionando um charme retrô e feminino à peça. A alça regulável permite usá-la tanto no ombro quanto na transversal, adaptando-se ao seu estilo de vida.\r\n\r\nIdeal para quem busca uma bolsa funcional sem abrir mão da elegância.",
+      "price": 199.9,
+      "promotional_price": null,
+      "promotion_active": false,
+      "category": "bolsa",
+      "images": [
+        "/static/uploads/1756657547_Bolsa_hortencia.jpeg",
+        "/static/uploads/1756657547_Bolsa_hortencia2.jpeg"
+      ],
+      "featured": true,
+      "created_at": "2025-08-31T13:24:31.468972",
+      "updated_at": "2025-08-31T13:26:07.447885"
+    },
+    {
+      "id": "b0c894ac-c1b4-4492-8d16-9f7462c06812",
+      "name": "Necessarie Girassol Maletinha",
+      "description": "-Material Tela Treliça \r\n-Cor predominante bege\r\n-Medidas:\r\n28 x 7 x 22cm",
+      "price": 67.0,
+      "promotional_price": null,
+      "promotion_active": false,
+      "category": "bolsa",
+      "images": [
+        "/static/uploads/1758250125_necessaire_maletinha.jpg"
+      ],
+      "featured": false,
+      "created_at": "2025-09-18T23:48:45.995366",
+      "updated_at": "2025-09-18T23:48:45.995366"
     }
   ],
   "announcements": [
